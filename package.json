@@ -1,0 +1,15 @@
+{
+    "name": "ChatBot",
+    "version": "0.0.1",
+    "description": "Quit Bot",
+    "license": "BSD-2-Clause",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Dave13h/quizbot"
+    },
+    "dependencies": {
+        "express": "^4.15.2",
+        "socket.io": "^2.1.1",
+        "uuid": "^3.3.2"
+    }
+}
