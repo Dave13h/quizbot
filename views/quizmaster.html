@@ -1,38 +1,56 @@
 <!doctype html>
 <html>
     <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
         <title>Quiz Master</title>
-        <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { font: 13px Helvetica, Arial; }
-            form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-            form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-            form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-            #messages { list-style-type: none; margin: 0; padding: 0; }
-            #messages li { padding: 5px 10px; }
-            #messages li:nth-child(odd) { background: #eee; }
-        </style>
+
+        <link href="css/nes.min.css" rel="stylesheet" />
+        <link href="css/animate.css" rel="stylesheet" />
+        <link href="css/style.css" rel="stylesheet" />
     </head>
     <body>
         <h1>Quiz Master</h1>
-        <ul id="messages"></ul>
+
+        <section class="container with-title">
+            <h2 class="title">Connections</h2>
+            <div class="containers" id="connections">
+
+            </div>
+        </section>
 
         <script src="/socket.io/socket.io.js"></script>
         <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
         <script>
           $(function () {
                 var socket = io.connect('/quizmaster'),
-                    cid    = null;
+                    qmid   = window.localStorage.getItem('qmid');
 
-                socket.on('chat message', function(msg){
-                    $('#messages').append($('<li>').text(msg));
+                socket.on('connections list', function(connections){
+                    $('#connections').html('');
+                    if (connections.length == 0) {
+                        $('#connections').append("-- No Connections --");
+                        return;
+                    }
+                    $(connections).each(function(k, v) {
+                        $('#connections').append(v + "<br/>");
+                    });
                 });
 
-
-                socket.emit('ident', cid);
-                socket.on('id', function(id){
+                socket
+                .on('reconnect', function(msg) {
+                    socket.emit('ident', qmid);
+                    console.log("Reconnected");
+                })
+                .on('connect', function(msg) {
+                    socket.emit('ident', qmid);
+                    console.log("Connected");
+                })
+                .on('id', function(id){
                     console.log('Got ID: ' + id);
-                    cid = id;
+                    qmid = id;
+                    window.localStorage.setItem('qmid', qmid);
                 });
             });
         </script>

@@ -1,25 +1,37 @@
 <!doctype html>
 <html>
     <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
         <title>Quiz Contestant</title>
+
+        <link href="css/nes.min.css" rel="stylesheet" />
+        <link href="css/animate.css" rel="stylesheet" />
+        <link href="css/style.css" rel="stylesheet" />
+
         <style>
-          * { margin: 0; padding: 0; box-sizing: border-box; }
-          body { font: 13px Helvetica, Arial; }
-          form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-          form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-          form button { background: rgb(130, 224, 255); border: none; padding: 10px; }
-          form button.send { width: 9%; }
-          #messages { list-style-type: none; margin: 0; padding: 0; }
-          #messages li { padding: 5px 10px; }
-          #messages li:nth-child(odd) { background: #eee; }
+            #teams { display: none; }
+            #err { display: none; }
+            #wait { display: none; }
+            header h1 { font-size: 200%; }
         </style>
     </head>
     <body>
-        <ul id="messages"></ul>
-        <form action="">
-            <input id="m" autocomplete="off" /><button class="send">Send</button>
-            <button id="c">Clear ID</button>
-        </form>
+        <header>
+            <h1>D3R Xmas Quiz!</h1>
+        </header>
+
+        <section id="err"></section>
+
+        <section id="wait" class="loading">
+            <p class="animated pulse infinite">Please Wait</p>
+        </section>
+
+        <section id="teams" class="container with-title">
+            <h2 class="title">Select Team</h2>
+            <div class="containers list" />
+        </section>
 
         <script src="/socket.io/socket.io.js"></script>
         <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -43,18 +55,39 @@
                     // @todo(dave13h): send disconnect?
                 });
 
-                socket.on('chat message', function(msg){
-                    $('#messages').append($('<li>').text(msg));
+                socket
+                .on('teams list', function (teams) {
+                    $('#teams .list').html('');
+                    $(teams).each(function(k, v) {
+                        $('#teams .list').append(
+                            $('<button/>')
+                                .addClass('btn')
+                                .addClass('is-error')
+                                .text(v)
+                                .on('click', function() {
+                                    $('#err').html("").hide();
+                                    socket.emit('team join', k);
+                                })
+                        ).append("<br/>");
+                    });
+                    $('#teams').show();
                 })
-                .on('reconnect', function(msg) {
+                .on('teams invalid', function () {
+                    $('#err').html("Invalid Team Choice").show();
+                })
+                .on('wait', function() {
+                    $('section').hide();
+                    $('#wait').show();
+                })
+                .on('reconnect', function (msg) {
                     socket.emit('ident', cid);
                     console.log("Reconnected");
                 })
-                .on('connect', function(msg) {
+                .on('connect', function (msg) {
                     socket.emit('ident', cid);
                     console.log("Connected");
                 })
-                .on('id', function(id){
+                .on('id', function (id) {
                     console.log('Got ID: ' + id);
                     cid = id;
                     window.localStorage.setItem('cid', cid);
