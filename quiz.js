@@ -9,7 +9,9 @@ var express = require('express'),
     app     = express(),
     http    = require('http').Server(app),
     io      = require('socket.io')(http),
-    uuid    = require('uuid');
+    uuid    = require('uuid'),
+    fs      = require("fs")
+    objects = require('./objects');
 
 var port = process.env.PORT || 3000;
 
@@ -24,16 +26,20 @@ var connections = {
 };
 
 var teams = [
-    'Team 1',
-    'Team 2',
-    'Team 3',
-    'Team 4',
-    'Team 5'
+    {name: 'Team 1', answered: false, points: 0},
+    {name: 'Team 2', answered: false, points: 0},
+    {name: 'Team 3', answered: false, points: 0},
+    {name: 'Team 4', answered: false, points: 0},
+    {name: 'Team 5', answered: false, points: 0}
 ];
 
-// ----------------------------------------------------------------------------
+var questions = null;
+var activeTeam = -1,
+    activeQuestion = -1;
+
+// ------------------------------------------------------------------------------------------------
 // Client views
-// ----------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 http.listen(port, function () {
     console.log('listening on *:' + port);
 });
@@ -48,9 +54,27 @@ app.get('/', function (req, res) {
 })
 .use(express.static('public'));
 
-// ----------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
+// Questions
+// ------------------------------------------------------------------------------------------------
+function notifyQuestions () {
+    sQuizMaster.emit('questions list', questions);
+
+    // @todo(dave13h): shouldn't really send everything to the dashboard :P
+    sDashboard.emit('questions list', questions);
+}
+
+function loadQuestions () {
+    var content = fs.readFileSync("data/questions.json");
+    json = JSON.parse(content);
+    questions = json.questions;
+    notifyQuestions();
+}
+loadQuestions();
+
+// ------------------------------------------------------------------------------------------------
 // Handle connections
-// ----------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 function ident (type, cid, socket) {
     var newConnection = false;
     if (cid == null) {
@@ -62,33 +86,43 @@ function ident (type, cid, socket) {
     switch (type) {
         case 'contestant':
             if (newConnection || connections.contestants[cid] == undefined)
-                connections.contestants[cid] = new oContestant(cid, socket);
+                connections.contestants[cid] = new objects.contestant(cid, socket);
             else
                 connections.contestants[cid].setSocket(socket).setState('connected');
             break;
+
         case 'quizmaster':
             if (newConnection || connections.quizmasters[cid] == undefined)
-                connections.quizmasters[cid] = new oQuizMaster(cid, socket);
+                connections.quizmasters[cid] = new objects.quizMaster(cid, socket);
             else
                 connections.quizmasters[cid].setSocket(socket).setState('connected');
+            notifyQuestions();
             break;
     }
 
-    updateConnectionList();
+    notifyConnectionList();
     return cid;
 }
 
-function updateConnectionList () {
+function notifyConnectionList () {
     var connectionList = [],
         i = 1;
 
     for (let c in connections.contestants) {
-        let con = connections.contestants[c];
-        var teamName = con.hasTeam() ? teams[con.getTeam()] : 'unassigned';
-        connectionList.push((i++) + ' => ' + teamName + ' [' + con.getState() + ']');
+        let con = connections.contestants[c],
+            teamName = con.hasTeam() ? teams[con.getTeam()].name : 'unassigned';
+        connectionList.push({
+            str: 'Contestant ' + (i++) + ' => ' + teamName + ' [' + con.getState() + ']',
+            cid: con.getId()
+        });
     }
     sQuizMaster.emit('connections list', connectionList);
+    sQuizMaster.emit('teams list', teams);
 }
+
+sDashboard.on('connection', function (socket) {
+    console.log('[SOCKET] Dashboard connected on socket: ' + socket.id);
+});
 
 sQuizMaster.on('connection', function (socket) {
     var qmid = null;
@@ -96,11 +130,59 @@ sQuizMaster.on('connection', function (socket) {
 
     socket.on('ident', function(id) {
         qmid = ident('quizmaster', id, socket);
+
+        let state = {
+            question: activeQuestion > -1 ? questions[activeQuestion] : null,
+            team: activeTeam > -1 ? teams[activeTeam] : null
+        };
+        socket.emit('game state', state);
     });
 
     socket.on('disconnect', function () {
         console.log('[SOCKET] QM [' + qmid + '] disconnected');
         connections.quizmasters[qmid].setState('disconnected');;
+    });
+
+    socket.on('client forcedisconnect', function (id) {
+        console.log('[SOCKET] QM [' + qmid + '] forcing client [' + id + '] to disconnect');
+        connections.contestants[id].kill();
+        delete connections.contestants[id];
+        notifyConnectionList();
+    });
+
+    socket.on('question play', function (qid) {
+        console.log('[SOCKET] QM [' + qmid + '] play question => ' + qid);
+        sDashboard.emit('question play', {
+            round: "Round " + 1 + "!",
+            question: questions[qid]
+        });
+
+        sContestant.emit('question play');
+    });
+
+    socket.on('question correct', function (qid) {
+        teams[activeTeam].points++;
+
+        activeTeam = -1;
+        for (let t in teams)
+            teams[t].answered = false;
+        sDashboard.emit('question correct', {sound: 'cheer'});
+        sQuizMaster.emit('teams list', teams);
+    });
+
+    socket.on('question wrong', function (qid) {
+        activeTeam = -1;
+
+        for (let c in connections.contestants) {
+            let con = connections.contestants[c],
+                team = teams[con.getTeam()];
+
+            if (team.answered)
+                continue;
+
+            con.socket.emit('question chance');
+        }
+        sDashboard.emit('question wrong', {sound: 'buzzer_wrong'});
     });
 });
 
@@ -127,69 +209,36 @@ sContestant.on('connection', function (socket) {
         }
         connections.contestants[cid].setTeam(team);
         socket.emit('wait');
+        notifyConnectionList();
+    });
+
+    socket.on('buzzer send', function (cid) {
+        if (!connections.contestants[cid].hasTeam()) {
+            return;
+        }
+
+        var teamid = connections.contestants[cid].getTeam(),
+            team   = teams[teamid];
+
+        if (team.answered) {
+            console.log('Team[' + team.name + '] already answered!');
+            return;
+        }
+
+        if (activeTeam < 0) {
+            activeTeam = teamid;
+            team.answered = true;
+            sDashboard.emit('question buzzed', {'team': team, 'sound': 'buzzer_default'});
+            sQuizMaster.emit('question buzzed', {'team': team});
+            sContestant.emit('question disable');
+        }
     });
 
     socket.on('disconnect', function () {
         console.log('[SOCKET] contestant [' + cid + '] disconnected');
-        connections.contestants[cid].setState('disconnected');
-        updateConnectionList();
+        if (connections.contestants[cid])
+            connections.contestants[cid].setState('disconnected');
+        notifyConnectionList();
     });
 });
 
-// ----------------------------------------------------------------------------
-// Objects
-// ----------------------------------------------------------------------------
-class oConnection {
-    constructor (cid, socket) {
-        this.id     = cid;
-        this.socket = socket;
-        this.state  = 'connected';
-    }
-
-    setSocket (socket) {
-        this.socket = socket;
-        return this;
-    }
-
-    getSocket (socket) {
-        return this.socket;
-    }
-
-    setState (state) {
-        this.state = state;
-        return this;
-    }
-
-    getState () {
-        return this.state;
-    }
-}
-
-class oContestant extends oConnection {
-    constructor (cid, socket) {
-        super(cid, socket);
-        this.team = -1;
-        console.log('[OBJECT] New Contestant[' + cid + ']');
-    }
-
-    hasTeam () {
-        return this.team > -1;
-    }
-
-    getTeam () {
-        return this.team;
-    }
-
-    setTeam (team) {
-        this.team = team;
-        console.log('[OBJECT] Contestant[' + this.id + '] Joined Team => ' + this.team);
-        return this;
-    }
-}
-
-class oQuizMaster extends oConnection {
-    constructor (cid, socket) {
-        super(cid, socket);
-        console.log('[OBJECT] New QuizMaster[' + cid + ']');
-    }
-}

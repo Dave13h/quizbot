@@ -9,36 +9,149 @@
         <link href="css/nes.min.css" rel="stylesheet" />
         <link href="css/animate.css" rel="stylesheet" />
         <link href="css/style.css" rel="stylesheet" />
+
+        <style>
+            #questions_view, #teams_view, #sounds_view, #game_view { display: none; }
+
+            #game_actions { display: none; }
+        </style>
     </head>
     <body>
         <h1>Quiz Master</h1>
 
         <section class="container with-title">
-            <h2 class="title">Connections</h2>
-            <div class="containers" id="connections">
+            <h2 class="title">Modes</h2>
+            <div id="menu">
+                <button type="button" data-target="contestants" class="btn is-primary">Contestants</button>
+                <button type="button" data-target="teams" class="btn is-success">Teams</button>
+                <button type="button" data-target="questions" class="btn is-success">Questions</button>
+                <button type="button" data-target="sounds" class="btn is-success">Sounds</button>
+                <button type="button" data-target="game" class="btn is-success">Game</button>
+            </div>
+        </section>
 
+        <section class="container with-title" id="contestants_view">
+            <h2 class="title">Contestants</h2>
+            <div class="containers" id="contestants"></div>
+        </section>
+
+        <section class="container with-title" id="teams_view">
+            <h2 class="title">Teams</h2>
+            <div class="containers" id="teams"></div>
+        </section>
+
+        <section class="container with-title" id="questions_view">
+            <h2 class="title">Questions</h2>
+            <div class="containers" id="questions"></div>
+        </section>
+
+        <section class="container with-title" id="sounds_view">
+            <h2 class="title">Sounds</h2>
+            <div class="containers" id="sounds"></div>
+        </section>
+
+        <section class="container with-title" id="game_view">
+            <h2 class="title">Game</h2>
+            <div class="containers" id="game">
+                <h3>Active Question</h3>
+                <p id="active_question"> -- None -- </p>
+
+                <h3>Active Team</h3>
+                <p id="active_team"> -- None -- </p>
+
+                <div id="game_actions">
+                    <button type="button" id="game_correct" class="btn is-primary">Correct</button>
+                    <button type="button" id="game_wrong" class="btn is-error">Wrong</button>
+                </div>
             </div>
         </section>
 
         <script src="/socket.io/socket.io.js"></script>
-        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+        <script src="js/jquery-1.11.1.js"></script>
         <script>
           $(function () {
+                function selectView () {
+                    $('#menu button').each(function() {
+                        $('#' + $(this).data('target') + '_view').hide();
+                        $(this).removeClass('is-primary').addClass('is-success');
+                    });
+                    $('#' + $(this).data('target') + '_view').show();
+                    $(this).removeClass('is-success').addClass('is-primary');
+                }
+
                 var socket = io.connect('/quizmaster'),
                     qmid   = window.localStorage.getItem('qmid');
 
-                socket.on('connections list', function(connections){
-                    $('#connections').html('');
-                    if (connections.length == 0) {
-                        $('#connections').append("-- No Connections --");
+                socket
+                .on('connections list', function(contestants){
+                    $('#contestants').html('');
+                    console.log(contestants);
+                    if (contestants.length == 0) {
+                        $('#contestants').append("-- No Contestants --");
                         return;
                     }
-                    $(connections).each(function(k, v) {
-                        $('#connections').append(v + "<br/>");
+                    $(contestants).each(function(k, v) {
+                        var disconnect = $('<button/>')
+                            .addClass('btn')
+                            .addClass('is-error')
+                            .html('<i class="icon close"></i>')
+                            .on('click', function() {
+                                socket.emit('client forcedisconnect', v.cid);
+                            })
+                        var con = v.str + "<br/>";
+                        $('#contestants').append(disconnect);
+                        $('#contestants').append(con);
                     });
-                });
+                })
+                .on('teams list', function(teams){
+                    $('#teams').html('');
+                    if (teams.length == 0) {
+                        $('#teams').append("-- No Teams --");
+                        return;
+                    }
+                    $(teams).each(function(k, v) {
+                        var t = v.name + " => Points: " + v.points + " Answered: " + v.answered + "<br/>";
+                        $('#teams').append(t);
+                    });
+                })
+                .on('questions list', function(questions){
+                    $('#questions').html('');
+                    if (questions.length == 0) {
+                        $('#questions').append("-- No Questions --");
+                        return;
+                    }
+                    $(questions).each(function(k, v) {
+                        var play = $('<button/>')
+                            .addClass('btn')
+                            .addClass('is-primary')
+                            .html('<i class="icon star"></i>')
+                            .on('click', function() {
+                                socket.emit('question play', k);
+                                $('#active_question').html(v.text);
+                                $('#active_team').html(' -- None -- ');
+                                $('#game_actions').hide();
+                                $('button[data-target="game"]').click();
+                            })
+                        var line = "[" + v.type + "] " + v.text + "<br/>";
+                        $('#questions').append(play);
+                        $('#questions').append(line);
+                    });
+                })
+                .on('question buzzed', function(msg) {
+                    $('#active_team').html(msg.team.name);
+                    $('#game_actions').show();
+                })
+                .on('game state', function(state) {
+                    $('#active_question').html(' -- None -- ');
+                    if (state.question)
+                        $('#active_question').html(state.question.text);
 
-                socket
+                    $('#active_team').html(' -- None -- ');
+                    if (state.team)
+                        $('#active_team').html(state.team.name);
+
+                    $('#game_actions').show();
+                })
                 .on('reconnect', function(msg) {
                     socket.emit('ident', qmid);
                     console.log("Reconnected");
@@ -51,6 +164,18 @@
                     console.log('Got ID: ' + id);
                     qmid = id;
                     window.localStorage.setItem('qmid', qmid);
+                });
+
+                $('#menu button').on('click', selectView);
+
+                $('#game_correct').on('click', function() {
+                    socket.emit('question correct');
+                    $('#game_actions').hide();
+                });
+                $('#game_wrong').on('click', function() {
+                    socket.emit('question wrong');
+                    $('#game_actions').hide();
+                    $('#active_team').html(' -- None -- ');
                 });
             });
         </script>

@@ -1,0 +1,22 @@
+{
+    "questions": [
+        {
+            "type": "text",
+            "text": "What is the average air speed of an unladen swallow?",
+            "answer": "Answer 1!"
+        },
+        {
+            "type": "choice",
+            "text": "Question 1",
+            "options": [
+                "answer 1",
+                "answer 2"
+            ],
+            "answer": 0
+        },
+        {
+            "type": "image",
+            "image": "test.png"
+        }
+    ]
+}
