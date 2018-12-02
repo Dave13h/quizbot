@@ -152,6 +152,12 @@ sQuizMaster.on('connection', function (socket) {
 
     socket.on('question play', function (qid) {
         console.log('[SOCKET] QM [' + qmid + '] play question => ' + qid);
+
+        for (let t in teams) {
+            teams[t].answered = false;
+        }
+        sQuizMaster.emit('teams list', teams);
+
         sDashboard.emit('question play', {
             round: "Round " + 1 + "!",
             question: questions[qid]
@@ -173,6 +179,7 @@ sQuizMaster.on('connection', function (socket) {
     socket.on('question wrong', function (qid) {
         activeTeam = -1;
 
+        var hasChance = false;
         for (let c in connections.contestants) {
             let con = connections.contestants[c],
                 team = teams[con.getTeam()];
@@ -181,8 +188,14 @@ sQuizMaster.on('connection', function (socket) {
                 continue;
 
             con.socket.emit('question chance');
+            hasChance = true;
         }
-        sDashboard.emit('question wrong', {sound: 'buzzer_wrong'});
+
+        if (hasChance) {
+            sDashboard.emit('question wrong', {sound: 'buzzer_wrong'});
+        } else {
+            sDashboard.emit('question losers', {sound: 'laugh'});
+        }
     });
 });
 

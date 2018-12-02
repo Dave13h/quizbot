@@ -171,6 +171,10 @@
                 $('#game_correct').on('click', function() {
                     socket.emit('question correct');
                     $('#game_actions').hide();
+
+                    $('#active_question').html(' -- None -- ');
+                    $('#active_team').html(' -- None -- ');
+                    $('button[data-target="teams"]').click();
                 });
                 $('#game_wrong').on('click', function() {
                     socket.emit('question wrong');
