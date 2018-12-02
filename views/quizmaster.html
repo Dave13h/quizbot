@@ -14,6 +14,8 @@
             #questions_view, #teams_view, #sounds_view, #game_view { display: none; }
 
             #game_actions { display: none; }
+
+            span.played { color: #aaa; }
         </style>
     </head>
     <body>
@@ -47,7 +49,12 @@
 
         <section class="container with-title" id="sounds_view">
             <h2 class="title">Sounds</h2>
-            <div class="containers" id="sounds"></div>
+            <div class="containers" id="sounds">
+                <button type="button" data-sound="awesome" class="btn">Awesome</button>
+                <button type="button" data-sound="nextround" class="btn">Next round</button>
+                <button type="button" data-sound="notyourbestmoment" class="btn">Not your best moment</button>
+                <button type="button" data-sound="orderorder" class="btn">Order! Order!</button>
+            </div>
         </section>
 
         <section class="container with-title" id="game_view">
@@ -59,6 +66,7 @@
                 <h3>Active Team</h3>
                 <p id="active_team"> -- None -- </p>
 
+                <button type="button" id="game_skip" class="btn is-warning">Skip</button>
                 <div id="game_actions">
                     <button type="button" id="game_correct" class="btn is-primary">Correct</button>
                     <button type="button" id="game_wrong" class="btn is-error">Wrong</button>
@@ -121,10 +129,17 @@
                         return;
                     }
                     $(questions).each(function(k, v) {
-                        var play = $('<button/>')
+                        let bClass = 'is-primary',
+                            bIcon  = 'star';
+                        if (v.played) {
+                            bClass = '';
+                            bIcon = 'star is-empty';
+                        }
+
+                        let play = $('<button/>')
                             .addClass('btn')
-                            .addClass('is-primary')
-                            .html('<i class="icon star"></i>')
+                            .addClass(bClass)
+                            .html('<i class="icon ' + bIcon + '"></i>')
                             .on('click', function() {
                                 socket.emit('question play', k);
                                 $('#active_question').html(v.text);
@@ -132,7 +147,10 @@
                                 $('#game_actions').hide();
                                 $('button[data-target="game"]').click();
                             })
-                        var line = "[" + v.type + "] " + v.text + "<br/>";
+                        let line = $('<span/>').html("[" + v.type + "] " + v.text + "<br/>");
+                        if (v.played)
+                            line.addClass('played');
+
                         $('#questions').append(play);
                         $('#questions').append(line);
                     });
@@ -180,6 +198,19 @@
                     socket.emit('question wrong');
                     $('#game_actions').hide();
                     $('#active_team').html(' -- None -- ');
+                });
+
+                $('#game_skip').on('click', function() {
+                    socket.emit('question skip');
+                    $('#game_actions').hide();
+
+                    $('#active_question').html(' -- None -- ');
+                    $('#active_team').html(' -- None -- ');
+                    $('button[data-target="teams"]').click();
+                });
+
+                $('#sounds button').on('click', function() {
+                    socket.emit('sound play', $(this).data('sound'));
                 });
             });
         </script>

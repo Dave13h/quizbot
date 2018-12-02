@@ -25,17 +25,22 @@ var connections = {
     dashboards:  []
 };
 
-var teams = [
-    {name: 'Team 1', answered: false, points: 0},
-    {name: 'Team 2', answered: false, points: 0},
-    {name: 'Team 3', answered: false, points: 0},
-    {name: 'Team 4', answered: false, points: 0},
-    {name: 'Team 5', answered: false, points: 0}
-];
+var teams      = [],
+    totalTeams = 5;
+for (var t = 0; t < totalTeams; ++t)
+    teams.push(new objects.team('Team ' + (t+1)));
 
-var questions = null;
-var activeTeam = -1,
-    activeQuestion = -1;
+var questions      = null,
+    activeTeam     = -1,
+    activeQuestion = -1,
+    roundNo        = 1;
+
+console.log(" _____       _    ______       _");
+console.log("|  _  |     (_)   | ___ \\     | |");
+console.log("| | | |_   _ _ ___| |_/ / ___ | |_");
+console.log("| | | | | | | |_  / ___ \\/ _ \\| __|");
+console.log("\\ \\/' / |_| | |/ /| |_/ / (_) | |_");
+console.log(" \\_/\\_\\\\__,_|_/___\\____/ \\___/ \\__|");
 
 // ------------------------------------------------------------------------------------------------
 // Client views
@@ -159,9 +164,11 @@ sQuizMaster.on('connection', function (socket) {
         sQuizMaster.emit('teams list', teams);
 
         sDashboard.emit('question play', {
-            round: "Round " + 1 + "!",
+            round: "Round " + roundNo + "!",
             question: questions[qid]
         });
+
+        questions[qid].played = true;
 
         sContestant.emit('question play');
     });
@@ -174,6 +181,8 @@ sQuizMaster.on('connection', function (socket) {
             teams[t].answered = false;
         sDashboard.emit('question correct', {sound: 'cheer'});
         sQuizMaster.emit('teams list', teams);
+        sDashboard.emit('team scores', {teams: teams});
+        notifyQuestions();
     });
 
     socket.on('question wrong', function (qid) {
@@ -184,7 +193,7 @@ sQuizMaster.on('connection', function (socket) {
             let con = connections.contestants[c],
                 team = teams[con.getTeam()];
 
-            if (team.answered)
+            if (team.getAnswered())
                 continue;
 
             con.socket.emit('question chance');
@@ -195,7 +204,20 @@ sQuizMaster.on('connection', function (socket) {
             sDashboard.emit('question wrong', {sound: 'buzzer_wrong'});
         } else {
             sDashboard.emit('question losers', {sound: 'laugh'});
+            sDashboard.emit('team scores', {teams: teams});
+            notifyQuestions();
+            ++roundNo;
         }
+    });
+
+    socket.on('question skip', function () {
+        sDashboard.emit('team scores', {teams: teams});
+        notifyQuestions();
+        ++roundNo;
+    });
+
+    socket.on('sound play', function (sound) {
+        sDashboard.emit('sound play', {sound: sound});
     });
 });
 
@@ -214,7 +236,6 @@ sContestant.on('connection', function (socket) {
     });
 
     socket.on('team join', function (team) {
-        console.log("Join team:", team);
         if (teams[team] == undefined) {
             socket.emit('teams invalid');
             socket.emit('teams list', teams);

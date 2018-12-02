@@ -71,9 +71,13 @@
                 text-align: center;
             }
 
-            #scoreboard {
+            #teamscores {
                 display: none;
             }
+
+            #teamscores { text-align: center; color: #fff; }
+            #teamscores h1 { font-size: 350%; }
+            #teamscorelist .teamscorelist { font-size: 200%; }
         </style>
     </head>
     <body>
@@ -83,7 +87,7 @@
 
         <section id="loading" class="loading">
             <div class="animated zoomInDown delay-1s">
-                <p class="animated pulse infinite">Loading...</p>
+                <p class="animated pulse infinite">Waiting for server</p>
             </div>
         </section>
 
@@ -94,17 +98,59 @@
         <section id="answer_losers">YOU ALL SUCK!</section>
 
         <section id="teamoverlay"></section>
+        <section id="teamscores">
+            <h1 class="animated zoomInDown">Scores!</h1>
+            <div id="teamscorelist"></div>
+        </section>
 
         <audio src="sounds/buzzer_default.wav" id="buzzer_default" preload></audio>
         <audio src="sounds/buzzer_wrong.wav" id="buzzer_wrong" preload></audio>
         <audio src="sounds/cheer.wav" id="cheer" preload></audio>
         <audio src="sounds/laugh.wav" id="laugh" preload></audio>
 
+        <audio src="sounds/awesome.wav" id="awesome" preload></audio>
+        <audio src="sounds/nextround.wav" id="nextround" preload></audio>
+        <audio src="sounds/notyourbestmoment.wav" id="notyourbestmoment" preload></audio>
+        <audio src="sounds/orderorder.wav" id="orderorder" preload></audio>
+
         <script src="/socket.io/socket.io.js"></script>
         <script src="js/jquery-1.11.1.js"></script>
 
         <script>
             $(function () {
+                // Mmmm shimmy
+                function toggleFullScreen() {
+                    if (!document.fullscreenElement &&
+                        !document.mozFullScreenElement &&
+                        !document.webkitFullscreenElement &&
+                        !document.msFullscreenElement) {
+                        if (document.documentElement.requestFullscreen) {
+                            document.documentElement.requestFullscreen();
+                        } else if (document.documentElement.msRequestFullscreen) {
+                            document.documentElement.msRequestFullscreen();
+                        } else if (document.documentElement.mozRequestFullScreen) {
+                            document.documentElement.mozRequestFullScreen();
+                        } else if (document.documentElement.webkitRequestFullscreen) {
+                            document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+                        }
+                    } else {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        } else if (document.msExitFullscreen) {
+                            document.msExitFullscreen();
+                        } else if (document.mozCancelFullScreen) {
+                            document.mozCancelFullScreen();
+                        } else if (document.webkitExitFullscreen) {
+                            document.webkitExitFullscreen();
+                        }
+                    }
+                }
+                document.addEventListener("keypress", function(e) {
+                    if (e.keyCode === 102) {
+                        toggleFullScreen();
+                    }
+                }, false);
+
                 var socket = io.connect('/dashboard'),
                     wrongTimer = null;
 
@@ -166,10 +212,34 @@
                 })
                 .on('question losers', function (event) {
                     window.clearTimeout(wrongTimer);
-                    console.log("losers");
                     $('#' + event.sound)[0].play();
                     $('#teamoverlay').html('').hide();
                     $('#answer_losers').show();
+                })
+                .on('team scores', function(event) {
+
+                    $('#teamscorelist').empty();
+                    var teams = event.teams;
+                    teams.sort((a, b) => parseFloat(b.points) - parseFloat(a.points));
+
+                    var s = 1;
+                    for (let t in teams) {
+                        $('#teamscorelist').append(
+                            '<div class="animated zoomInDown delay-' + s +
+                            's" style="font-size: ' + (200 - (20 * s)) + '%;">' +
+                            teams[t].name + ' (' + teams[t].points +
+                            (teams[t].points == 1 ? ' point' : ' points') + ')</div>'
+                        );
+                        s++;
+                    }
+
+                    window.setTimeout(
+                        function() {
+                            $('section').hide();
+                            $('#teamscores').show();
+                        },
+                        3000
+                    );
                 });
             });
         </script>

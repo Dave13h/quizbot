@@ -3,20 +3,29 @@
         {
             "type": "text",
             "text": "What is the average air speed of an unladen swallow?",
-            "answer": "Answer 1!"
+            "answer": "African or european?",
+            "played": false
+        },
+        {
+            "type": "text",
+            "text": "Name the two D3R Offices",
+            "answer": "Chichester, London",
+            "played": false
         },
         {
             "type": "choice",
-            "text": "Question 1",
+            "text": "Question 3",
             "options": [
                 "answer 1",
                 "answer 2"
             ],
-            "answer": 0
+            "answer": 0,
+            "played": false
         },
         {
             "type": "image",
-            "image": "test.png"
+            "image": "test.png",
+            "played": false
         }
     ]
 }

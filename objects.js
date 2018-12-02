@@ -79,11 +79,52 @@ class oQuizMaster extends oConnection {
     }
 }
 
+class oTeam {
+    constructor (name) {
+        this.name     = name;
+        this.answered = false;
+        this.points   = 0;
+    }
+
+    getName () {
+        return this.name;
+    }
+
+    setName (name) {
+        this.name = name;
+    }
+
+    getAnswered () {
+        return this.answered;
+    }
+
+    setAnswered (answered) {
+        this.answered = answered;
+    }
+
+    getPoints () {
+        return this.points;
+    }
+
+    addPoints (incr) {
+        this.points += incr;
+    }
+
+    decPoints (decr) {
+        this.points -= decr;
+    }
+
+    setPoints (points) {
+        this.points = points;
+    }
+}
+
 // ------------------------------------------------------------------------------------------------
 // Exports
 // ------------------------------------------------------------------------------------------------
 module.exports = {
     connection: oConnection,
     contestant: oContestant,
-    quizMaster: oQuizMaster
+    quizMaster: oQuizMaster,
+    team:       oTeam
 }
