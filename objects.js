@@ -26,7 +26,7 @@ class oConnection {
         return this;
     }
 
-    getSocket (socket) {
+    getSocket () {
         return this.socket;
     }
 

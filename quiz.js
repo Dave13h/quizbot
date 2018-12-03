@@ -80,6 +80,26 @@ loadQuestions();
 // ------------------------------------------------------------------------------------------------
 // Handle connections
 // ------------------------------------------------------------------------------------------------
+function sendClientState (cid) {
+    var c = connections.contestants[cid];
+
+    var state = {
+        team: null,
+        question: false,
+        answered: false
+    }
+    if (c.hasTeam()) {
+        state.team = teams[c.getTeam()];
+    }
+
+    if (activeQuestion > -1) {
+        state.question = true;
+        state.answered = (state.team && state.team.getAnswered());
+    }
+
+    c.getSocket().emit('game state', state);
+}
+
 function ident (type, cid, socket) {
     var newConnection = false;
     if (cid == null) {
@@ -94,6 +114,7 @@ function ident (type, cid, socket) {
                 connections.contestants[cid] = new objects.contestant(cid, socket);
             else
                 connections.contestants[cid].setSocket(socket).setState('connected');
+            sendClientState(cid);
             break;
 
         case 'quizmaster':
@@ -168,6 +189,7 @@ sQuizMaster.on('connection', function (socket) {
             question: questions[qid]
         });
 
+        activeQuestion = qid;
         questions[qid].played = true;
 
         sContestant.emit('question play');
@@ -182,6 +204,7 @@ sQuizMaster.on('connection', function (socket) {
         sDashboard.emit('question correct', {sound: 'cheer'});
         sQuizMaster.emit('teams list', teams);
         sDashboard.emit('team scores', {teams: teams});
+        activeQuestion = -1;
         notifyQuestions();
     });
 
@@ -205,6 +228,7 @@ sQuizMaster.on('connection', function (socket) {
         } else {
             sDashboard.emit('question losers', {sound: 'laugh'});
             sDashboard.emit('team scores', {teams: teams});
+            activeQuestion = -1;
             notifyQuestions();
             ++roundNo;
         }
@@ -212,6 +236,7 @@ sQuizMaster.on('connection', function (socket) {
 
     socket.on('question skip', function () {
         sDashboard.emit('team scores', {teams: teams});
+        activeQuestion = -1;
         notifyQuestions();
         ++roundNo;
     });
@@ -231,7 +256,8 @@ sContestant.on('connection', function (socket) {
         if (!connections.contestants[cid].hasTeam()) {
             socket.emit('teams list', teams);
         } else {
-            socket.emit('wait');
+            if (activeQuestion == -1)
+                socket.emit('wait');
         }
     });
 
