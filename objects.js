@@ -80,10 +80,24 @@ class oQuizMaster extends oConnection {
 }
 
 class oTeam {
-    constructor (name) {
+    constructor (id, name) {
+        this.id       = id;
         this.name     = name;
         this.answered = false;
         this.points   = 0;
+        this.buzzer   = null;
+    }
+
+    getId () {
+        return this.id;
+    }
+
+    getBuzzer () {
+        return this.buzzer;
+    }
+
+    setBuzzer (blob) {
+        this.buzzer = blob;
     }
 
     getName () {

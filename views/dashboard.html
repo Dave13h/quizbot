@@ -113,11 +113,15 @@
         <audio src="sounds/notyourbestmoment.wav" id="notyourbestmoment" preload></audio>
         <audio src="sounds/orderorder.wav" id="orderorder" preload></audio>
 
+        <div id="teambuzzers" style="display: none;"></div>
+
         <script src="/socket.io/socket.io.js"></script>
         <script src="js/jquery-1.11.1.js"></script>
 
         <script>
             $(function () {
+                var teams = [];
+
                 // Mmmm shimmy
                 function toggleFullScreen() {
                     if (!document.fullscreenElement &&
@@ -183,7 +187,11 @@
                 });
 
                 socket.on('question buzzed', function (event) {
-                    $('#' + event.sound)[0].play();
+                    if ($('#audio_team_' + event.team.id).length) {
+                        $('#audio_team_' + event.team.id)[0].play();
+                    } else {
+                        $('#' + event.sound)[0].play();
+                    }
 
                     $('#teamoverlay').html('').append(
                         $('<div />')
@@ -216,19 +224,37 @@
                     $('#teamoverlay').html('').hide();
                     $('#answer_losers').show();
                 })
-                .on('team scores', function(event) {
+                .on('teams list', function(ts) {
+                    teams = ts;
+                    for (let t in teams) {
+                        let team = teams[t];
+                        if (team.buzzer != null) {
+                            if (!$('#audio_team_' + team.id).length) {
+                                var audio = document.createElement('audio');
+                                audio.setAttribute('controls', '');
+                                audio.setAttribute('id', 'audio_team_' + team.id);
+                                $('#teambuzzers')[0].appendChild(audio);
+                            }
 
+                            var buzzerBlob = new Blob([team.buzzer], { 'type' : 'audio/ogg; codecs=opus' });
+                            var audioURL = window.URL.createObjectURL(buzzerBlob);
+                            $('#audio_team_' + team.id)[0].src = audioURL;
+                        }
+                    }
+                })
+                .on('teams scores', function(event) {
                     $('#teamscorelist').empty();
-                    var teams = event.teams;
-                    teams.sort((a, b) => parseFloat(b.points) - parseFloat(a.points));
+                    teams = event.teams;
+                    var ts = teams;
+                    ts.sort((a, b) => parseFloat(b.points) - parseFloat(a.points));
 
                     var s = 1;
-                    for (let t in teams) {
+                    for (let t in ts) {
                         $('#teamscorelist').append(
                             '<div class="animated zoomInDown delay-' + s +
                             's" style="font-size: ' + (200 - (20 * s)) + '%;">' +
-                            teams[t].name + ' (' + teams[t].points +
-                            (teams[t].points == 1 ? ' point' : ' points') + ')</div>'
+                            ts[t].name + ' (' + ts[t].points +
+                            (ts[t].points == 1 ? ' point' : ' points') + ')</div>'
                         );
                         s++;
                     }

@@ -35,7 +35,7 @@ var connections = {
 var teams      = [],
     totalTeams = 5;
 for (var t = 0; t < totalTeams; ++t)
-    teams.push(new objects.team('Team ' + (t+1)));
+    teams.push(new objects.team(t, 'Team ' + (t+1)));
 
 var questions      = null,
     activeTeam     = -1,
@@ -151,6 +151,7 @@ function notifyConnectionList () {
     }
     sQuizMaster.emit('connections list', connectionList);
     sQuizMaster.emit('teams list', teams);
+    sDashboard.emit('teams list', teams);
 }
 
 sDashboard.on('connection', function (socket) {
@@ -210,7 +211,7 @@ sQuizMaster.on('connection', function (socket) {
             teams[t].answered = false;
         sDashboard.emit('question correct', {sound: 'cheer'});
         sQuizMaster.emit('teams list', teams);
-        sDashboard.emit('team scores', {teams: teams});
+        sDashboard.emit('teams scores', {teams: teams});
         activeQuestion = -1;
         notifyQuestions();
     });
@@ -234,7 +235,7 @@ sQuizMaster.on('connection', function (socket) {
             sDashboard.emit('question wrong', {sound: 'buzzer_wrong'});
         } else {
             sDashboard.emit('question losers', {sound: 'laugh'});
-            sDashboard.emit('team scores', {teams: teams});
+            sDashboard.emit('teams scores', {teams: teams});
             activeQuestion = -1;
             notifyQuestions();
             ++roundNo;
@@ -242,7 +243,7 @@ sQuizMaster.on('connection', function (socket) {
     });
 
     socket.on('question skip', function () {
-        sDashboard.emit('team scores', {teams: teams});
+        sDashboard.emit('teams scores', {teams: teams});
         activeQuestion = -1;
         notifyQuestions();
         ++roundNo;
@@ -288,6 +289,19 @@ sContestant.on('connection', function (socket) {
         var team = teams[c.getTeam()];
         team.setName(settings.name);
 
+        notifyConnectionList();
+    });
+
+    socket.on('team buzzer', function (data) {
+        var buffer = Buffer.from(data),
+            arraybuffer = Uint8Array.from(buffer).buffer;
+
+        var c = connections.contestants[cid];
+        if (!c.hasTeam())
+            return;
+
+        var team = teams[c.getTeam()];
+        team.setBuzzer(arraybuffer);
         notifyConnectionList();
     });
 
