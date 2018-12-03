@@ -7,13 +7,20 @@
 //
 var express = require('express'),
     app     = express(),
-    http    = require('http').Server(app),
-    io      = require('socket.io')(http),
+    https   = require('https'), //.Server(app),
     uuid    = require('uuid'),
     fs      = require("fs")
     objects = require('./objects');
 
 var port = process.env.PORT || 3000;
+
+var credentials = {
+    key: fs.readFileSync('./keys/key.pem'),
+    cert: fs.readFileSync('./keys/cert.pem')
+};
+
+var httpsServer = https.createServer(credentials, app),
+    io = require('socket.io')(httpsServer);
 
 var sContestant = io.of('/contestant'),
     sQuizMaster = io.of('/quizmaster'),
@@ -45,7 +52,7 @@ console.log(" \\_/\\_\\\\__,_|_/___\\____/ \\___/ \\__|");
 // ------------------------------------------------------------------------------------------------
 // Client views
 // ------------------------------------------------------------------------------------------------
-http.listen(port, function () {
+httpsServer.listen(port, function () {
     console.log('listening on *:' + port);
 });
 app.get('/', function (req, res) {
@@ -269,6 +276,18 @@ sContestant.on('connection', function (socket) {
         }
         connections.contestants[cid].setTeam(team);
         socket.emit('wait');
+        sendClientState(cid);
+        notifyConnectionList();
+    });
+
+    socket.on('team update', function (settings) {
+        var c = connections.contestants[cid];
+        if (!c.hasTeam())
+            return;
+
+        var team = teams[c.getTeam()];
+        team.setName(settings.name);
+
         notifyConnectionList();
     });
 

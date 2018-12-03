@@ -32,12 +32,20 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
+                padding: 20px;
+                border: 1px solid #fff;
+                box-shadow: inset 0 0 100px black;
+                text-align: center;
             }
 
             #bMenu {
                 position: absolute;
                 bottom: 0;
                 right: 0;
+            }
+
+            .recorder {
+                margin: 20px;
             }
         </style>
     </head>
@@ -69,13 +77,18 @@
 
         <button type="button" id="bMenu" class="btn is-success">MENU</button>
 
-        <section id="menu" class="container with-title">
+        <section id="menu" class="container">
             <h2 class="title">Team Settings</h2>
             <div class="field">
                 <label for="name_field">Team name</label>
-                <input type="text" id="name_field" class="input">
+                <input type="text" id="name_field" class="input" style="display: inline-block">
             </div>
 
+            <audio id="aBuzzer"></audio>
+            Team Buzzer <button type="button" id="bRecord" class="btn is-success">Record</button>
+            <button type="button" id="bPlay" class="btn is-success">Play</button><br><br>
+
+            <button type="button" id="bCancel" class="btn is-warning">CANCEL</button>
             <button type="button" id="bSave" class="btn is-success">SAVE</button>
         </section>
 
@@ -105,9 +118,20 @@
 
                 $('#bMenu').on('click', function () {
                     $('#menu').show();
+                    $('#bMenu').hide();
                 });
                 $('#bSave').on('click', function () {
+                    var settings = {
+                        name: $('#name_field').val(),
+                        sound: null
+                    };
+                    socket.emit('team update', settings);
                     $('#menu').hide();
+                    $('#bMenu').show();
+                });
+                $('#bCancel').on('click', function () {
+                    $('#menu').hide();
+                    $('#bMenu').show();
                 });
 
                 function buttonView () {
@@ -139,6 +163,7 @@
                 .on('wait', function() {
                     $('section').hide();
                     $('#wait').show();
+                    $('#bMenu').show();
                 })
                 .on('question play', function(options) {
                     buttonView();
@@ -160,6 +185,7 @@
                     if (state.team) {
                         team = state.team;
                         $('#bMenu').show();
+                        $('#name_field').val(team.name);
 
                         if (state.question) {
                             buttonView();
@@ -181,6 +207,49 @@
                     cid = id;
                     window.localStorage.setItem('cid', cid);
                 });
+
+                // Team sound recorder
+                var mediaRecorder, recording = false, buzzerChunks = [];
+                $('#bRecord').on('click', function () {
+                    if (recording) {
+                        mediaRecorder.stop();
+                        recording = false;
+                        $(this).addClass('is-success').removeClass('is-error');
+                        return;
+                    }
+                    recording = true;
+                    mediaRecorder.start();
+                    buzzerChunks = [];
+                    $(this).removeClass('is-success').addClass('is-error');
+                });
+
+                $('#bPlay').on('click', function () {
+                    if (!buzzerChunks)
+                        return;
+                    $('#aBuzzer')[0].play();
+                });
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                   console.log('getUserMedia supported.');
+                   navigator.mediaDevices.getUserMedia({audio: true})
+                        .then(function(stream) {
+                            mediaRecorder = new MediaRecorder(stream);
+
+                            mediaRecorder.ondataavailable = function(e) {
+                                buzzerChunks.push(e.data);
+                            }
+
+                            mediaRecorder.onstop = function(e) {
+                                var blob = new Blob(buzzerChunks, { 'type' : 'audio/ogg; codecs=opus' });
+                                var audioURL = window.URL.createObjectURL(blob);
+                                $('#aBuzzer')[0].src = audioURL;
+                            }
+                        })
+                        .catch(function(err) {
+                            console.log('The following getUserMedia error occured: ' + err);
+                        });
+                } else {
+                   console.log('getUserMedia not supported on your browser!');
+                }
             });
         </script>
     </body>
