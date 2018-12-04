@@ -79,10 +79,10 @@
 
         <section id="menu" class="container">
             <h2 class="title">Team Settings</h2>
-            <div class="field">
+            <!-- <div class="field">
                 <label for="name_field">Team name</label>
                 <input type="text" id="name_field" class="input" style="display: inline-block">
-            </div>
+            </div> -->
 
             <audio id="aBuzzer"></audio>
             Team Buzzer <button type="button" id="bRecord" class="btn is-success">Record</button>
@@ -90,6 +90,10 @@
 
             <button type="button" id="bCancel" class="btn is-warning">CANCEL</button>
             <button type="button" id="bSave" class="btn is-success">SAVE</button>
+
+            <div style="position: absolute; bottom: 0; left: 0">
+                <button type="button" id="bResetToken" class="btn is-error">LEAVE GAME</button>
+            </div>
         </section>
 
         <section id="teams" class="container with-title">
@@ -107,9 +111,10 @@
 
                 console.log('My id: ' + cid);
 
-                $('#c').on('click', function () {
+                $('#bResetToken').on('click', function () {
                     window.localStorage.removeItem('cid');
                     cid = null;
+                    window.location.reload(false);
                 });
 
                 $('#buzzer').on('click', function () {
@@ -125,7 +130,6 @@
                     var settings = {
                         name: $('#name_field').val()
                     };
-
 
                     socket.emit('team update', settings);
                     socket.emit('team buzzer', buzzerBlob);

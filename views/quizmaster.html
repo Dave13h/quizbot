@@ -11,11 +11,22 @@
         <link href="css/style.css" rel="stylesheet" />
 
         <style>
-            #questions_view, #teams_view, #sounds_view, #game_view { display: none; }
+            #questions_view, #teams_view, #sounds_view, #game_view, #titles_view { display: none; }
 
             #game_actions { display: none; }
 
             span.played { color: #aaa; }
+
+            .teamname { width: 200px; }
+            .teamscore { width: 100px; }
+
+            .containers {
+                /* mmm hack for too many questions in list */
+                background-color: #00b5cc;
+            }
+            #questions { font-size: 80%; }
+            #questions .btn { padding: 5px 6px; }
+            #questions div { margin-bottom: 20px; border: 1px solid #fff; }
         </style>
     </head>
     <body>
@@ -28,6 +39,7 @@
                 <button type="button" data-target="teams" class="btn is-success">Teams</button>
                 <button type="button" data-target="questions" class="btn is-success">Questions</button>
                 <button type="button" data-target="sounds" class="btn is-success">Sounds</button>
+                <button type="button" data-target="titles" class="btn is-success">Titles</button>
                 <button type="button" data-target="game" class="btn is-success">Game</button>
             </div>
         </section>
@@ -54,6 +66,14 @@
                 <button type="button" data-sound="nextround" class="btn">Next round</button>
                 <button type="button" data-sound="notyourbestmoment" class="btn">Not your best moment</button>
                 <button type="button" data-sound="orderorder" class="btn">Order! Order!</button>
+            </div>
+        </section>
+
+        <section class="container with-title" id="titles_view">
+            <h2 class="title">titles</h2>
+            <div class="containers" id="titles">
+                <button type="button" data-title="wait" class="btn">Wait</button>
+                <button type="button" data-title="intro" class="btn">Intro</button>
             </div>
         </section>
 
@@ -93,7 +113,6 @@
                 socket
                 .on('connections list', function(contestants){
                     $('#contestants').html('');
-                    console.log(contestants);
                     if (contestants.length == 0) {
                         $('#contestants').append("-- No Contestants --");
                         return;
@@ -118,8 +137,20 @@
                         return;
                     }
                     $(teams).each(function(k, v) {
-                        var t = v.name + " => Points: " + v.points + " Answered: " + v.answered + "<br/>";
+                        let teamName = '<input type="text" class="input teamname" data-tid="' + k +
+                            '" style="display: inline-block" value="' + v.name + '" />';
+
+                        let teamPoints = '<input type="text" class="input teamscore" data-tid="' + k +
+                            '" style="display: inline-block" value="' + v.points + '" />';
+                        let t = teamName + " => Points: " + teamPoints + " Answered: " + v.answered + "<br/>";
                         $('#teams').append(t);
+                    });
+
+                    $('.teamname').on('focusout', function() {
+                        socket.emit('team name', { id: $(this).data('tid'), name: $(this).val() });
+                    });
+                    $('.teamscore').on('focusout', function() {
+                        socket.emit('team score', { id: $(this).data('tid'), points: $(this).val() });
                     });
                 })
                 .on('questions list', function(questions){
@@ -135,7 +166,7 @@
                             bClass = '';
                             bIcon = 'star is-empty';
                         }
-
+                        let con = $('<div/>');
                         let play = $('<button/>')
                             .addClass('btn')
                             .addClass(bClass)
@@ -147,12 +178,14 @@
                                 $('#game_actions').hide();
                                 $('button[data-target="game"]').click();
                             })
-                        let line = $('<span/>').html("[" + v.type + "] " + v.text + "<br/>");
+                        let line = $('<span/>').html("[" + v.type + "] " + v.title + "<br/>" + v.text);
                         if (v.played)
                             line.addClass('played');
 
-                        $('#questions').append(play);
-                        $('#questions').append(line);
+                        $(con).append(play).append(line);
+
+                        $('#questions').append(con);
+
                     });
                 })
                 .on('question buzzed', function(msg) {
@@ -211,6 +244,10 @@
 
                 $('#sounds button').on('click', function() {
                     socket.emit('sound play', $(this).data('sound'));
+                });
+
+                $('#titles button').on('click', function() {
+                    socket.emit('title show', $(this).data('title'));
                 });
             });
         </script>

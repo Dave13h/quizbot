@@ -12,7 +12,8 @@ var express = require('express'),
     fs      = require("fs")
     objects = require('./objects');
 
-var port = process.env.PORT || 3000;
+var port       = process.env.PORT  || 80,
+    portSecure = process.env.PORTS || 443;
 
 var credentials = {
     key: fs.readFileSync('./keys/key.pem'),
@@ -37,7 +38,7 @@ var teams      = [],
 for (var t = 0; t < totalTeams; ++t)
     teams.push(new objects.team(t, 'Team ' + (t+1)));
 
-var questions      = null,
+var questions      = [],
     activeTeam     = -1,
     activeQuestion = -1,
     roundNo        = 1;
@@ -50,10 +51,10 @@ console.log("\\ \\/' / |_| | |/ /| |_/ / (_) | |_");
 console.log(" \\_/\\_\\\\__,_|_/___\\____/ \\___/ \\__|");
 
 // ------------------------------------------------------------------------------------------------
-// Client views
+// HTTP Server
 // ------------------------------------------------------------------------------------------------
-httpsServer.listen(port, function () {
-    console.log('listening on *:' + port);
+httpsServer.listen(portSecure, function () {
+    console.log('listening on *:' + portSecure);
 });
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/views/contestant.html');
@@ -65,6 +66,13 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/views/dashboard.html');
 })
 .use(express.static('public'));
+
+// Redirect to secure
+var httpServer = require('http');
+httpServer.createServer(function (req, res) {
+    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+    res.end();
+}).listen(port);
 
 // ------------------------------------------------------------------------------------------------
 // Questions
@@ -79,7 +87,9 @@ function notifyQuestions () {
 function loadQuestions () {
     var content = fs.readFileSync("data/questions.json");
     json = JSON.parse(content);
-    questions = json.questions;
+    for (let q in json.questions) {
+        questions.push(new objects.question(json.questions[q]));
+    }
     notifyQuestions();
 }
 loadQuestions();
@@ -251,6 +261,28 @@ sQuizMaster.on('connection', function (socket) {
 
     socket.on('sound play', function (sound) {
         sDashboard.emit('sound play', {sound: sound});
+    });
+
+    socket.on('title show', function (title) {
+        sDashboard.emit('title show', {title: title});
+    });
+
+    socket.on('team name', function (team) {
+        if (teams[team.id] == undefined) {
+            return;
+        }
+
+        teams[team.id].setName(team.name);
+        notifyConnectionList(); // @todo(dave13h): optimise
+    });
+
+    socket.on('team score', function (team) {
+        if (teams[team.id] == undefined) {
+            return;
+        }
+
+        teams[team.id].setPoints(team.points);
+        notifyConnectionList(); // @todo(dave13h): optimise
     });
 });
 

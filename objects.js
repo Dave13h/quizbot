@@ -133,6 +133,28 @@ class oTeam {
     }
 }
 
+class oQuestion {
+    constructor (data) {
+        this.played = false;
+
+        this.type   = data.type;
+        this.title  = data.title;
+        this.text   = data.text;
+    }
+
+    getType () {
+        return this.type;
+    }
+
+    getTitle () {
+        return this.title;
+    }
+
+    getText () {
+        return this.text;
+    }
+}
+
 // ------------------------------------------------------------------------------------------------
 // Exports
 // ------------------------------------------------------------------------------------------------
@@ -140,5 +162,6 @@ module.exports = {
     connection: oConnection,
     contestant: oContestant,
     quizMaster: oQuizMaster,
-    team:       oTeam
+    team:       oTeam,
+    question:   oQuestion
 }
