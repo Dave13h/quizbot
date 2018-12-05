@@ -123,6 +123,8 @@
         <audio src="sounds/notyourbestmoment.wav" id="notyourbestmoment" preload></audio>
         <audio src="sounds/orderorder.wav" id="orderorder" preload></audio>
 
+        <audio src="music/intro.wav" id="music_intro" preload></audio>
+
         <audio src="music/all_i_want_for_christmas.wav" id="music_all_i_want_for_christmas" preload></audio>
         <audio src="music/do_they_know_its_christmas.wav" id="music_do_they_know_its_christmas" preload></audio>
         <audio src="music/have_your_self_a_merry_little_christmas.wav" id="music_have_your_self_a_merry_little_christmas" preload></audio>
@@ -238,6 +240,16 @@
                     $('section').hide();
                     $('.title').hide();
                     $('#title_' + title.title).show();
+                    if (title.audio) {
+                        $('#' + title.audio)[0].play();
+                    }
+                });
+
+                socket.on('sound stop', function () {
+                    $('audio').each(function () {
+                        $(this)[0].pause();
+                        $(this)[0].currentTime = 0;
+                    });
                 });
 
                 socket.on('question buzzed', function (event) {

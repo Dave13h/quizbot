@@ -66,6 +66,9 @@
                 <button type="button" data-sound="nextround" class="btn">Next round</button>
                 <button type="button" data-sound="notyourbestmoment" class="btn">Not your best moment</button>
                 <button type="button" data-sound="orderorder" class="btn">Order! Order!</button>
+
+                <br><br>
+                <button type="button" id="stopaudio" class="btn is-error">Stop all audio</button>
             </div>
         </section>
 
@@ -73,7 +76,7 @@
             <h2 class="title">titles</h2>
             <div class="containers" id="titles">
                 <button type="button" data-title="wait" class="btn">Wait</button>
-                <button type="button" data-title="intro" class="btn">Intro</button>
+                <button type="button" data-title="intro" data-audio="music_intro" class="btn">Intro</button>
             </div>
         </section>
 
@@ -100,6 +103,9 @@
         <script>
           $(function () {
                 function selectView () {
+                    if (!$(this).data('target'))
+                        return;
+
                     $('#menu button').each(function() {
                         $('#' + $(this).data('target') + '_view').hide();
                         $(this).removeClass('is-primary').addClass('is-success');
@@ -229,6 +235,9 @@
                 });
 
                 $('#menu button').on('click', selectView);
+                $('#stopaudio').on('click', function() {
+                    socket.emit('sound stop');
+                });
 
                 $('#game_audio').on('click', function() {
                     socket.emit('question audio play');
@@ -262,7 +271,11 @@
                 });
 
                 $('#titles button').on('click', function() {
-                    socket.emit('title show', $(this).data('title'));
+                    var title = {title: $(this).data('title'), audio: null};
+                    if ($(this).data('audio')) {
+                        title.audio = $(this).data('audio');
+                    }
+                    socket.emit('title show', title);
                 });
             });
         </script>

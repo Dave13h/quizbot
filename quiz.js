@@ -274,8 +274,12 @@ sQuizMaster.on('connection', function (socket) {
         sDashboard.emit('sound play', {sound: sound});
     });
 
+    socket.on('sound stop', function (sound) {
+        sDashboard.emit('sound stop');
+    });
+
     socket.on('title show', function (title) {
-        sDashboard.emit('title show', {title: title});
+        sDashboard.emit('title show', title);
     });
 
     socket.on('team name', function (team) {
