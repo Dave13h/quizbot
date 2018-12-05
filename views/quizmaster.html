@@ -87,6 +87,7 @@
                 <p id="active_team"> -- None -- </p>
 
                 <button type="button" id="game_skip" class="btn is-warning">Skip</button>
+                <button type="button" id="game_audio" class="btn is-success" style="display: none;">Play Audio</button>
                 <div id="game_actions">
                     <button type="button" id="game_correct" class="btn is-primary">Correct</button>
                     <button type="button" id="game_wrong" class="btn is-error">Wrong</button>
@@ -176,7 +177,12 @@
                                 $('#active_question').html(v.text);
                                 $('#active_team').html(' -- None -- ');
                                 $('#game_actions').hide();
+                                $('#game_audio').hide();
                                 $('button[data-target="game"]').click();
+                                $('#game_audio').hide();
+                                if (v.type == 'audio') {
+                                    $('#game_audio').show();
+                                }
                             })
                         let line = $('<span/>').html("[" + v.type + "] " + v.title + "<br/>" + v.text);
                         if (v.played)
@@ -193,9 +199,14 @@
                     $('#game_actions').show();
                 })
                 .on('game state', function(state) {
+                    $('#game_audio').hide();
+
                     $('#active_question').html(' -- None -- ');
-                    if (state.question)
+                    if (state.question) {
                         $('#active_question').html(state.question.text);
+                        if (state.question.type == 'audio')
+                            $('#game_audio').show();
+                    }
 
                     $('#active_team').html(' -- None -- ');
                     if (state.team)
@@ -218,6 +229,10 @@
                 });
 
                 $('#menu button').on('click', selectView);
+
+                $('#game_audio').on('click', function() {
+                    socket.emit('question audio play');
+                });
 
                 $('#game_correct').on('click', function() {
                     socket.emit('question correct');

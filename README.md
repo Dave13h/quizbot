@@ -1,5 +1,7 @@
 # Quizbot
 
+Note: this thing was cobbled together in a rush without much planning, so beware of dragons! This all needs a serious re-factor and clean up, the CSS hackery is just plain embarrassing :P
+
 # External Libs
 https://bcrikko.github.io/NES.css
 https://github.com/daneden/animate.css

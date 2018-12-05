@@ -52,6 +52,7 @@
                 display: none;
                 font-size: 500%;
                 background-color: rgba(100, 100, 100, 0.85);
+                background-image: none;
             }
 
             #answer_correct {
@@ -70,7 +71,7 @@
                 color: #f44;
             }
 
-            #teamoverlay div {
+            #teamoverlay {
                 text-align: center;
                 display: none;
             }
@@ -97,6 +98,10 @@
 
         <section id="question" class="fullscreen"></section>
 
+        <div style="display: none;">
+            <img id="icon_music" class="animated zoomInDown delay-1s" src="images/icon_music.png" />
+        </div>
+
         <section id="answer_correct" class="fullscreen">CORRECT!</section>
         <section id="answer_wrong" class="fullscreen">WRONG!</section>
         <section id="answer_losers" class="fullscreen">YOU ALL SUCK!</section>
@@ -107,6 +112,7 @@
             <div id="teamscorelist"></div>
         </section>
 
+        <!-- should all be loaded by the quiz system really -->
         <audio src="sounds/buzzer_default.wav" id="buzzer_default" preload></audio>
         <audio src="sounds/buzzer_wrong.wav" id="buzzer_wrong" preload></audio>
         <audio src="sounds/cheer.wav" id="cheer" preload></audio>
@@ -116,6 +122,17 @@
         <audio src="sounds/nextround.wav" id="nextround" preload></audio>
         <audio src="sounds/notyourbestmoment.wav" id="notyourbestmoment" preload></audio>
         <audio src="sounds/orderorder.wav" id="orderorder" preload></audio>
+
+        <audio src="music/all_i_want_for_christmas.wav" id="music_all_i_want_for_christmas" preload></audio>
+        <audio src="music/do_they_know_its_christmas.wav" id="music_do_they_know_its_christmas" preload></audio>
+        <audio src="music/have_your_self_a_merry_little_christmas.wav" id="music_have_your_self_a_merry_little_christmas" preload></audio>
+        <audio src="music/i_wish_it_could_be_christmas_everyday.wav" id="music_i_wish_it_could_be_christmas_everyday" preload></audio>
+        <audio src="music/jingle_bells.wav" id="music_jingle_bells" preload></audio>
+        <audio src="music/last_chistmas.wav" id="music_last_chistmas" preload></audio>
+        <audio src="music/let_it_snow.wav" id="music_let_it_snow" preload></audio>
+        <audio src="music/merry_christmas_everybody.wav" id="music_merry_christmas_everybody" preload></audio>
+        <audio src="music/santa_claus_is_coming_to_town.wav" id="music_santa_claus_is_coming_to_town" preload></audio>
+        <audio src="music/white_christmas.wav" id="music_white_christmas" preload></audio>
 
         <div id="title_wait" class="title fullscreen">
             <h1 class="animated zoomInDown">Welcome to the D3R Quiz</h1>
@@ -187,18 +204,29 @@
                         $('<h1/>')
                             .addClass('animated')
                             .addClass('zoomInDown')
-                            .html(msg.round)
-                    )
-                    .append(
-                        $('<div />').append(
-                            $('<span />')
-                                .addClass('content')
-                                .addClass('animated')
-                                .addClass('zoomInDown')
-                                .addClass('delay-1s')
-                                .html(msg.question.text)
-                        )
-                    ).show();
+                            .html(msg.question.title)
+                    );
+
+                    switch (msg.question.type) {
+                        case 'text':
+                            $('#question').append(
+                                $('<div />').append(
+                                    $('<span />')
+                                        .addClass('content')
+                                        .addClass('animated')
+                                        .addClass('zoomInDown')
+                                        .addClass('delay-1s')
+                                        .html(msg.question.text)
+                                )
+                            );
+                            break;
+
+                        case 'audio':
+                            $('#question').append($('#icon_music'));
+                            break;
+                    }
+
+                    $('#question').show();
                 });
 
                 socket.on('sound play', function (sound) {
@@ -213,6 +241,11 @@
                 });
 
                 socket.on('question buzzed', function (event) {
+                    $('audio').each(function () {
+                        $(this)[0].pause();
+                        $(this)[0].currentTime = 0;
+                    });
+
                     if ($('#audio_team_' + event.team.id).length) {
                         $('#audio_team_' + event.team.id)[0].play();
                     } else {

@@ -334,52 +334,62 @@
         {
             "type": "audio",
             "title": "Round 9 - Christmas Hits",
-            "text": "Last Christmas - Wham"
+            "text": "Last Christmas - Wham",
+            "audio": "last_chistmas"
         },
         {
             "type": "audio",
             "title": "Round 9 - Christmas Hits",
-            "text": "All I want for Christmas is You - Maria Carey"
+            "text": "All I want for Christmas is You - Maria Carey",
+            "audio": "all_i_want_for_christmas"
         },
         {
             "type": "audio",
             "title": "Round 9 - Christmas Hits",
-            "text": "Merry Xmas Everybody - Slade"
+            "text": "Merry Xmas Everybody - Slade",
+            "audio": "merry_christmas_everybody"
         },
         {
             "type": "audio",
             "title": "Round 9 - Christmas Hits",
-            "text": "Santa Claus is coming to town - Bruce Springsteen"
+            "text": "Santa Claus is coming to town - Bruce Springsteen",
+            "audio": "santa_claus_is_coming_to_town"
         },
         {
             "type": "audio",
             "title": "Round 9 - Christmas Hits",
-            "text": "Do they know it's Christmas - BandAid"
+            "text": "Do they know it's Christmas - BandAid",
+            "audio": "do_they_know_its_christmas"
         },
         {
             "type": "audio",
             "title": "Round 9 - Christmas Hits",
-            "text": "Let it Snow, Let it Snow, Let it Snow - Frank Sinatra"
+            "text": "Let it Snow, Let it Snow, Let it Snow - Frank Sinatra",
+            "audio": "let_it_snow"
         },
         {
             "type": "audio",
             "title": "Round 9 - Christmas Hits",
-            "text": "Have yourself a merry little Christmas - Orig. Judy Garland"
+            "text": "Have yourself a merry little Christmas - Orig. Judy Garland",
+            "audio": "have_your_self_a_merry_little_christmas"
         },
         {
             "type": "audio",
             "title": "Round 9 - Christmas Hits",
-            "text": "Jingle Bells"
+            "text": "Jingle Bells",
+            "audio": "jingle_bells"
         },
         {
             "type": "audio",
             "title": "Round 9 - Christmas Hits",
-            "text": "White Christmas - Bing Crosby"
+            "text": "White Christmas - Bing Crosby",
+            "audio": "white_christmas"
         },
         {
             "type": "audio",
             "title": "Round 9 - Christmas Hits",
-            "text": "i wish it could be christmas everyday - Wizzard"
+            "text": "i wish it could be christmas everyday - Wizzard",
+            "audio": "i_wish_it_could_be_christmas_everyday"
         }
     ]
 }

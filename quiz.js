@@ -197,6 +197,7 @@ sQuizMaster.on('connection', function (socket) {
     socket.on('question play', function (qid) {
         console.log('[SOCKET] QM [' + qmid + '] play question => ' + qid);
 
+        activeTeam = -1;
         for (let t in teams) {
             teams[t].answered = false;
         }
@@ -211,6 +212,16 @@ sQuizMaster.on('connection', function (socket) {
         questions[qid].played = true;
 
         sContestant.emit('question play');
+    });
+
+    socket.on('question audio play', function () {
+        if (activeQuestion == -1)
+            return;
+
+        if (questions[activeQuestion].type != 'audio')
+            return;
+
+        sDashboard.emit('sound play', {sound: 'music_' + questions[activeQuestion].audio});
     });
 
     socket.on('question correct', function (qid) {
@@ -338,7 +349,9 @@ sContestant.on('connection', function (socket) {
     });
 
     socket.on('buzzer send', function (cid) {
+        console.log("buzz! " + cid + " => team: " + connections.contestants[cid].team);
         if (!connections.contestants[cid].hasTeam()) {
+            console.log("not on a team");
             return;
         }
 
@@ -356,6 +369,8 @@ sContestant.on('connection', function (socket) {
             sDashboard.emit('question buzzed', {'team': team, 'sound': 'buzzer_default'});
             sQuizMaster.emit('question buzzed', {'team': team});
             sContestant.emit('question disable');
+        } else {
+            console.log("a team is already active");
         }
     });
 

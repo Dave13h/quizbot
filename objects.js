@@ -140,10 +140,15 @@ class oQuestion {
         this.type   = data.type;
         this.title  = data.title;
         this.text   = data.text;
+        this.audio  = data.audio;
     }
 
     getType () {
         return this.type;
+    }
+
+    getAudio () {
+        return this.audio;
     }
 
     getTitle () {
