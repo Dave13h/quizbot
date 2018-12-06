@@ -301,7 +301,7 @@ sQuizMaster.on('connection', function (socket) {
             sDashboard.emit('teams scores', {teams: teams});
             return;
         }
-        sDashboard.emit('title show', title);
+        sDashboard.emit('title show', {title: title, teams: teams});
     });
 
     socket.on('team name', function (team) {

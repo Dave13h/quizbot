@@ -66,6 +66,9 @@
                 <button type="button" data-sound="nextround" class="btn">Next round</button>
                 <button type="button" data-sound="notyourbestmoment" class="btn">Not your best moment</button>
                 <button type="button" data-sound="orderorder" class="btn">Order! Order!</button>
+                <button type="button" data-sound="nice_to_see_you" class="btn">Nice to see you</button>
+                <button type="button" data-sound="catchphrase" class="btn">Catchphrase</button>
+                <button type="button" data-sound="weakest_link" class="btn">Weakest Link</button>
 
                 <br><br>
                 <button type="button" id="stopaudio" class="btn is-error">Stop all audio</button>
@@ -78,6 +81,8 @@
                 <button type="button" data-title="wait" class="btn">Wait</button>
                 <button type="button" data-title="intro" data-audio="music_intro" class="btn">Intro</button>
                 <button type="button" data-title="scores" class="btn">Scores</button>
+                <button type="button" data-title="break" class="btn">Break the game</button>
+                <button type="button" data-title="outro" data-audio="music_outro" class="btn">Outro</button>
             </div>
         </section>
 
@@ -212,7 +217,6 @@
                         $(con).append(play).append(line);
 
                         $('#questions').append(con);
-
                     });
                 })
                 .on('question buzzed', function(msg) {
@@ -224,7 +228,6 @@
 
                     $('#active_question').html(' -- None -- ');
 
-                    console.log(state);
                     if (state.question) {
                         $('#active_question').html(state.question.text);
 

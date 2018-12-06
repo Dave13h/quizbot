@@ -181,8 +181,12 @@
         <audio src="sounds/nextround.wav" id="nextround" preload></audio>
         <audio src="sounds/notyourbestmoment.wav" id="notyourbestmoment" preload></audio>
         <audio src="sounds/orderorder.wav" id="orderorder" preload></audio>
+        <audio src="sounds/nice_to_see_you.wav" id="nice_to_see_you" preload></audio>
+        <audio src="sounds/catchphrase.wav" id="catchphrase" preload></audio>
+        <audio src="sounds/weakest_link.wav" id="weakest_link" preload></audio>
 
         <audio src="music/intro.wav" id="music_intro" preload></audio>
+        <audio src="music/outro.wav" id="music_outro" preload></audio>
 
         <audio src="music/all_i_want_for_christmas.wav" id="music_all_i_want_for_christmas" preload></audio>
         <audio src="music/do_they_know_its_christmas.wav" id="music_do_they_know_its_christmas" preload></audio>
@@ -200,6 +204,20 @@
             <div class="animated zoomInDown delay-1s">
                 <p class="animated pulse infinite">Please Wait</p>
             </div>
+        </div>
+
+        <div id="title_break" class="title fullscreen">
+            <h1 class="animated zoomInDown">Hack the game and change your score to win!</h1>
+            <div class="animated zoomInDown delay-1s">
+                <p class="animated pulse infinite">
+                    Sourcecode available at https://github.com/Dave13h/quizbot
+                </p>
+            </div>
+        </div>
+
+        <div id="title_outro" class="title fullscreen">
+            <h1 class="animated zoomInDown">Final Scores!</h1>
+            <div id="outroteams"></div>
         </div>
 
         <div id="title_intro" class="title fullscreen">
@@ -381,7 +399,6 @@
                     }
                 }
                 socket.on('question timer', function (event) {
-                    console.log("timer event: ", event, timerId);
                     if (!timerId)
                         return;
 
@@ -406,13 +423,30 @@
                     $('#' + sound.sound)[0].play();
                 });
 
-                socket.on('title show', function (title) {
+                socket.on('title show', function (event) {
                     $('header').hide();
                     $('section').hide();
                     $('.title').hide();
-                    $('#title_' + title.title).show();
-                    if (title.audio) {
-                        $('#' + title.audio)[0].play();
+                    $('#title_' + event.title.title).show();
+                    if (event.title.audio) {
+                        $('#' + event.title.audio)[0].play();
+                    }
+
+                    if (event.title.title == 'outro') {
+                        var ts = event.teams;
+                        ts.sort((a, b) => parseFloat(b.points) - parseFloat(a.points));
+
+                        var s = 1;
+                        for (let t in ts) {
+                            $('#outroteams').append(
+                                '<div class="animated zoomInDown delay-' + s +
+                                's" style="font-size: ' + (200 - (20 * s)) + '%;">' +
+                                (s == 1 ? '**WINNER**' : '') +
+                                ts[t].name + ' (' + ts[t].points +
+                                (ts[t].points == 1 ? ' point' : ' points') + ')</div>'
+                            );
+                            s++;
+                        }
                     }
                 });
 
