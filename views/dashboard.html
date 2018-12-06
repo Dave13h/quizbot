@@ -186,7 +186,7 @@
         <audio src="sounds/weakest_link.wav" id="weakest_link" preload></audio>
 
         <audio src="music/intro.wav" id="music_intro" preload></audio>
-        <audio src="music/outro.wav" id="music_outro" preload></audio>
+        <audio src="music/we_are_the_champions.wav" id="music_outro" preload></audio>
 
         <audio src="music/all_i_want_for_christmas.wav" id="music_all_i_want_for_christmas" preload></audio>
         <audio src="music/do_they_know_its_christmas.wav" id="music_do_they_know_its_christmas" preload></audio>
@@ -210,7 +210,7 @@
             <h1 class="animated zoomInDown">Hack the game and change your score to win!</h1>
             <div class="animated zoomInDown delay-1s">
                 <p class="animated pulse infinite">
-                    Sourcecode available at https://github.com/Dave13h/quizbot
+                    Sourcecode available at<br>https://github.com/Dave13h/quizbot
                 </p>
             </div>
         </div>
@@ -424,6 +424,7 @@
                 });
 
                 socket.on('title show', function (event) {
+                    stopAllSound();
                     $('header').hide();
                     $('section').hide();
                     $('.title').hide();
@@ -441,7 +442,6 @@
                             $('#outroteams').append(
                                 '<div class="animated zoomInDown delay-' + s +
                                 's" style="font-size: ' + (200 - (20 * s)) + '%;">' +
-                                (s == 1 ? '**WINNER**' : '') +
                                 ts[t].name + ' (' + ts[t].points +
                                 (ts[t].points == 1 ? ' point' : ' points') + ')</div>'
                             );
@@ -506,15 +506,34 @@
                                 $('#teambuzzers')[0].appendChild(audio);
                             }
 
-                            var buzzerBlob = new Blob([team.buzzer], { 'type' : 'audio/ogg; codecs=opus' });
-                            var audioURL = window.URL.createObjectURL(buzzerBlob);
+                            var buzzerBlob = new Blob([team.buzzer], { 'type' : 'audio/ogg; codecs=opus' }),
+                                audioURL = window.URL.createObjectURL(buzzerBlob);
                             $('#audio_team_' + team.id)[0].src = audioURL;
                         }
                     }
+                    if ($('#teamscores').is(':visible')) {
+                        updateTeamScores();
+                    }
                 })
                 .on('teams scores', function(event) {
-                    $('#teamscorelist').empty();
                     teams = event.teams;
+
+                    updateTeamScores();
+
+                    window.setTimeout(
+                        function() {
+                            stopAllSound();
+                            $('header').hide();
+                            $('section').hide();
+                            $('.title').hide();
+                            $('#teamscores').show();
+                        },
+                        3000
+                    );
+                });
+
+                function updateTeamScores() {
+                    $('#teamscorelist').empty();
                     var ts = teams;
                     ts.sort((a, b) => parseFloat(b.points) - parseFloat(a.points));
 
@@ -528,16 +547,7 @@
                         );
                         s++;
                     }
-
-                    window.setTimeout(
-                        function() {
-                            stopAllSound();
-                            $('section').hide();
-                            $('#teamscores').show();
-                        },
-                        3000
-                    );
-                });
+                }
             });
         </script>
     </body>

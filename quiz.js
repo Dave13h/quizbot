@@ -154,7 +154,8 @@ function ident (type, cid, socket) {
     return cid;
 }
 
-function notifyConnectionList () {
+function notifyConnectionList (skipDash) {
+    skipDash = (skipDash == 1);
     var connectionList = [],
         i = 1;
 
@@ -168,7 +169,9 @@ function notifyConnectionList () {
     }
     sQuizMaster.emit('connections list', connectionList);
     sQuizMaster.emit('teams list', teams);
-    sDashboard.emit('teams list', teams);
+    if (!skipDash) { // @todo(dave13h): last minute fudge to stop rebuilding buzzer sound on "contestant buzz in"
+        sDashboard.emit('teams list', teams);
+    }
 }
 
 sDashboard.on('connection', function (socket) {
@@ -399,7 +402,7 @@ sContestant.on('connection', function (socket) {
             sDashboard.emit('question buzzed', { 'team': team, 'sound': 'buzzer_default' });
             sQuizMaster.emit('question buzzed', { 'team': team });
             sContestant.emit('question disable');
-            notifyConnectionList();
+            notifyConnectionList(1);
         } else {
             console.log('[BUZZER] Team[' + team.getName() + '] is already active');
         }
