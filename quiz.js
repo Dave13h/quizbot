@@ -9,7 +9,7 @@ var express = require('express'),
     app     = express(),
     https   = require('https'), //.Server(app),
     uuid    = require('uuid'),
-    fs      = require("fs")
+    fs      = require('fs')
     objects = require('./objects');
 
 var port       = process.env.PORT  || 80,
@@ -34,9 +34,16 @@ var connections = {
 };
 
 var teams      = [],
-    totalTeams = 5;
+    totalTeams = 5,
+    teamNames  =[
+        'Turkeys',
+        'Sprouts',
+        'Spuds',
+        'Puddings',
+        'Roasters'
+    ];
 for (var t = 0; t < totalTeams; ++t)
-    teams.push(new objects.team(t, 'Team ' + (t+1)));
+    teams.push(new objects.team(t, teamNames[t]));
 
 var questions      = [],
     activeTeam     = -1,
@@ -70,7 +77,7 @@ app.get('/', function (req, res) {
 // Redirect to secure
 var httpServer = require('http');
 httpServer.createServer(function (req, res) {
-    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+    res.writeHead(301, { 'Location': 'https://' + req.headers['host'] + req.url });
     res.end();
 }).listen(port);
 
@@ -85,7 +92,7 @@ function notifyQuestions () {
 }
 
 function loadQuestions () {
-    var content = fs.readFileSync("data/questions.json");
+    var content = fs.readFileSync('data/questions.json');
     json = JSON.parse(content);
     for (let q in json.questions) {
         questions.push(new objects.question(json.questions[q]));
@@ -204,7 +211,7 @@ sQuizMaster.on('connection', function (socket) {
         sQuizMaster.emit('teams list', teams);
 
         sDashboard.emit('question play', {
-            round: "Round " + roundNo + "!",
+            round: "Round " + roundNo + "!", // @note(dave13h): not in use at the moment
             question: questions[qid]
         });
 
@@ -334,12 +341,16 @@ sContestant.on('connection', function (socket) {
             return;
 
         var team = teams[c.getTeam()];
-        team.setName(settings.name);
+        if (settings.name)
+            team.setName(settings.name);
 
         notifyConnectionList();
     });
 
     socket.on('team buzzer', function (data) {
+        if (!data)
+            return;
+
         var buffer = Buffer.from(data),
             arraybuffer = Uint8Array.from(buffer).buffer;
 
@@ -353,28 +364,29 @@ sContestant.on('connection', function (socket) {
     });
 
     socket.on('buzzer send', function (cid) {
-        console.log("buzz! " + cid + " => team: " + connections.contestants[cid].team);
         if (!connections.contestants[cid].hasTeam()) {
-            console.log("not on a team");
+            console.log('[BUZZER] ' + cid + ' is not on a team');
             return;
         }
+        console.log('[BUZZER] ' + cid + ' => team: ' + connections.contestants[cid].team);
 
         var teamid = connections.contestants[cid].getTeam(),
             team   = teams[teamid];
 
-        if (team.answered) {
-            console.log('Team[' + team.name + '] already answered!');
+        if (team.getAnswered()) {
+            console.log('[BUZZER] Team[' + team.name + '] already answered!');
             return;
         }
 
         if (activeTeam < 0) {
             activeTeam = teamid;
-            team.answered = true;
-            sDashboard.emit('question buzzed', {'team': team, 'sound': 'buzzer_default'});
-            sQuizMaster.emit('question buzzed', {'team': team});
+            team.setAnswered(true);
+            sDashboard.emit('question buzzed', { 'team': team, 'sound': 'buzzer_default' });
+            sQuizMaster.emit('question buzzed', { 'team': team });
             sContestant.emit('question disable');
+            notifyConnectionList();
         } else {
-            console.log("a team is already active");
+            console.log('[BUZZER] Team[' + team.getName() + '] is already active');
         }
     });
 

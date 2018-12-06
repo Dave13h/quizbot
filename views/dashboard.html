@@ -24,6 +24,13 @@
                 background-size: 540px auto;
             }
 
+            #presskey {
+                background-color: #a66;
+                text-align: center;
+                padding-top: 100px;
+                background-image: none;
+            }
+
             #answer_correct, #answer_wrong, #answer_losers { display: none; }
 
             #question {
@@ -83,12 +90,40 @@
             .title { display: none; }
             .title h1 { font-size: 350%; margin-bottom: 50px; }
             .title p { text-align: center; color: #fff; font-size: 200%; }
+
+            .table {
+                width: 100%;
+                text-align: center;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .table th {
+                background-color: #ccc;
+                color: #000;
+                border-left: 2px solid #fff;
+                border-top: 2px solid #fff;
+            }
+            .table td {
+                background-color: #999;
+                color: #000;
+                border-left: 2px solid #fff;
+                border-top: 2px solid #fff;
+                border-bottom: 2px solid #fff;
+            }
+            .table tr {
+                border-right: 2px solid #fff;
+            }
         </style>
     </head>
     <body>
         <header>
-            <h1 class="animated zoomInDown">D3R Xmas Quiz!</h1>
+            <h1 class="animated zoomInDown">D3R Xmas Charity Quiz 2018!</h1>
         </header>
+
+        <div id="presskey" class="fullscreen">
+            Press a key to continue<br>
+            (silly browser security)
+        </div>
 
         <section id="loading" class="loading">
             <div class="animated zoomInDown delay-1s">
@@ -104,7 +139,10 @@
 
         <section id="answer_correct" class="fullscreen">CORRECT!</section>
         <section id="answer_wrong" class="fullscreen">WRONG!</section>
-        <section id="answer_losers" class="fullscreen">YOU ALL SUCK!</section>
+        <section id="answer_losers" class="fullscreen">
+            YOU ALL SUCK!<br>
+            No one got the answer correct :(
+        </section>
 
         <section id="teamoverlay" class="fullscreen"></section>
         <section id="teamscores" class="fullscreen">
@@ -137,17 +175,72 @@
         <audio src="music/white_christmas.wav" id="music_white_christmas" preload></audio>
 
         <div id="title_wait" class="title fullscreen">
-            <h1 class="animated zoomInDown">Welcome to the D3R Quiz</h1>
+            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2018</h1>
             <div class="animated zoomInDown delay-1s">
                 <p class="animated pulse infinite">Please Wait</p>
             </div>
         </div>
 
         <div id="title_intro" class="title fullscreen">
-            <h1 class="animated zoomInDown">Welcome to the D3R Quiz</h1>
-            <div class="animated zoomInDown delay-1s">
-                <p class="animated pulse infinite">Team Leaders connect to https://quiz.d3r.com !</p>
+            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2018</h1>
+            <div>
+                <h2>Teams</h2>
+                <table class="table is-bordered is-centered" cellspacing="2">
+                    <thead>
+                        <tr>
+                            <th>Turkeys</th>
+                            <th>Sprouts</th>
+                            <th>Spuds</th>
+                            <th>Puddings</th>
+                            <th>Roasters</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                Dom<br>
+                                James<br>
+                                Kevin<br>
+                                Adam
+                            </td>
+
+                            <td>
+                                Dave S<br>
+                                Mat<br>
+                                Joe<br>
+                                Dave F
+                            </td>
+
+                            <td>
+                                Stuart L<br>
+                                Joe B<br>
+                                Phil<br>
+                                Alfi
+                            </td>
+
+                            <td>
+                                Lynton<br>
+                                Roberto<br>
+                                Tamas<br>
+                                Dan B
+                            </td>
+
+                            <td>
+                                Brett<br>
+                                Neil<br>
+                                Sean<br>
+                                Ronan<br>
+                                Mark W
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
             </div>
+
+            <!-- <div class="animated zoomInDown delay-1s">
+                <p class="animated pulse infinite">Team Leaders connect to https://quiz.d3r.com !</p>
+            </div> -->
         </div>
 
         <div id="teambuzzers" style="display: none;"></div>
@@ -187,15 +280,25 @@
                     }
                 }
                 document.addEventListener("keypress", function(e) {
+                    $('#presskey').hide();
                     if (e.keyCode === 102) {
                         toggleFullScreen();
                     }
                 }, false);
 
+                function stopAllSound() {
+                    $('audio').each(function () {
+                        $(this)[0].pause();
+                        $(this)[0].currentTime = 0;
+                    });
+                }
+
                 var socket = io.connect('/dashboard'),
                     wrongTimer = null;
 
                 socket.on('question play', function (msg) {
+                    stopAllSound();
+
                     $('header').hide();
                     $('section').hide();
                     $('.title').hide();
@@ -224,7 +327,9 @@
                             break;
 
                         case 'audio':
-                            $('#question').append($('#icon_music'));
+                            let icon = $('#icon_music').clone();
+                            $(icon).attr("id","");
+                            $('#question').append(icon);
                             break;
                     }
 
@@ -232,6 +337,7 @@
                 });
 
                 socket.on('sound play', function (sound) {
+                    stopAllSound();
                     $('#' + sound.sound)[0].play();
                 });
 
@@ -246,17 +352,11 @@
                 });
 
                 socket.on('sound stop', function () {
-                    $('audio').each(function () {
-                        $(this)[0].pause();
-                        $(this)[0].currentTime = 0;
-                    });
+                    stopAllSound();
                 });
 
                 socket.on('question buzzed', function (event) {
-                    $('audio').each(function () {
-                        $(this)[0].pause();
-                        $(this)[0].currentTime = 0;
-                    });
+                    stopAllSound();
 
                     if ($('#audio_team_' + event.team.id).length) {
                         $('#audio_team_' + event.team.id)[0].play();
@@ -332,6 +432,7 @@
 
                     window.setTimeout(
                         function() {
+                            stopAllSound();
                             $('section').hide();
                             $('#teamscores').show();
                         },
