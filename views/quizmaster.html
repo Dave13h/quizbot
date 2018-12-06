@@ -77,6 +77,7 @@
             <div class="containers" id="titles">
                 <button type="button" data-title="wait" class="btn">Wait</button>
                 <button type="button" data-title="intro" data-audio="music_intro" class="btn">Intro</button>
+                <button type="button" data-title="scores" class="btn">Scores</button>
             </div>
         </section>
 
@@ -89,8 +90,13 @@
                 <h3>Active Team</h3>
                 <p id="active_team"> -- None -- </p>
 
-                <button type="button" id="game_skip" class="btn is-warning">Skip</button>
-                <button type="button" id="game_audio" class="btn is-success" style="display: none;">Play Audio</button>
+                <button type="button" id="game_skip" class="btn is-warning">Skip</button><br>
+                <button type="button" id="game_audio" class="btn is-success" style="display: none;">Play Audio</button><br>
+
+                <button type="button" id="game_timer_start" class="btn is-success" style="display: none;">Start timer</button>
+                <button type="button" id="game_timer_pause" class="btn is-warning" style="display: none;">Pause timer</button>
+                <button type="button" id="game_timer_reset" class="btn is-error" style="display: none;">Reset timer</button>
+
                 <div id="game_actions">
                     <button type="button" id="game_correct" class="btn is-primary">Correct</button>
                     <button type="button" id="game_wrong" class="btn is-error">Wrong</button>
@@ -185,9 +191,18 @@
                                 $('#game_actions').hide();
                                 $('#game_audio').hide();
                                 $('button[data-target="game"]').click();
+
                                 $('#game_audio').hide();
+                                $('#game_timer_start').hide();
+                                $('#game_timer_pause').hide();
+                                $('#game_timer_reset').hide();
+
                                 if (v.type == 'audio') {
                                     $('#game_audio').show();
+                                } else if (v.type == 'timer') {
+                                    $('#game_timer_start').show();
+                                    $('#game_timer_pause').show();
+                                    $('#game_timer_reset').show();
                                 }
                             })
                         let line = $('<span/>').html("[" + v.type + "] " + v.title + "<br/>" + v.text);
@@ -208,10 +223,18 @@
                     $('#game_audio').hide();
 
                     $('#active_question').html(' -- None -- ');
+
+                    console.log(state);
                     if (state.question) {
                         $('#active_question').html(state.question.text);
-                        if (state.question.type == 'audio')
+
+                        if (state.question.type == 'audio') {
                             $('#game_audio').show();
+                        } else if (state.question.type == 'timer') {
+                            $('#game_timer_start').show();
+                            $('#game_timer_pause').show();
+                            $('#game_timer_reset').show();
+                        }
                     }
 
                     $('#active_team').html(' -- None -- ');
@@ -241,6 +264,16 @@
 
                 $('#game_audio').on('click', function() {
                     socket.emit('question audio play');
+                });
+
+                $('#game_timer_start').on('click', function() {
+                    socket.emit('question timer', {action: 'start'});
+                });
+                $('#game_timer_pause').on('click', function() {
+                    socket.emit('question timer', {action: 'pause'});
+                });
+                $('#game_timer_reset').on('click', function() {
+                    socket.emit('question timer', {action: 'reset'});
                 });
 
                 $('#game_correct').on('click', function() {

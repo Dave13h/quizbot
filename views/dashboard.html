@@ -25,9 +25,14 @@
             }
 
             #presskey {
+                position: absolute;
+                top: 0px;
+                left: 0px;
                 background-color: #a66;
+                margin: 10px;
+                border: 5px solid #777;
                 text-align: center;
-                padding-top: 100px;
+                padding-top: 10px;
                 background-image: none;
             }
 
@@ -113,6 +118,20 @@
             .table tr {
                 border-right: 2px solid #fff;
             }
+
+            .animated.delay-10s {
+              -webkit-animation-delay: 10s;
+              animation-delay: 10s;
+            }
+
+            .animated.delay-intro {
+              -webkit-animation-delay: 80s;
+              animation-delay: 80s;
+            }
+
+            .timer {
+                font-size: 450%;
+            }
         </style>
     </head>
     <body>
@@ -120,9 +139,8 @@
             <h1 class="animated zoomInDown">D3R Xmas Charity Quiz 2018!</h1>
         </header>
 
-        <div id="presskey" class="fullscreen">
-            Press a key to continue<br>
-            (silly browser security)
+        <div id="presskey">
+            Press a key to enable audio
         </div>
 
         <section id="loading" class="loading">
@@ -135,6 +153,7 @@
 
         <div style="display: none;">
             <img id="icon_music" class="animated zoomInDown delay-1s" src="images/icon_music.png" />
+            <div id="timer" class="animated zoomInDown delay-1s timer"><span>60</span> seconds</div>
         </div>
 
         <section id="answer_correct" class="fullscreen">CORRECT!</section>
@@ -153,6 +172,8 @@
         <!-- should all be loaded by the quiz system really -->
         <audio src="sounds/buzzer_default.wav" id="buzzer_default" preload></audio>
         <audio src="sounds/buzzer_wrong.wav" id="buzzer_wrong" preload></audio>
+        <audio src="sounds/timer_tick.wav" id="timer_tick" preload></audio>
+        <audio src="sounds/timer_horn.wav" id="timer_horn" preload></audio>
         <audio src="sounds/cheer.wav" id="cheer" preload></audio>
         <audio src="sounds/laugh.wav" id="laugh" preload></audio>
 
@@ -183,7 +204,7 @@
 
         <div id="title_intro" class="title fullscreen">
             <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2018</h1>
-            <div>
+            <div class="animated zoomInDown delay-10s">
                 <h2>Teams</h2>
                 <table class="table is-bordered is-centered" cellspacing="2">
                     <thead>
@@ -238,9 +259,9 @@
 
             </div>
 
-            <!-- <div class="animated zoomInDown delay-1s">
-                <p class="animated pulse infinite">Team Leaders connect to https://quiz.d3r.com !</p>
-            </div> -->
+            <div class="animated zoomInDown delay-intro" style="margin-top: 20px;">
+                <p class="animated pulse infinite">Team Leaders connect to<br>https://quiz.d3r.com<br>Using your phone!</p>
+            </div>
         </div>
 
         <div id="teambuzzers" style="display: none;"></div>
@@ -251,6 +272,7 @@
         <script>
             $(function () {
                 var teams = [];
+                var timerId, timerTimer;
 
                 // Mmmm shimmy
                 function toggleFullScreen() {
@@ -313,6 +335,7 @@
                     );
 
                     switch (msg.question.type) {
+                        case 'timer':
                         case 'text':
                             $('#question').append(
                                 $('<div />').append(
@@ -324,6 +347,14 @@
                                         .html(msg.question.text)
                                 )
                             );
+
+                            if (msg.question.type == 'timer') {
+                                let timer = $('#timer').clone();
+                                timerId = "timer_" + Math.floor(Math.random() * 1000);
+                                $(timer).attr("id", timerId);
+                                $(timer).show();
+                                $('#question div').append(timer);
+                            }
                             break;
 
                         case 'audio':
@@ -334,6 +365,40 @@
                     }
 
                     $('#question').show();
+                });
+
+                function timerRun () {
+                    let time = parseInt($('#' + timerId + ' span').html());
+                    --time;
+
+                    $('#' + timerId + ' span').html(time);
+
+                    if (time < 1) {
+                        $('#timer_horn')[0].play();
+                        clearInterval(timerTimer);
+                    } else if (time < 6) {
+                        $('#timer_tick')[0].play();
+                    }
+                }
+                socket.on('question timer', function (event) {
+                    console.log("timer event: ", event, timerId);
+                    if (!timerId)
+                        return;
+
+                    switch (event.action) {
+                        case 'start':
+                            timerTimer = setInterval(timerRun, 1000);
+                            break;
+
+                        case 'pause':
+                            clearInterval(timerTimer);
+                            break;
+
+                        case 'reset':
+                            clearInterval(timerTimer);
+                            $('#' + timerId + ' span').html(60);
+                            break;
+                    }
                 });
 
                 socket.on('sound play', function (sound) {

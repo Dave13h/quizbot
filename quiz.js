@@ -231,6 +231,16 @@ sQuizMaster.on('connection', function (socket) {
         sDashboard.emit('sound play', {sound: 'music_' + questions[activeQuestion].audio});
     });
 
+    socket.on('question timer', function (msg) {
+        if (activeQuestion == -1)
+            return;
+
+        if (questions[activeQuestion].type != 'timer')
+            return;
+
+        sDashboard.emit('question timer', { action: msg.action });
+    });
+
     socket.on('question correct', function (qid) {
         teams[activeTeam].points++;
 
@@ -286,6 +296,11 @@ sQuizMaster.on('connection', function (socket) {
     });
 
     socket.on('title show', function (title) {
+        // @todo(dave13h): ugh hackery...
+        if (title.title == 'scores') {
+            sDashboard.emit('teams scores', {teams: teams});
+            return;
+        }
         sDashboard.emit('title show', title);
     });
 
