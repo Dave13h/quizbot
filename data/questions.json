@@ -33,7 +33,7 @@
         {
             "type": "text",
             "title": "Round 1 - GEOGRAPHY",
-            "text": "Please identify the following countries - outside Europe"
+            "text": "Please identify the South American flags"
         },
         {
             "type": "text",
@@ -141,7 +141,7 @@
         {
             "type": "text",
             "title": "Round 3 - D3R & Clients",
-            "text": "which client works with Crystal, Regent and Silversea"
+            "text": "Which client works with Crystal, Regent and Silversea"
         },
         {
             "type": "text",
@@ -333,61 +333,61 @@
 
         {
             "type": "audio",
-            "title": "Round 9 - Christmas Hits",
+            "title": "Round 8 - Christmas Hits",
             "text": "Last Christmas - Wham",
             "audio": "last_chistmas"
         },
         {
             "type": "audio",
-            "title": "Round 9 - Christmas Hits",
+            "title": "Round 8 - Christmas Hits",
             "text": "All I want for Christmas is You - Maria Carey",
             "audio": "all_i_want_for_christmas"
         },
         {
             "type": "audio",
-            "title": "Round 9 - Christmas Hits",
+            "title": "Round 8 - Christmas Hits",
             "text": "Merry Xmas Everybody - Slade",
             "audio": "merry_christmas_everybody"
         },
         {
             "type": "audio",
-            "title": "Round 9 - Christmas Hits",
+            "title": "Round 8 - Christmas Hits",
             "text": "Santa Claus is coming to town - Bruce Springsteen",
             "audio": "santa_claus_is_coming_to_town"
         },
         {
             "type": "audio",
-            "title": "Round 9 - Christmas Hits",
+            "title": "Round 8 - Christmas Hits",
             "text": "Do they know it's Christmas - BandAid",
             "audio": "do_they_know_its_christmas"
         },
         {
             "type": "audio",
-            "title": "Round 9 - Christmas Hits",
+            "title": "Round 8 - Christmas Hits",
             "text": "Let it Snow, Let it Snow, Let it Snow - Frank Sinatra",
             "audio": "let_it_snow"
         },
         {
             "type": "audio",
-            "title": "Round 9 - Christmas Hits",
+            "title": "Round 8 - Christmas Hits",
             "text": "Have yourself a merry little Christmas - Orig. Judy Garland",
             "audio": "have_your_self_a_merry_little_christmas"
         },
         {
             "type": "audio",
-            "title": "Round 9 - Christmas Hits",
+            "title": "Round 8 - Christmas Hits",
             "text": "Jingle Bells",
             "audio": "jingle_bells"
         },
         {
             "type": "audio",
-            "title": "Round 9 - Christmas Hits",
+            "title": "Round 8 - Christmas Hits",
             "text": "White Christmas - Bing Crosby",
             "audio": "white_christmas"
         },
         {
             "type": "audio",
-            "title": "Round 9 - Christmas Hits",
+            "title": "Round 8 - Christmas Hits",
             "text": "i wish it could be christmas everyday - Wizzard",
             "audio": "i_wish_it_could_be_christmas_everyday"
         }

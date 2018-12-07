@@ -221,13 +221,13 @@
                     if (recording) {
                         mediaRecorder.stop();
                         recording = false;
-                        $(this).addClass('is-success').removeClass('is-error');
+                        $(this).addClass('is-success').removeClass('is-error').text("Record");
                         return;
                     }
                     recording = true;
                     mediaRecorder.start();
                     buzzerChunks = [];
-                    $(this).removeClass('is-success').addClass('is-error');
+                    $(this).removeClass('is-success').addClass('is-error').text("Stop");
                 });
 
                 $('#bPlay').on('click', function () {
