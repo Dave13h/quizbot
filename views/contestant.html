@@ -47,6 +47,15 @@
             .recorder {
                 margin: 20px;
             }
+
+            .canvas {
+                background-color: #fff;
+                border: 2px solid #000;
+                height: 800px;
+                width: 800px;
+            }
+
+            .btn.is-black{color:#fff;background-color:#000;box-shadow:inset -4px -4px #888}
         </style>
     </head>
     <body>
@@ -99,6 +108,37 @@
         <section id="teams" class="container with-title">
             <h2 class="title">Select Team</h2>
             <div class="containers list" />
+        </section>
+
+        <section class="container with-title" id="canvas_view">
+            <h2 class="title">Canvas</h2>
+            <div class="containers" id="game">
+                <canvas id="canvas_in" class="canvas" width="800" height="800"></canvas><br />
+
+                <div id="pens" class="item">
+                    <label>
+                        <input type="radio" class="nes-radio" name="pen_size" value="1.0" checked="checked">
+                        <span>Small</span>
+                    </label>
+                    <label>
+                        <input type="radio" class="nes-radio" name="pen_size" value="10.0">
+                        <span>Medium</span>
+                    </label>
+                    <label>
+                        <input type="radio" class="nes-radio" name="pen_size" value="30.0">
+                        <span>Large</span>
+                    </label>
+                </div><br />
+
+                <button type="button" data-colour="#000" class="btn is-black">&nbsp;</button>
+                <button type="button" data-colour="#fff" class="btn">&nbsp;</button>
+                <button type="button" data-colour="#92cc41" class="btn is-primary">&nbsp;</button>
+                <button type="button" data-colour="#209cee" class="btn is-success">&nbsp;</button>
+                <button type="button" data-colour="#f7d51d" class="btn is-warning">&nbsp;</button>
+                <button type="button" data-colour="#e76e55" class="btn is-error">&nbsp;</button><br /><br />
+                <button type="button" id="game_canvas_fill" class="btn is-warning">Fill</button>
+                <button type="button" id="game_canvas_clear" class="btn is-primary">Clear</button>
+            </div>
         </section>
 
         <script src="/socket.io/socket.io.js"></script>
@@ -257,6 +297,84 @@
                 } else {
                    console.log('getUserMedia not supported on your browser!');
                 }
+
+
+                // ------------------------------------------------------------
+                // Just Canvas things
+                // ------------------------------------------------------------
+                var canvas    = document.getElementById('canvas_in'),
+                    canvasCtx = canvas.getContext("2d"),
+                    canvasW   = canvas.width,
+                    canvasH   = canvas.height;
+
+                var px = 0, py = 0, cx = 0, cy = 0, penDown = false, colour = "#000", penSize = 5.0;
+                $(canvas).on('mousemove mousedown mouseup mouseout', function(e) {
+                    px = cx;
+                    py = cy;
+                    cx = e.clientX - $(canvas).offset().left;
+                    cy = e.clientY - $(canvas).offset().top;
+
+                    switch (e.type) {
+                        case 'mousedown':
+                            penDown = true;
+                            break;
+                        case 'mouseup':
+                        case 'mouseout':
+                            penDown = false;
+                            break;
+
+                        case 'mousemove':
+                            if (penDown) {
+                                canvasCtx.beginPath();
+                                    canvasCtx.moveTo(px, py);
+                                    canvasCtx.lineTo(cx, cy);
+                                    canvasCtx.strokeStyle = colour;
+                                    canvasCtx.lineWidth = penSize;
+                                    canvasCtx.stroke();
+                                canvasCtx.closePath();
+
+                                sendPen(px, py, cx, cy, colour, penSize);
+                            }
+                            break;
+                    }
+                });
+
+                function sendPen(x1, y1, x2, y2, c, s) {
+                    socket.emit('canvas pen', {
+                        'x1': x1,
+                        'y1': y1,
+                        'x2': x2,
+                        'y2': y2,
+                        'c':  c,
+                        's':  s
+                    });
+                }
+                function sendClear() {
+                    socket.emit('canvas clear');
+                }
+                function sendFill(c) {
+                    socket.emit('canvas fill', {'c': c});
+                }
+
+                $('#game_canvas_clear').on('click', function() {
+                    canvasCtx.clearRect(0, 0, canvasW, canvasH);
+                    sendClear();
+                });
+
+                $('#game_canvas_fill').on('click', function() {
+                    canvasCtx.fillStyle = colour;
+                    canvasCtx.fillRect(0, 0, canvasW, canvasH);
+                    canvasCtx.fillStyle = '#fff';
+                    sendFill(colour);
+                });
+
+                $('button[data-colour]').on('click', function() {
+                    colour = $(this).data('colour');
+                });
+
+                $('input[name=pen_size]').on('change', function() {
+                    penSize = $(this).val();
+                });
             });
         </script>
     </body>

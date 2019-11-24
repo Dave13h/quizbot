@@ -27,6 +27,13 @@
             #questions { font-size: 80%; }
             #questions .btn { padding: 5px 6px; }
             #questions div { margin-bottom: 20px; border: 1px solid #fff; }
+
+            .canvas {
+                background-color: #fff;
+                border: 2px solid #000;
+                height: 800px;
+                width: 800px;
+            }
         </style>
     </head>
     <body>
@@ -109,6 +116,8 @@
             </div>
         </section>
 
+        <canvas id="cin" class="canvas" width="800" height="800"></canvas>
+
         <script src="/socket.io/socket.io.js"></script>
         <script src="js/jquery-1.11.1.js"></script>
         <script>
@@ -135,6 +144,11 @@
                     $('#' + $(this).data('target') + '_view').show();
                     $(this).removeClass('is-success').addClass('is-primary');
                 }
+
+                var canvas    = document.getElementById('cin'),
+                    canvasCtx = canvas.getContext("2d"),
+                    canvasW   = canvas.width,
+                    canvasH   = canvas.height;
 
                 var socket = io.connect('/quizmaster'),
                     qmid   = window.localStorage.getItem('qmid');
@@ -269,7 +283,25 @@
                     console.log('Got ID: ' + id);
                     qmid = id;
                     window.localStorage.setItem('qmid', qmid);
-                });
+                })
+                .on('canvas pen', function(data){
+                    canvasCtx.beginPath();
+                        canvasCtx.moveTo(data.x1, data.y1);
+                        canvasCtx.lineTo(data.x2, data.y2);
+                        canvasCtx.strokeStyle = data.c;
+                        canvasCtx.lineWidth = data.s;
+                        canvasCtx.stroke();
+                    canvasCtx.closePath();
+                })
+                .on('canvas clear', function(data){
+                    canvasCtx.clearRect(0, 0, canvasW, canvasH);
+                })
+                .on('canvas fill', function(data){
+                    canvasCtx.fillStyle = data.c;
+                    canvasCtx.fillRect(0, 0, canvasW, canvasH);
+                    canvasCtx.fillStyle = '#fff';
+                })
+                ;
 
                 $('#menu button').on('click', selectView);
                 $('#stopaudio').on('click', function() {

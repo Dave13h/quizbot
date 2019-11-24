@@ -72,6 +72,9 @@ app.get('/', function (req, res) {
 .get('/dashboard', function (req, res) {
     res.sendFile(__dirname + '/views/dashboard.html');
 })
+.get('/test', function (req, res) {
+    res.sendFile(__dirname + '/views/test.html');
+})
 .use(express.static('public'));
 
 // Redirect to secure
@@ -406,6 +409,22 @@ sContestant.on('connection', function (socket) {
         } else {
             console.log('[BUZZER] Team[' + team.getName() + '] is already active');
         }
+    });
+
+    socket.on('canvas pen', function (data) {
+        if (!data)
+            return;
+
+        sQuizMaster.emit('canvas pen', data);
+    })
+    .on('canvas clear', function () {
+        sQuizMaster.emit('canvas clear');
+    })
+    .on('canvas fill', function (data) {
+        if (!data)
+            return;
+
+        sQuizMaster.emit('canvas fill', data);
     });
 
     socket.on('disconnect', function () {
