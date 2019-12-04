@@ -17,6 +17,8 @@
             .bcrikko { top: 60px; }
             .messages { padding-bottom: 10px; }
 
+            .btn-sm { padding: 6px 8px; }
+
             #buttons {
                 display: none;
                 width: 100%;
@@ -31,7 +33,6 @@
                 top: 0;
                 left: 0;
                 width: 100%;
-                height: 100%;
                 padding: 20px;
                 border: 1px solid #fff;
                 box-shadow: inset 0 0 100px black;
@@ -48,11 +49,13 @@
                 margin: 20px;
             }
 
-            .canvas {
+            .team_logo_canvas {
                 background-color: #fff;
                 border: 2px solid #000;
-                height: 800px;
-                width: 800px;
+                height: 350px;
+                width: 350px;
+                touch-action: none;
+                margin: auto;
             }
 
             .btn.is-black{color:#fff;background-color:#000;box-shadow:inset -4px -4px #888}
@@ -94,15 +97,41 @@
             </div> -->
 
             <audio id="aBuzzer"></audio>
-            Team Buzzer <button type="button" id="bRecord" class="btn is-success">Record</button>
+            Buzzer <button type="button" id="bRecord" class="btn is-success">Record</button>
             <button type="button" id="bPlay" class="btn is-success">Play</button><br><br>
 
-            <button type="button" id="bCancel" class="btn is-warning">CANCEL</button>
-            <button type="button" id="bSave" class="btn is-success">SAVE</button>
+            <div class="team_logo">
+                <canvas id="team_logo" class="team_logo_canvas" width="350" height="350"></canvas><br />
+                <div id="pens" class="item">
+                    <label>
+                        <input type="radio" class="nes-radio" name="pen_size" value="1.0" checked="checked">
+                        <span>Sm</span>
+                    </label>
+                    <label>
+                        <input type="radio" class="nes-radio" name="pen_size" value="10.0">
+                        <span>Med</span>
+                    </label>
+                    <label>
+                        <input type="radio" class="nes-radio" name="pen_size" value="30.0">
+                        <span>Lrg</span>
+                    </label>
+                </div><br />
 
-            <div style="position: absolute; bottom: 0; left: 0">
-                <button type="button" id="bResetToken" class="btn is-error">LEAVE GAME</button>
+                <button type="button" data-colour="#000" class="btn btn-sm is-black">&nbsp;</button>
+                <button type="button" data-colour="#fff" class="btn btn-sm">&nbsp;</button>
+                <button type="button" data-colour="#92cc41" class="btn btn-sm is-primary">&nbsp;</button>
+                <button type="button" data-colour="#209cee" class="btn btn-sm is-success">&nbsp;</button>
+                <button type="button" data-colour="#f7d51d" class="btn btn-sm is-warning">&nbsp;</button>
+                <button type="button" data-colour="#e76e55" class="btn btn-sm is-error">&nbsp;</button><br /><br />
+                <button type="button" class="canvas_fill btn btn-sm is-warning">Fill</button>
+                <button type="button" class="canvas_clear btn btn-sm is-primary">Clear</button>
             </div>
+
+            <br>
+            <button type="button" id="bCancel" class="btn btn-sm is-warning">CANCEL</button>
+            <button type="button" id="bSave" class="btn btn-sm is-success">SAVE</button><br><br>
+
+            <button type="button" id="bResetToken" class="btn is-error">LEAVE GAME</button>
         </section>
 
         <section id="teams" class="container with-title">
@@ -110,7 +139,7 @@
             <div class="containers list" />
         </section>
 
-        <section class="container with-title" id="canvas_view">
+        <!-- <section class="container with-title" id="canvas_view">
             <h2 class="title">Canvas</h2>
             <div class="containers" id="game">
                 <canvas id="canvas_in" class="canvas" width="800" height="800"></canvas><br />
@@ -140,7 +169,7 @@
                 <button type="button" id="game_canvas_clear" class="btn is-primary">Clear</button>
             </div>
         </section>
-
+ -->
         <script src="/socket.io/socket.io.js"></script>
         <script src="js/jquery-1.11.1.js"></script>
         <script>
@@ -173,6 +202,7 @@
 
                     socket.emit('team update', settings);
                     socket.emit('team buzzer', buzzerBlob);
+                    socket.emit('team logo', tl_canvas.toDataURL());
                     $('#menu').hide();
                     $('#bMenu').show();
                 });
@@ -253,6 +283,9 @@
                     console.log('Got ID: ' + id);
                     cid = id;
                     window.localStorage.setItem('cid', cid);
+                })
+                .on('logo data', function (data) {
+
                 });
 
                 // Team sound recorder
@@ -298,47 +331,109 @@
                    console.log('getUserMedia not supported on your browser!');
                 }
 
-
                 // ------------------------------------------------------------
-                // Just Canvas things
+                // Logo Canvas
                 // ------------------------------------------------------------
-                var canvas    = document.getElementById('canvas_in'),
-                    canvasCtx = canvas.getContext("2d"),
-                    canvasW   = canvas.width,
-                    canvasH   = canvas.height;
+                var tl_canvasId  = 'team_logo',
+                    tl_canvas    = document.getElementById(tl_canvasId),
+                    tl_canvasCtx = tl_canvas.getContext("2d"),
+                    tl_canvasW   = tl_canvas.width,
+                    tl_canvasH   = tl_canvas.height;
 
                 var px = 0, py = 0, cx = 0, cy = 0, penDown = false, colour = "#000", penSize = 5.0;
-                $(canvas).on('mousemove mousedown mouseup mouseout', function(e) {
+                // $(canvas).on('mousemove mousedown mouseup mouseout', function(e) {
+                //     px = cx;
+                //     py = cy;
+
+                //     var rect = canvas.getBoundingClientRect();
+                //     cx = e.clientX - rect.left;
+                //     cy = e.clientY - rect.top;
+
+                //     switch (e.type) {
+                //         case 'mousedown':
+                //             penDown = true;
+                //             break;
+
+                //         case 'mouseup':
+                //         case 'mouseout':
+                //             penDown = false;
+                //             break;
+
+                //         case 'mousemove':
+                //             if (penDown) {
+                //                 canvasCtx.beginPath();
+                //                     canvasCtx.moveTo(px, py);
+                //                     canvasCtx.lineTo(cx, cy);
+                //                     canvasCtx.strokeStyle = colour;
+                //                     canvasCtx.lineWidth = penSize;
+                //                     canvasCtx.stroke();
+                //                 canvasCtx.closePath();
+
+                //                 sendPen(px, py, cx, cy, colour, penSize);
+                //             }
+                //             break;
+                //     }
+                // });
+
+                $(tl_canvas).on('touchstart touchend touchmove', function(e) {
                     px = cx;
                     py = cy;
-                    cx = e.clientX - $(canvas).offset().left;
-                    cy = e.clientY - $(canvas).offset().top;
 
                     switch (e.type) {
-                        case 'mousedown':
+                        case 'touchstart':
+                                var touch = e.originalEvent.touches[0],
+                                    rect  = tl_canvas.getBoundingClientRect();
+                                cx = touch.clientX - rect.left;
+                                cy = touch.clientY - rect.top;
                             penDown = true;
                             break;
-                        case 'mouseup':
-                        case 'mouseout':
+
+                        case 'touchend':
                             penDown = false;
                             break;
 
-                        case 'mousemove':
+                        case 'touchmove':
                             if (penDown) {
-                                canvasCtx.beginPath();
-                                    canvasCtx.moveTo(px, py);
-                                    canvasCtx.lineTo(cx, cy);
-                                    canvasCtx.strokeStyle = colour;
-                                    canvasCtx.lineWidth = penSize;
-                                    canvasCtx.stroke();
-                                canvasCtx.closePath();
+                                var touch = e.originalEvent.touches[0],
+                                    rect  = tl_canvas.getBoundingClientRect();
+                                cx = touch.clientX - rect.left;
+                                cy = touch.clientY - rect.top;
 
-                                sendPen(px, py, cx, cy, colour, penSize);
+                                tl_canvasCtx.beginPath();
+                                    tl_canvasCtx.moveTo(px, py);
+                                    tl_canvasCtx.lineTo(cx, cy);
+                                    tl_canvasCtx.strokeStyle = colour;
+                                    tl_canvasCtx.lineWidth = penSize;
+                                    tl_canvasCtx.stroke();
+                                tl_canvasCtx.closePath();
+
+                                // sendPen(px, py, cx, cy, colour, penSize);
                             }
                             break;
                     }
                 });
 
+                $('.team_logo .canvas_clear').on('click', function() {
+                    tl_canvasCtx.clearRect(0, 0, tl_canvasW, tl_canvasH);
+                    // sendClear();
+                });
+
+                $('.team_logo .canvas_fill').on('click', function() {
+                    tl_canvasCtx.fillStyle = colour;
+                    tl_canvasCtx.fillRect(0, 0, tl_canvasW, tl_canvasH);
+                    tl_canvasCtx.fillStyle = '#fff';
+                    // sendFill(colour);
+                });
+
+                $('.team_logo button[data-colour]').on('click', function() {
+                    colour = $(this).data('colour');
+                });
+
+                $('.team_logo input[name=pen_size]').on('change', function() {
+                    penSize = $(this).val();
+                });
+
+                // Canvas socket
                 function sendPen(x1, y1, x2, y2, c, s) {
                     socket.emit('canvas pen', {
                         'x1': x1,
@@ -355,26 +450,6 @@
                 function sendFill(c) {
                     socket.emit('canvas fill', {'c': c});
                 }
-
-                $('#game_canvas_clear').on('click', function() {
-                    canvasCtx.clearRect(0, 0, canvasW, canvasH);
-                    sendClear();
-                });
-
-                $('#game_canvas_fill').on('click', function() {
-                    canvasCtx.fillStyle = colour;
-                    canvasCtx.fillRect(0, 0, canvasW, canvasH);
-                    canvasCtx.fillStyle = '#fff';
-                    sendFill(colour);
-                });
-
-                $('button[data-colour]').on('click', function() {
-                    colour = $(this).data('colour');
-                });
-
-                $('input[name=pen_size]').on('change', function() {
-                    penSize = $(this).val();
-                });
             });
         </script>
     </body>

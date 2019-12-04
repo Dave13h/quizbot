@@ -122,17 +122,6 @@
         <script src="js/jquery-1.11.1.js"></script>
         <script>
           $(function () {
-                function rot13(s) {
-                    return s.replace(/[a-zA-Z]/g, function (c) {
-                        return String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26);
-                    });
-                }
-                var awesomeAuth = rot13(prompt('password?'));
-                var pass = 'cnffjbeq1'
-                if (awesomeAuth != pass) {
-                    window.location.reload(false);
-                }
-
                 function selectView () {
                     if (!$(this).data('target'))
                         return;
@@ -144,6 +133,8 @@
                     $('#' + $(this).data('target') + '_view').show();
                     $(this).removeClass('is-success').addClass('is-primary');
                 }
+
+                var pin = prompt("Enter Pin");
 
                 var canvas    = document.getElementById('cin'),
                     canvasCtx = canvas.getContext("2d"),
@@ -272,12 +263,17 @@
                     $('#game_actions').show();
                 })
                 .on('reconnect', function(msg) {
-                    socket.emit('ident', qmid);
-                    console.log("Reconnected");
+                    socket.emit('ident', pin, qmid);
+                    console.log("Reconnected", ret);
                 })
                 .on('connect', function(msg) {
-                    socket.emit('ident', qmid);
+                    socket.emit('ident', pin, qmid);
                     console.log("Connected");
+                })
+                .on('bad auth', function(msg) {
+                    console.log("Bad auth", msg);
+                    confirm("Bad Pin");
+                    window.location.reload(false);
                 })
                 .on('id', function(id){
                     console.log('Got ID: ' + id);

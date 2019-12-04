@@ -72,9 +72,6 @@ app.get('/', function (req, res) {
 .get('/dashboard', function (req, res) {
     res.sendFile(__dirname + '/views/dashboard.html');
 })
-.get('/test', function (req, res) {
-    res.sendFile(__dirname + '/views/test.html');
-})
 .use(express.static('public'));
 
 // Redirect to secure
@@ -181,11 +178,17 @@ sDashboard.on('connection', function (socket) {
     console.log('[SOCKET] Dashboard connected on socket: ' + socket.id);
 });
 
+const QMPIN = 4576;
 sQuizMaster.on('connection', function (socket) {
     var qmid = null;
     console.log('[SOCKET] QM connected on socket: ' + socket.id);
 
-    socket.on('ident', function(id) {
+    socket.on('ident', function(pin, id) {
+        // Level 2 security!
+        if (pin != QMPIN) {
+            socket.emit('bad auth', {'magic_number': pin - QMPIN});
+            return;
+        }
         qmid = ident('quizmaster', id, socket);
 
         let state = {
@@ -196,6 +199,10 @@ sQuizMaster.on('connection', function (socket) {
     });
 
     socket.on('disconnect', function () {
+        if (qmid == null) {
+            console.log('[SOCKET] QM [Un-Authed] disconnected');
+            return;
+        }
         console.log('[SOCKET] QM [' + qmid + '] disconnected');
         connections.quizmasters[qmid].setState('disconnected');;
     });
@@ -381,6 +388,22 @@ sContestant.on('connection', function (socket) {
 
         var team = teams[c.getTeam()];
         team.setBuzzer(arraybuffer);
+        notifyConnectionList();
+    });
+
+    socket.on('team logo', function (data) {
+        if (!data)
+            return;
+
+        var buffer = Buffer.from(data),
+            arraybuffer = Uint8Array.from(buffer).buffer;
+
+        var c = connections.contestants[cid];
+        if (!c.hasTeam())
+            return;
+
+        var team = teams[c.getTeam()];
+        team.setLogo(arraybuffer);
         notifyConnectionList();
     });
 
