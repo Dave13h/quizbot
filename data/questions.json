@@ -1,6 +1,13 @@
 {
     "questions": [
         {
+            "type": "catchphrase",
+            "title": "Round 1 - CATCHPHRASE",
+            "image": "catchphrase_1.png"
+        },
+
+
+        {
             "type": "text",
             "title": "Round 1 - GEOGRAPHY",
             "text": "Which two cities did the original Orient Express travel between?"

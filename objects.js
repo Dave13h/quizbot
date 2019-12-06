@@ -150,6 +150,7 @@ class oQuestion {
         this.title  = data.title;
         this.text   = data.text;
         this.audio  = data.audio;
+        this.image  = data.image;
     }
 
     getType () {
@@ -158,6 +159,10 @@ class oQuestion {
 
     getAudio () {
         return this.audio;
+    }
+
+    getImage () {
+        return this.image;
     }
 
     getTitle () {

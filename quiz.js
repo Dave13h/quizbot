@@ -12,8 +12,8 @@ var express = require('express'),
     fs      = require('fs')
     objects = require('./objects');
 
-var port       = process.env.PORT  || 80,
-    portSecure = process.env.PORTS || 443;
+var port       = process.env.PORT  || 13080,
+    portSecure = process.env.PORTS || 13443;
 
 var credentials = {
     key: fs.readFileSync('./keys/key.pem'),
@@ -185,8 +185,14 @@ sQuizMaster.on('connection', function (socket) {
 
     socket.on('ident', function(pin, id) {
         // Level 2 security!
-        if (pin != QMPIN) {
-            socket.emit('bad auth', {'magic_number': pin - QMPIN});
+        if (!pin || pin.length != 4) {
+            socket.emit('bad auth', {'result': 'bad len'});
+            return;
+        } else if (isNaN(pin)) {
+            socket.emit('bad auth', {'result': 'malformed'});
+            return;
+        } else if (pin != QMPIN) {
+            socket.emit('bad auth', {'result': Math.abs(pin - QMPIN)});
             return;
         }
         qmid = ident('quizmaster', id, socket);
@@ -245,12 +251,14 @@ sQuizMaster.on('connection', function (socket) {
     });
 
     socket.on('question timer', function (msg) {
+
         if (activeQuestion == -1)
             return;
 
-        if (questions[activeQuestion].type != 'timer')
+        if (questions[activeQuestion].type != 'timer' && questions[activeQuestion].type != 'catchphrase')
             return;
 
+        console.log('[SOCKET] QM [' + qmid + '] timer => ' + msg.action);
         sDashboard.emit('question timer', { action: msg.action });
     });
 

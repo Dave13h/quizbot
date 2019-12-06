@@ -34,9 +34,22 @@
                 height: 800px;
                 width: 800px;
             }
+
+            .toggle_image {
+                height: 5%;
+                width: 5%;
+            }
+            .toggle_image:hover {
+                height: 25%;
+                width: 25%;
+            }
+
+            body.curtain {
+                display:none;
+            }
         </style>
     </head>
-    <body>
+    <body class="curtain">
         <h1>Quiz Master</h1>
 
         <section class="container with-title">
@@ -116,7 +129,7 @@
             </div>
         </section>
 
-        <canvas id="cin" class="canvas" width="800" height="800"></canvas>
+        <!-- <canvas id="cin" class="canvas" width="800" height="800"></canvas> -->
 
         <script src="/socket.io/socket.io.js"></script>
         <script src="js/jquery-1.11.1.js"></script>
@@ -136,10 +149,10 @@
 
                 var pin = prompt("Enter Pin");
 
-                var canvas    = document.getElementById('cin'),
-                    canvasCtx = canvas.getContext("2d"),
-                    canvasW   = canvas.width,
-                    canvasH   = canvas.height;
+                // var canvas    = document.getElementById('cin'),
+                //     canvasCtx = canvas.getContext("2d"),
+                //     canvasW   = canvas.width,
+                //     canvasH   = canvas.height;
 
                 var socket = io.connect('/quizmaster'),
                     qmid   = window.localStorage.getItem('qmid');
@@ -220,13 +233,25 @@
 
                                 if (v.type == 'audio') {
                                     $('#game_audio').show();
-                                } else if (v.type == 'timer') {
+                                } else if (v.type == 'timer' || v.type == 'catchphrase') {
                                     $('#game_timer_start').show();
                                     $('#game_timer_pause').show();
                                     $('#game_timer_reset').show();
                                 }
                             })
-                        let line = $('<span/>').html("[" + v.type + "] " + v.title + "<br/>" + v.text);
+
+                        let lineStr = "[" + v.type + "] " + v.title + "<br/>";
+                        switch (v.type) {
+                            case 'catchphrase':
+                                lineStr += '<img class="toggle_image" src="/images/' + v.image + '">';
+                                break;
+
+                            default:
+                                lineStr += v.text;
+                                break;
+                        }
+                        let line = $('<span/>').html(lineStr);
+
                         if (v.played)
                             line.addClass('played');
 
@@ -240,6 +265,9 @@
                     $('#game_actions').show();
                 })
                 .on('game state', function(state) {
+                    if ($('body').hasClass('curtain')) {
+                        $('body').removeClass('curtain');
+                    }
                     $('#game_audio').hide();
 
                     $('#active_question').html(' -- None -- ');
@@ -249,7 +277,7 @@
 
                         if (state.question.type == 'audio') {
                             $('#game_audio').show();
-                        } else if (state.question.type == 'timer') {
+                        } else if (state.question.type == 'timer' || state.question.type == 'catchphrase') {
                             $('#game_timer_start').show();
                             $('#game_timer_pause').show();
                             $('#game_timer_reset').show();
@@ -272,7 +300,7 @@
                 })
                 .on('bad auth', function(msg) {
                     console.log("Bad auth", msg);
-                    confirm("Bad Pin");
+                    var c = confirm("bad pin");
                     window.location.reload(false);
                 })
                 .on('id', function(id){

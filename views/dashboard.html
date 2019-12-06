@@ -50,7 +50,7 @@
             #question div {
                 margin-top: 25px;
                 text-align: center;
-                height: 100%;
+                /*height: 100%;*/
                 width: 100%;
             }
 
@@ -91,6 +91,8 @@
             #teamscores { display: none; text-align: center; color: #fff; }
             #teamscores h1 { font-size: 350%; }
             #teamscorelist .teamscorelist { font-size: 200%; }
+            #teamscores span.green { color: #0f0; }
+            #teamscores span.red { color: #f00; }
 
             .title { display: none; }
             .title h1 { font-size: 350%; margin-bottom: 50px; }
@@ -132,11 +134,32 @@
             .timer {
                 font-size: 450%;
             }
+
+            .catchphrase {
+                position: relative;
+            }
+
+            .catchphrase::after {
+                content: '';
+                position: absolute;
+                width: 960px;
+                height: 540px;
+                background-color: #00b5cc;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                transform: scale(1);
+                transition: transform linear 25.0s;
+            }
+
+            .catchphrase.revealed::after {
+                transform: scale(0);
+            }
         </style>
     </head>
     <body>
         <header>
-            <h1 class="animated zoomInDown">D3R Xmas Charity Quiz 2018!</h1>
+            <h1 class="animated zoomInDown">D3R Xmas Charity Quiz 2019!</h1>
         </header>
 
         <div id="presskey">
@@ -200,8 +223,8 @@
         <audio src="music/white_christmas.wav" id="music_white_christmas" preload></audio>
 
         <div id="title_wait" class="title fullscreen">
-            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2018</h1>
-            <div class="animated zoomInDown delay-1s">
+            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2019</h1>
+            <div class="animated zoomInDown delay-2s">
                 <p class="animated pulse infinite">Please Wait</p>
             </div>
         </div>
@@ -210,7 +233,10 @@
             <h1 class="animated zoomInDown">Hack the game and change your score to win!</h1>
             <div class="animated zoomInDown delay-1s">
                 <p class="animated pulse infinite">
-                    Sourcecode available at<br>https://github.com/Dave13h/quizbot
+                    2019 Challenge - Security by obscurity!<br>
+                    No Source Code this time!<br>
+                    https://quiz.d3r.com/quizmaster<br>
+                    Good Luck!
                 </p>
             </div>
         </div>
@@ -221,7 +247,7 @@
         </div>
 
         <div id="title_intro" class="title fullscreen">
-            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2018</h1>
+            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2019</h1>
             <div class="animated zoomInDown delay-10s">
                 <h2>Teams</h2>
                 <table class="table is-bordered is-centered" cellspacing="2">
@@ -294,7 +320,7 @@
         <script>
             $(function () {
                 var teams = [];
-                var timerId, timerTimer;
+                var timerId, timerTimer, questionType;
 
                 // Mmmm shimmy
                 function toggleFullScreen() {
@@ -356,6 +382,7 @@
                             .html(msg.question.title)
                     );
 
+                    questionType = msg.question.type;
                     switch (msg.question.type) {
                         case 'timer':
                         case 'text':
@@ -377,6 +404,24 @@
                                 $(timer).show();
                                 $('#question div').append(timer);
                             }
+                            break;
+
+                        case 'catchphrase':
+                            $('#question').append(
+                                $('<div />').addClass('qhead').append(
+                                    $('<div />').addClass('catchphrase').append(
+                                        $('<img />')
+                                            .addClass('content')
+                                            .prop('src', '/images/' + msg.question.image)
+                                    )
+                                )
+                            );
+
+                            let timer = $('#timer').clone();
+                            timerId = "timer_" + Math.floor(Math.random() * 1000);
+                            $(timer).attr("id", timerId);
+                            $(timer).show();
+                            $('#question div.qhead').append(timer);
                             break;
 
                         case 'audio':
@@ -409,6 +454,11 @@
                     switch (event.action) {
                         case 'start':
                             timerTimer = setInterval(timerRun, 1000);
+                            if (questionType == 'catchphrase') {
+                                if (!$('#question div.catchphrase').hasClass('revealed')) {
+                                    $('#question div.catchphrase').addClass('revealed');
+                                }
+                            }
                             break;
 
                         case 'pause':
@@ -535,20 +585,33 @@
                     );
                 });
 
+                var lastScores = [];
                 function updateTeamScores() {
                     $('#teamscorelist').empty();
                     var ts = teams;
                     ts.sort((a, b) => parseFloat(b.points) - parseFloat(a.points));
 
-                    var s = 1;
+                    var s = 500, size = 1;
                     for (let t in ts) {
+                        var diff = '';
+                        if (lastScores[ts[t].name]) {
+                            diff = ts[t].points - lastScores[ts[t].name];
+                            if (diff > 0)
+                                diff = '<span class="green">+' + diff + '</span>';
+                            else if (diff < 0)
+                                diff = '<span class="red">-' + diff + '</span>';
+                            else
+                                diff = '';
+                        }
                         $('#teamscorelist').append(
-                            '<div class="animated zoomInDown delay-' + s +
-                            's" style="font-size: ' + (200 - (20 * s)) + '%;">' +
+                            '<div class="animated zoomInDown" style="font-size: ' + (250 - (12 * (size++))) +
+                                '%; animation-delay: ' + s + 'ms;">' +
                             ts[t].name + ' (' + ts[t].points +
-                            (ts[t].points == 1 ? ' point' : ' points') + ')</div>'
+                            (ts[t].points == 1 ? ' point' : ' points') + ') ' + diff + '</div>'
                         );
-                        s++;
+                        s += 200;
+
+                        lastScores[ts[t].name] = ts[t].points;
                     }
                 }
             });
