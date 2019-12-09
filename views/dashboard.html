@@ -139,21 +139,22 @@
                 position: relative;
             }
 
-            .catchphrase::after {
+            .catchphrase_hide {
                 content: '';
                 position: absolute;
-                width: 960px;
+                width: 960px !important;
                 height: 540px;
-                background-color: #00b5cc;
+                background: url("images/catchphrase_1.png");
+                left: 430px;
+                animation: reveal 25.0s;
+                animation-play-state: paused;
                 top: 0;
-                left: 0;
-                bottom: 0;
-                transform: scale(1);
-                transition: transform linear 25.0s;
+                margin-top: 0 !important;
             }
 
-            .catchphrase.revealed::after {
-                transform: scale(0);
+            @keyframes reveal {
+                from {transform: scale(1); }
+                to {transform: scale(0) };
             }
         </style>
     </head>
@@ -413,6 +414,8 @@
                                         $('<img />')
                                             .addClass('content')
                                             .prop('src', '/images/' + msg.question.image)
+                                    ).append(
+                                        $('<div />').addClass('catchphrase_hide')
                                     )
                                 )
                             );
@@ -455,19 +458,21 @@
                         case 'start':
                             timerTimer = setInterval(timerRun, 1000);
                             if (questionType == 'catchphrase') {
-                                if (!$('#question div.catchphrase').hasClass('revealed')) {
-                                    $('#question div.catchphrase').addClass('revealed');
-                                }
+                                $('#question div.catchphrase_hide').css('animation-play-state', 'running');
                             }
                             break;
 
                         case 'pause':
                             clearInterval(timerTimer);
+                            if (questionType == 'catchphrase') {
+                                $('#question div.catchphrase_hide').css('animation-play-state', 'paused');
+                            }
                             break;
 
                         case 'reset':
                             clearInterval(timerTimer);
                             $('#' + timerId + ' span').html(60);
+                            $('#question div.catchphrase_hide').css('animation-play-state', 'running');
                             break;
                     }
                 });
@@ -517,6 +522,11 @@
                         $('#' + event.sound)[0].play();
                     }
 
+                    if (questionType == 'catchphrase') {
+                        clearInterval(timerTimer);
+                        $('#question div.catchphrase_hide').css('animation-play-state', 'paused');
+                    }
+
                     $('#teamoverlay').html('').append(
                         $('<div />')
                             .addClass('animated')
@@ -532,9 +542,14 @@
                     wrongTimer = window.setTimeout(
                         function() {
                             $('#answer_wrong').hide();
+                            if (questionType == 'catchphrase') {
+                                timerTimer = setInterval(timerRun, 1000);
+                                $('#question div.catchphrase_hide').css('animation-play-state', 'running');
+                            }
                         },
                         3000
                     );
+
                 })
                 .on('question correct', function (event) {
                     window.clearTimeout(wrongTimer);
