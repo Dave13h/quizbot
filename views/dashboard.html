@@ -87,6 +87,12 @@
                 text-align: center;
                 display: none;
             }
+            #teamoverlay .team_logo {
+                text-align: center;
+            }
+            #teamoverlay .team_logo  img{
+                background-color: #fff;
+            }
 
             #teamscores { display: none; text-align: center; color: #fff; }
             #teamscores h1 { font-size: 350%; }
@@ -320,7 +326,7 @@
 
         <script>
             $(function () {
-                var teams = [];
+                var teams = [], logos = [];
                 var timerId, timerTimer, questionType;
 
                 // Mmmm shimmy
@@ -472,7 +478,9 @@
                         case 'reset':
                             clearInterval(timerTimer);
                             $('#' + timerId + ' span').html(60);
-                            $('#question div.catchphrase_hide').css('animation-play-state', 'running');
+                            if (questionType == 'catchphrase') {
+                                $('#question div.catchphrase_hide').css('animation-play-state', 'running');
+                            }
                             break;
                     }
                 });
@@ -532,7 +540,15 @@
                             .addClass('animated')
                             .addClass('zoomInDown')
                             .html(event.team.name)
+                    ).append(
+                        $('<div />')
+                            .addClass('animated')
+                            .addClass('zoomInDown')
+                            .addClass('team_logo')
+                            .html(logos[event.team.id])
                     ).show();
+
+                    console.log(logos[event.team.id]);
                 })
                 .on('question wrong', function (event) {
                     $('#' + event.sound)[0].play();
@@ -563,7 +579,7 @@
                     $('#teamoverlay').html('').hide();
                     $('#answer_losers').show();
                 })
-                .on('teams list', function(ts) {
+                .on('teams list', function (ts) {
                     teams = ts;
                     for (let t in teams) {
                         let team = teams[t];
@@ -584,7 +600,13 @@
                         updateTeamScores();
                     }
                 })
-                .on('teams scores', function(event) {
+                .on('teams logo', function (tid, data) {
+                    console.log("Got logo for Team[" + tid + "]");
+                    var img = new Image();
+                    img.src = data;
+                    logos[tid] = img;
+                })
+                .on('teams scores', function (event) {
                     teams = event.teams;
 
                     updateTeamScores();
@@ -601,7 +623,7 @@
                 });
 
                 var lastScores = [];
-                function updateTeamScores() {
+                function updateTeamScores () {
                     $('#teamscorelist').empty();
                     var ts = teams;
                     ts.sort((a, b) => parseFloat(b.points) - parseFloat(a.points));

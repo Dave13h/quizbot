@@ -237,6 +237,19 @@
                 .on('teams invalid', function () {
                     $('#err').html("Invalid Team Choice").show();
                 })
+                .on('team logo', function (data) {
+                    console.log("Restoring Team Logo");
+                    var img = new Image();
+                    img.onload = function(){
+                      tl_canvasCtx.drawImage(img, 0, 0);
+                    };
+                    img.src = data;
+                })
+                .on('team buzzer', function (data) {
+                    console.log("Restoring Team Buzzer - @Todo(dave13): =(");
+                    // console.log(data);
+                    // createMediaRecorder(data);
+                })
                 .on('wait', function() {
                     $('section').hide();
                     $('#wait').show();
@@ -283,9 +296,6 @@
                     console.log('Got ID: ' + id);
                     cid = id;
                     window.localStorage.setItem('cid', cid);
-                })
-                .on('logo data', function (data) {
-
                 });
 
                 // Team sound recorder
@@ -312,23 +322,28 @@
                    console.log('getUserMedia supported.');
                    navigator.mediaDevices.getUserMedia({audio: true})
                         .then(function(stream) {
-                            mediaRecorder = new MediaRecorder(stream);
-
-                            mediaRecorder.ondataavailable = function(e) {
-                                buzzerChunks.push(e.data);
-                            }
-
-                            mediaRecorder.onstop = function(e) {
-                                buzzerBlob = new Blob(buzzerChunks, { 'type' : 'audio/ogg; codecs=opus' });
-                                var audioURL = window.URL.createObjectURL(buzzerBlob);
-                                $('#aBuzzer')[0].src = audioURL;
-                            }
+                            createMediaRecorder(stream);
                         })
                         .catch(function(err) {
                             console.log('The following getUserMedia error occured: ' + err);
                         });
                 } else {
                    console.log('getUserMedia not supported on your browser!');
+                }
+
+                function createMediaRecorder(s)
+                {
+                    mediaRecorder = new MediaRecorder(s);
+
+                    mediaRecorder.ondataavailable = function(e) {
+                        buzzerChunks.push(e.data);
+                    }
+
+                    mediaRecorder.onstop = function(e) {
+                        buzzerBlob = new Blob(buzzerChunks, { 'type' : 'audio/ogg; codecs=opus' });
+                        var audioURL = window.URL.createObjectURL(buzzerBlob);
+                        $('#aBuzzer')[0].src = audioURL;
+                    }
                 }
 
                 // ------------------------------------------------------------
@@ -433,7 +448,7 @@
                     penSize = $(this).val();
                 });
 
-                // Canvas socket
+                // Realtime Canvas socket
                 function sendPen(x1, y1, x2, y2, c, s) {
                     socket.emit('canvas pen', {
                         'x1': x1,

@@ -174,8 +174,18 @@ function notifyConnectionList (skipDash) {
     }
 }
 
+function notifyLogo (team, data) {
+    sDashboard.emit('teams logo', team, data);
+}
+
 sDashboard.on('connection', function (socket) {
     console.log('[SOCKET] Dashboard connected on socket: ' + socket.id);
+    for (let t in teams) {
+        let l = teams[t].getLogo();
+        if (!l)
+            continue;
+        sDashboard.emit('teams logo', t, l);
+    }
 });
 
 const QMPIN = 4576;
@@ -283,6 +293,11 @@ sQuizMaster.on('connection', function (socket) {
             let con = connections.contestants[c],
                 team = teams[con.getTeam()];
 
+            if (!team) {
+                console.error("Invalid team connection:", con.getTeam());
+                continue;
+            }
+
             if (team.getAnswered())
                 continue;
 
@@ -354,6 +369,8 @@ sContestant.on('connection', function (socket) {
         if (!connections.contestants[cid].hasTeam()) {
             socket.emit('teams list', teams);
         } else {
+            socket.emit('team logo', teams[connections.contestants[cid].getTeam()].getLogo());
+            socket.emit('team buzzer', teams[connections.contestants[cid].getTeam()].getBuzzer());
             if (activeQuestion == -1)
                 socket.emit('wait');
         }
@@ -403,16 +420,13 @@ sContestant.on('connection', function (socket) {
         if (!data)
             return;
 
-        var buffer = Buffer.from(data),
-            arraybuffer = Uint8Array.from(buffer).buffer;
-
         var c = connections.contestants[cid];
         if (!c.hasTeam())
             return;
 
         var team = teams[c.getTeam()];
-        team.setLogo(arraybuffer);
-        notifyConnectionList();
+        team.setLogo(data);
+        notifyLogo(c.getTeam(), data);
     });
 
     socket.on('buzzer send', function (cid) {
