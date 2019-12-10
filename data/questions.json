@@ -1,6 +1,31 @@
 {
     "questions": [
         {
+            "type": "pictionary",
+            "title": "Team Turkeys",
+            "team": 0,
+            "questions": [
+                "fish",
+                "horse",
+                "chair",
+                "house",
+                "banana"
+            ]
+        },
+        {
+            "type": "pictionary",
+            "title": "Team Sprouts",
+            "team": 1,
+            "questions": [
+                "car",
+                "tree",
+                "sea",
+                "uk",
+                "toilet"
+            ]
+        },
+
+        {
             "type": "catchphrase",
             "title": "Round 1 - CATCHPHRASE",
             "image": "catchphrase_2.png"

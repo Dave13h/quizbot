@@ -151,6 +151,12 @@ class oQuestion {
         this.text   = data.text;
         this.audio  = data.audio;
         this.image  = data.image;
+
+        this.questions = [];
+        if (this.type == 'pictionary') {
+            this.team = data.team;
+            this.questions = data.questions;
+        }
     }
 
     getType () {
@@ -167,6 +173,14 @@ class oQuestion {
 
     getTitle () {
         return this.title;
+    }
+
+    getTeam () {
+        return this.team;
+    }
+
+    getQuestions () {
+        return this.questions;
     }
 
     getText () {

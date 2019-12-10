@@ -162,6 +162,33 @@
                 from {transform: scale(1); }
                 to {transform: scale(0) };
             }
+
+            #pictionary {
+                display: none;
+            }
+            #pictionary h1 {
+                text-align: center;
+                color: #fff;
+                font-size: 200%;
+            }
+            #pictionary h3 {
+                text-align: center;
+                color: #fff;
+            }
+
+            #pictionary div {
+                margin-top: 25px;
+                text-align: center;
+                /*height: 100%;*/
+                width: 100%;
+            }
+
+            #pictionary .canvas {
+                height: 700px;
+                width: 700px;
+                border: 2px solid #fff;
+                background-color: #fff;
+            }
         </style>
     </head>
     <body>
@@ -180,6 +207,16 @@
         </section>
 
         <section id="question" class="fullscreen"></section>
+
+        <section id="pictionary" class="fullscreen">
+            <h1>Pictionary!</h1>
+            <h2>Team Name</h2>
+            <h3>Pictures</h3>
+            <h4>Score</h4>
+            <div>
+                <canvas id="pictionary_canvas" class="canvas" width="350" height="350"></canvas>
+            </div>
+        </section>
 
         <div style="display: none;">
             <img id="icon_music" class="animated zoomInDown delay-1s" src="images/icon_music.png" />
@@ -379,6 +416,7 @@
                     $('header').hide();
                     $('section').hide();
                     $('.title').hide();
+                    $('#pictionary').hide();
                     $('#question').html('');
 
                     $('#question')
@@ -405,7 +443,7 @@
                             );
 
                             if (msg.question.type == 'timer') {
-                                let timer = $('#timer').clone();
+                                var timer = $('#timer').clone();
                                 timerId = "timer_" + Math.floor(Math.random() * 1000);
                                 $(timer).attr("id", timerId);
                                 $(timer).show();
@@ -426,11 +464,15 @@
                                 )
                             );
 
-                            let timer = $('#timer').clone();
+                            var timer = $('#timer').clone();
                             timerId = "timer_" + Math.floor(Math.random() * 1000);
                             $(timer).attr("id", timerId);
                             $(timer).show();
                             $('#question div.qhead').append(timer);
+                            break;
+
+                        case 'pictionary':
+                            // Done in "pictionary init"
                             break;
 
                         case 'audio':
@@ -443,6 +485,66 @@
                     $('#question').show();
                 });
 
+                // ------------------------------------------------------------
+                // Pictionary
+                // ------------------------------------------------------------
+                var canvasId  = 'pictionary_canvas',
+                    canvas    = document.getElementById(canvasId),
+                    canvasCtx = canvas.getContext("2d"),
+                    canvasW   = 350,
+                    canvasH   = 350; // Must match incoming canvas data!
+                socket.on('pictionary init', function (team, totalQuestions) {
+                    $('#pictionary').show();
+                    var timer = $('#timer').clone();
+                    timerId = "timer_" + Math.floor(Math.random() * 1000);
+                    $(timer).attr("id", timerId);
+                    $(timer).show();
+                    $('#question div.qhead').append(timer);
+
+                    $('#pictionary h2').html("Team " + team);
+                    $('#pictionary h3').html("<span>0</span> of " + totalQuestions + " pictures");
+                    $('#pictionary h4').html("<span>0</span> Correct Answer(s)");
+
+                    canvasCtx.clearRect(0, 0, canvasW, canvasH);
+
+                    var timer = $('#timer').clone();
+                    timerId = "timer_" + Math.floor(Math.random() * 1000);
+                    $(timer).attr("id", timerId);
+                    $(timer).show();
+                    $('#pictionary div').append(timer);
+                })
+                .on('pictionary start', function () {
+                    timerTimer = setInterval(timerRun, 1000);
+                })
+                .on('pictionary end', function () {
+                    clearInterval(timerTimer);
+                })
+                .on('pictionary active', function (active, score) {
+                    $('#pictionary h3 span').html(parseInt(active) + 1);
+                    $('#pictionary h4 span').html(score);
+                    canvasCtx.clearRect(0, 0, canvasW, canvasH);
+                })
+                .on('pictionary update', function(data) {
+                    canvasCtx.beginPath();
+                        canvasCtx.moveTo(data.x1, data.y1);
+                        canvasCtx.lineTo(data.x2, data.y2);
+                        canvasCtx.strokeStyle = data.c;
+                        canvasCtx.lineWidth = data.s;
+                        canvasCtx.stroke();
+                    canvasCtx.closePath();
+                })
+                .on('pictionary clear', function(data) {
+                    canvasCtx.clearRect(0, 0, canvasW, canvasH);
+                })
+                .on('pictionary fill', function(data) {
+                    canvasCtx.fillStyle = data.c;
+                    canvasCtx.fillRect(0, 0, canvasW, canvasH);
+                    canvasCtx.fillStyle = '#fff';
+                })
+
+                // ------------------------------------------------------------
+                // Timer
+                // ------------------------------------------------------------
                 function timerRun () {
                     let time = parseInt($('#' + timerId + ' span').html());
                     --time;

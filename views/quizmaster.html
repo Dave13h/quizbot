@@ -44,6 +44,26 @@
                 width: 25%;
             }
 
+            #game_pictionary ul li.active {
+                font-weight: bold;
+                color: #FF9;
+            }
+            #game_pictionary ul li.active:after {
+                content: " <=="
+            }
+            #game_pictionary ul li.correct {
+                color: #9F9;
+            }
+            #game_pictionary ul li.correct:after {
+                content: " - Correct!"
+            }
+            #game_pictionary ul li.skip {
+                color: #F99;
+            }
+            #game_pictionary ul li.skip:after {
+                content: " - Skipped!"
+            }
+
             body.curtain {
                 display:none;
             }
@@ -109,15 +129,28 @@
         <section class="container with-title" id="game_view">
             <h2 class="title">Game</h2>
             <div class="containers" id="game">
-                <h3>Active Question</h3>
-                <p id="active_question"> -- None -- </p>
+                <div id="active_state">
+                    <h3>Active Question</h3>
+                    <p id="active_question"> -- None -- </p>
 
-                <h3>Active Team</h3>
-                <p id="active_team"> -- None -- </p>
+                    <h3>Active Team</h3>
+                    <p id="active_team"> -- None -- </p>
+                </div>
 
                 <button type="button" id="game_skip" class="btn is-warning">Skip</button><br>
-                <button type="button" id="game_audio" class="btn is-success" style="display: none;">Play Audio</button><br>
+                <button type="button" id="game_audio" class="btn is-success" style="display: none;">Play Audio</button>
 
+
+                <div id="game_pictionary">
+                    Pictures<br />
+                    <ul></ul><br />
+
+                    <button type="button" id="game_pictionary_start" class="btn is-success">Start</button>
+                    <button type="button" id="game_pictionary_correct" class="btn is-primary">Correct</button>
+                    <button type="button" id="game_pictionary_skip" class="btn is-warning">Skip</button><br />
+                </div>
+
+                <br />
                 <button type="button" id="game_timer_start" class="btn is-success" style="display: none;">Start timer</button>
                 <button type="button" id="game_timer_pause" class="btn is-warning" style="display: none;">Pause timer</button>
                 <button type="button" id="game_timer_reset" class="btn is-error" style="display: none;">Reset timer</button>
@@ -128,8 +161,6 @@
                 </div>
             </div>
         </section>
-
-        <!-- <canvas id="cin" class="canvas" width="800" height="800"></canvas> -->
 
         <script src="/socket.io/socket.io.js"></script>
         <script src="js/jquery-1.11.1.js"></script>
@@ -147,14 +178,8 @@
                     $(this).removeClass('is-success').addClass('is-primary');
                 }
 
-                var pin = prompt("Enter Pin");
-
-                // var canvas    = document.getElementById('cin'),
-                //     canvasCtx = canvas.getContext("2d"),
-                //     canvasW   = canvas.width,
-                //     canvasH   = canvas.height;
-
-                var socket = io.connect('/quizmaster'),
+                var pin    = prompt("Enter Pin"),
+                    socket = io.connect('/quizmaster'),
                     qmid   = window.localStorage.getItem('qmid');
 
                 socket
@@ -222,6 +247,8 @@
                                 socket.emit('question play', k);
                                 $('#active_question').html(v.text);
                                 $('#active_team').html(' -- None -- ');
+                                $('#active_state').show();
+
                                 $('#game_actions').hide();
                                 $('#game_audio').hide();
                                 $('button[data-target="game"]').click();
@@ -233,10 +260,17 @@
 
                                 if (v.type == 'audio') {
                                     $('#game_audio').show();
-                                } else if (v.type == 'timer' || v.type == 'catchphrase') {
+                                } else if (v.type == 'timer' || v.type == 'catchphrase' || v.type == 'pictionary') {
                                     $('#game_timer_start').show();
                                     $('#game_timer_pause').show();
                                     $('#game_timer_reset').show();
+                                }
+
+                                if (v.type == 'pictionary') {
+                                    $('#active_state').hide();
+                                    $('#game_actions').hide();
+                                    $('#game_skip').hide();
+                                    $('#game_pictionary').show();
                                 }
                             })
 
@@ -244,6 +278,9 @@
                         switch (v.type) {
                             case 'catchphrase':
                                 lineStr += '<img class="toggle_image" src="/images/' + v.image + '">';
+                                break;
+
+                            case 'pictionary':
                                 break;
 
                             default:
@@ -264,6 +301,24 @@
                     $('#active_team').html(msg.team.name);
                     $('#game_actions').show();
                 })
+                .on('pictionary init', function(questions) {
+                    $('#game_pictionary ul').empty();
+                    for (var pq in questions) {
+                        $('#game_pictionary ul').append(
+                            $('<li/>').attr('data-qid', pq).html(questions[pq])
+                        );
+                    }
+                    $('#game_pictionary ul li').removeClass('active');
+                    $('#game_pictionary ul li[data-qid=0]').addClass('active');
+                    $('#game_pictionary_start').show();
+                    $('#game_timer_start').hide();
+                    $('#game_timer_pause').hide();
+                    $('#game_timer_reset').hide();
+                })
+                .on('pictionary active', function(activeQ) {
+                    $('#game_pictionary ul li').removeClass('active');
+                    $('#game_pictionary ul li[data-qid=' + activeQ + ']').addClass('active');
+                })
                 .on('game state', function(state) {
                     if ($('body').hasClass('curtain')) {
                         $('body').removeClass('curtain');
@@ -274,13 +329,27 @@
 
                     if (state.question) {
                         $('#active_question').html(state.question.text);
+                        $('#active_state').show();
+
+                        $('#game_skip').show();
+                        $('#game_actions').show();
 
                         if (state.question.type == 'audio') {
                             $('#game_audio').show();
-                        } else if (state.question.type == 'timer' || state.question.type == 'catchphrase') {
+                        } else if (state.question.type == 'timer' ||
+                            state.question.type == 'catchphrase'
+                        ) {
                             $('#game_timer_start').show();
                             $('#game_timer_pause').show();
                             $('#game_timer_reset').show();
+                        }
+
+                        if (state.question.type == 'pictionary') {
+                            $('#active_state').hide();
+                            $('#game_actions').hide();
+                            $('#game_pictionary').show();
+                            $('#game_skip').hide();
+                            $('#game_pictionary_start').show();
                         }
                     }
 
@@ -367,6 +436,19 @@
                     $('#active_question').html(' -- None -- ');
                     $('#active_team').html(' -- None -- ');
                     $('button[data-target="teams"]').click();
+                });
+
+                $('#game_pictionary_start').on('click', function() {
+                    $('#game_pictionary_start').hide();
+                    socket.emit('pictionary start');
+                });
+                $('#game_pictionary_correct').on('click', function() {
+                    $('#game_pictionary ul li.active').addClass('correct');
+                    socket.emit('pictionary correct');
+                });
+                $('#game_pictionary_skip').on('click', function() {
+                    $('#game_pictionary ul li.active').addClass('skip');
+                    socket.emit('pictionary skip');
                 });
 
                 $('#sounds button').on('click', function() {
