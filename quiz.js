@@ -12,8 +12,8 @@ var express = require('express'),
     fs      = require('fs')
     objects = require('./objects');
 
-var port       = process.env.PORT  || 80,
-    portSecure = process.env.PORTS || 443;
+var port       = process.env.PORT  || 13080,
+    portSecure = process.env.PORTS || 13443;
 
 var credentials = {
     key: fs.readFileSync('./keys/key.pem'),
@@ -453,12 +453,15 @@ sQuizMaster.on('connection', function (socket) {
     });
 
     socket.on('team score', function (team) {
+        var penalty = team.penalty || false;
         if (teams[team.id] == undefined) {
             return;
         }
 
         teams[team.id].setPoints(team.points);
         notifyConnectionList(); // @todo(dave13h): optimise
+        if (penalty)
+            sDashboard.emit('penalty', teams[team.id].getName());
     });
 });
 

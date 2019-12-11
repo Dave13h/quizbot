@@ -198,6 +198,20 @@
                 border: 2px solid #fff;
                 background-color: #fff;
             }
+
+            #penalty_popup {
+                display: none;
+                background-color: #922;
+                border: 1px solid #955;
+                color: #fff;
+                position: absolute;
+                top: 0;
+                left: 0;
+                margin: 10px;
+            }
+            #penalty_popup span {
+                margin: 10px;
+            }
         </style>
     </head>
     <body>
@@ -367,6 +381,10 @@
         </div>
 
         <div id="teambuzzers" style="display: none;"></div>
+
+        <div id="penalty_popup">
+            <span>Penalty</span>
+        </div>
 
         <script src="/socket.io/socket.io.js"></script>
         <script src="js/jquery-1.11.1.js"></script>
@@ -735,6 +753,14 @@
                         },
                         3000
                     );
+                })
+                .on('penalty', function (teamName) {
+                    console.log("Penality for Team[" + teamName + "]");
+                    $('#penalty')[0].play();
+                    $('#penalty_popup span').html('PENALTY for ' + teamName + ' -1 point');
+                    $('#penalty_popup').show(0, function() {
+                        $(this).fadeOut(5000);
+                    });
                 });
 
                 var lastScores = [];

@@ -210,14 +210,27 @@
                         $('#teams').append("-- No Teams --");
                         return;
                     }
+                    $('.teampenalty').off('click');
                     $(teams).each(function(k, v) {
                         let teamName = '<input type="text" class="input teamname" data-tid="' + k +
                             '" style="display: inline-block" value="' + v.name + '" />';
 
                         let teamPoints = '<input type="text" class="input teamscore" data-tid="' + k +
                             '" style="display: inline-block" value="' + v.points + '" />';
-                        let t = teamName + " => Points: " + teamPoints + " Answered: " + v.answered + "<br/>";
+                        let t = teamName + " => Points: " + teamPoints +
+                            '<button class="teampenalty btn btn-sm is-error" data-tid="' + k +
+                                '" title="issue a penality -1 point">P</button>' +
+                            " Answered: " + v.answered +
+                            "<br/>";
                         $('#teams').append(t);
+                    });
+
+                    $('.teampenalty').on('click', function() {
+                        console.log($(this).data('tid'));
+                        var $team = $('.teamscore[data-tid=' + $(this).data('tid') + ']');
+                        console.log($team.val());
+                        $team.val($team.val() - 1);
+                        socket.emit('team score', { id: $(this).data('tid'), points: $team.val(), penalty: true});
                     });
 
                     $('.teamname').on('focusout', function() {
