@@ -151,6 +151,9 @@ class oQuestion {
         this.text   = data.text;
         this.audio  = data.audio;
         this.image  = data.image;
+        this.timer  = 60;
+        if (!isNaN(data.timer))
+            this.timer = parseInt(data.timer);
 
         this.questions = [];
         if (this.type == 'pictionary') {
@@ -185,6 +188,10 @@ class oQuestion {
 
     getText () {
         return this.text;
+    }
+
+    getTimer () {
+        return this.timer;
     }
 }
 

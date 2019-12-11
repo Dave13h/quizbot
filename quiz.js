@@ -12,8 +12,8 @@ var express = require('express'),
     fs      = require('fs')
     objects = require('./objects');
 
-var port       = process.env.PORT  || 80,
-    portSecure = process.env.PORTS || 443;
+var port       = process.env.PORT  || 13080,
+    portSecure = process.env.PORTS || 13443;
 
 var credentials = {
     key: fs.readFileSync('./keys/key.pem'),
@@ -256,7 +256,8 @@ sQuizMaster.on('connection', function (socket) {
             sDashboard.emit(
                 'pictionary init',
                 teamNames[activeTeam],
-                questions[qid].getQuestions().length
+                questions[qid].getQuestions().length,
+                questions[qid].getTimer()
             );
             return;
         }

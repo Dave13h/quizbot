@@ -220,7 +220,7 @@
 
         <div style="display: none;">
             <img id="icon_music" class="animated zoomInDown delay-1s" src="images/icon_music.png" />
-            <div id="timer" class="animated zoomInDown delay-1s timer"><span>60</span> seconds</div>
+            <div id="timer" class="animated zoomInDown delay-1s timer" data-time="60"><span>60</span> seconds</div>
         </div>
 
         <section id="answer_correct" class="fullscreen">CORRECT!</section>
@@ -445,9 +445,11 @@
                             if (msg.question.type == 'timer') {
                                 var timer = $('#timer').clone();
                                 timerId = "timer_" + Math.floor(Math.random() * 1000);
-                                $(timer).attr("id", timerId);
-                                $(timer).show();
+                                $(timer).attr("id", timerId)
+                                        .attr("data-time", msg.question.timer)
+                                        .show(msg.question.timer);
                                 $('#question div').append(timer);
+                                $('span', timer).html(msg.question.timer);
                             }
                             break;
 
@@ -466,9 +468,11 @@
 
                             var timer = $('#timer').clone();
                             timerId = "timer_" + Math.floor(Math.random() * 1000);
-                            $(timer).attr("id", timerId);
-                            $(timer).show();
+                            $(timer).attr("id", timerId)
+                                    .attr("data-time", msg.question.timer)
+                                    .show(msg.question.timer);
                             $('#question div.qhead').append(timer);
+                            $('span', timer).html(msg.question.timer);
                             break;
 
                         case 'pictionary':
@@ -493,14 +497,8 @@
                     canvasCtx = canvas.getContext("2d"),
                     canvasW   = 350,
                     canvasH   = 350; // Must match incoming canvas data!
-                socket.on('pictionary init', function (team, totalQuestions) {
+                socket.on('pictionary init', function (team, totalQuestions, timer) {
                     $('#pictionary').show();
-                    var timer = $('#timer').clone();
-                    timerId = "timer_" + Math.floor(Math.random() * 1000);
-                    $(timer).attr("id", timerId);
-                    $(timer).show();
-                    $('#question div.qhead').append(timer);
-
                     $('#pictionary h2').html("Team " + team);
                     $('#pictionary h3').html("<span>0</span> of " + totalQuestions + " pictures");
                     $('#pictionary h4').html("<span>0</span> Correct Answer(s)");
@@ -509,9 +507,11 @@
 
                     var timer = $('#timer').clone();
                     timerId = "timer_" + Math.floor(Math.random() * 1000);
-                    $(timer).attr("id", timerId);
-                    $(timer).show();
+                    $(timer).attr("id", timerId)
+                            .attr('data-time', timer)
+                            .show();
                     $('#pictionary div').append(timer);
+                    $('#' + timerId + ' span').html(timer);
                 })
                 .on('pictionary start', function () {
                     timerTimer = setInterval(timerRun, 1000);
@@ -579,7 +579,8 @@
 
                         case 'reset':
                             clearInterval(timerTimer);
-                            $('#' + timerId + ' span').html(60);
+
+                            $('#' + timerId + ' span').html($('#' + timerId).attr("data-time"));
                             if (questionType == 'catchphrase') {
                                 $('#question div.catchphrase_hide').css('animation-play-state', 'running');
                             }

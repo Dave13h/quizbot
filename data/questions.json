@@ -347,7 +347,8 @@
         {
             "type": "timer",
             "title": "Round 6 - Sport",
-            "text": "Charades but with speaking!"
+            "text": "Charades but with speaking!",
+            "timer": 120
         },
 
 
