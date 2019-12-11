@@ -212,6 +212,16 @@
             #penalty_popup span {
                 margin: 10px;
             }
+
+            #title_rules h2 {
+                font-size: 450%;
+            }
+            .rules_list {
+                width: 685px;
+                margin: 50px;
+                margin-top: 200px;
+                font-size: 200%;
+            }
         </style>
     </head>
     <body>
@@ -331,44 +341,49 @@
                     <tbody>
                         <tr>
                             <td>
-                                Dom<br>
-                                James<br>
-                                Kevin<br>
-                                Adam
+                                Oliver<br />
+                                Stuart H<br />
+                                Jason<br />
+                                Mark W<br />
+                                Joe B<br />
+                                Rob
                             </td>
 
                             <td>
-                                Dave S<br>
-                                Mat<br>
-                                Joe<br>
-                                Dave F
+                                Lexi<br />
+                                Alfi<br />
+                                Sean<br />
+                                Dale<br />
+                                Tamas<br />
+                                Jahidul
                             </td>
 
                             <td>
-                                Stuart L<br>
-                                Joe B<br>
-                                Phil<br>
-                                Alfi
+                                Roberto<br />
+                                Lynton<br />
+                                James<br />
+                                Mark S<br />
+                                Joe B
                             </td>
 
                             <td>
-                                Lynton<br>
-                                Roberto<br>
-                                Tamas<br>
-                                Dan B
+                                Brett<br />
+                                Adam<br />
+                                David F<br />
+                                Joe A<br />
+                                Dan<br />
+                                Sara
                             </td>
 
                             <td>
-                                Brett<br>
-                                Neil<br>
-                                Sean<br>
-                                Ronan<br>
-                                Mark W
+                                Ronan<br />
+                                Dom<br />
+                                Neil<br />
+                                Kevin<br />
                             </td>
                         </tr>
                     </tbody>
                 </table>
-
             </div>
 
             <div class="animated zoomInDown delay-intro" style="margin-top: 20px;">
@@ -378,6 +393,76 @@
                     Using your phone on the WiFi!
                 </p>
             </div>
+        </div>
+
+        <div id="title_teams" class="title fullscreen">
+            <h2>Teams</h2>
+            <table class="teamtable table is-bordered is-centered" cellspacing="2">
+                <thead>
+                    <tr>
+                        <th>Turkeys</th>
+                        <th>Sprouts</th>
+                        <th>Spuds</th>
+                        <th>Puddings</th>
+                        <th>Roasters</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            Oliver<br />
+                            Stuart H<br />
+                            Jason<br />
+                            Mark W<br />
+                            Joe B<br />
+                            Rob
+                        </td>
+
+                        <td>
+                            Lexi<br />
+                            Alfi<br />
+                            Sean<br />
+                            Dale<br />
+                            Tamas<br />
+                            Jahidul
+                        </td>
+
+                        <td>
+                            Roberto<br />
+                            Lynton<br />
+                            James<br />
+                            Mark S<br />
+                            Joe B
+                        </td>
+
+                        <td>
+                            Brett<br />
+                            Adam<br />
+                            David F<br />
+                            Joe A<br />
+                            Dan<br />
+                            Sara
+                        </td>
+
+                        <td>
+                            Ronan<br />
+                            Dom<br />
+                            Neil<br />
+                            Kevin<br />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="title_rules" class="title fullscreen">
+            <h2>QUIZ RULES</h2>
+
+            <ol class="rules_list">
+                <li>NO INTERNET SEARCHES</li>
+                <li>NO INTERNET SEARCHES</li>
+                <li>NO INTERNET SEARCHES</li>
+            </ol>
         </div>
 
         <div id="teambuzzers" style="display: none;"></div>
@@ -773,11 +858,11 @@
                     for (let t in ts) {
                         var diff = '';
                         if (lastScores[ts[t].name]) {
-                            diff = ts[t].points - lastScores[ts[t].name];
+                            diff = parseInt(ts[t].points) - parseInt(lastScores[ts[t].name]);
                             if (diff > 0)
                                 diff = '<span class="green">+' + diff + '</span>';
                             else if (diff < 0)
-                                diff = '<span class="red">-' + diff + '</span>';
+                                diff = '<span class="red">' + diff + '</span>';
                             else
                                 diff = '';
                         }
