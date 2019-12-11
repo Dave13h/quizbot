@@ -12,8 +12,8 @@ var express = require('express'),
     fs      = require('fs')
     objects = require('./objects');
 
-var port       = process.env.PORT  || 13080,
-    portSecure = process.env.PORTS || 13443;
+var port       = process.env.PORT  || 80,
+    portSecure = process.env.PORTS || 443;
 
 var credentials = {
     key: fs.readFileSync('./keys/key.pem'),
@@ -285,6 +285,17 @@ sQuizMaster.on('connection', function (socket) {
         }
     });
 
+    socket.on('pictionary end', function () {
+        sDashboard.emit('pictionary end', pictionaryScore, questions[activeQuestion].getQuestions().length);
+        sQuizMaster.emit('pictionary end');
+        sQuizMaster.emit('teams list', teams);
+        for (var c in connections.contestants) {
+            if (connections.contestants[c].getTeam() != activeTeam)
+                continue;
+            connections.contestants[c].getSocket().emit('wait');
+        }
+    });
+
     socket.on('pictionary correct', function () {
         teams[activeTeam].points++;
         pictionaryScore++;
@@ -294,6 +305,8 @@ sQuizMaster.on('connection', function (socket) {
 
         if (activePictionaryQuestion >= questions[activeQuestion].getQuestions().length) {
             sDashboard.emit('pictionary end', pictionaryScore, questions[activeQuestion].getQuestions().length);
+            sQuizMaster.emit('pictionary end');
+            sQuizMaster.emit('teams list', teams);
 
             for (var c in connections.contestants) {
                 if (connections.contestants[c].getTeam() != activeTeam)
@@ -320,6 +333,8 @@ sQuizMaster.on('connection', function (socket) {
 
         if (activePictionaryQuestion >= questions[activeQuestion].getQuestions().length) {
             sDashboard.emit('pictionary end', pictionaryScore, questions[activeQuestion].getQuestions().length);
+            sQuizMaster.emit('pictionary end');
+            sQuizMaster.emit('teams list', teams);
 
             for (var c in connections.contestants) {
                 if (connections.contestants[c].getTeam() != activeTeam)

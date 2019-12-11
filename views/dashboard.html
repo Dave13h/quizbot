@@ -11,6 +11,9 @@
         <link href="css/style.css" rel="stylesheet" />
 
         <style>
+            body {
+                text-shadow: 4px 4px 2px black;
+            }
             .fullscreen {
                 text-align: center;
                 position: absolute;
@@ -20,8 +23,8 @@
                 width: 100%;
                 box-shadow: inset 0 0 100px black;
                 padding: 50px;
-                background: url("images/tree.png") #384335 no-repeat bottom left;
-                background-size: 540px auto;
+                background: url("images/background.png");
+                background-size: 100%;
             }
 
             #presskey {
@@ -104,6 +107,8 @@
             .title h1 { font-size: 350%; margin-bottom: 50px; }
             .title p { text-align: center; color: #fff; font-size: 200%; }
 
+            .teamtable { text-shadow: initial; }
+
             .table {
                 width: 100%;
                 text-align: center;
@@ -131,10 +136,14 @@
               -webkit-animation-delay: 10s;
               animation-delay: 10s;
             }
+            .animated.delay-18s {
+              -webkit-animation-delay: 18s;
+              animation-delay: 18s;
+            }
 
             .animated.delay-intro {
-              -webkit-animation-delay: 80s;
-              animation-delay: 80s;
+              -webkit-animation-delay: 22s;
+              animation-delay: 22s;
             }
 
             .timer {
@@ -243,6 +252,7 @@
         <audio src="sounds/timer_horn.wav" id="timer_horn" preload></audio>
         <audio src="sounds/cheer.wav" id="cheer" preload></audio>
         <audio src="sounds/laugh.wav" id="laugh" preload></audio>
+        <audio src="sounds/penalty.wav" id="penalty" preload></audio>
 
         <audio src="sounds/awesome.wav" id="awesome" preload></audio>
         <audio src="sounds/nextround.wav" id="nextround" preload></audio>
@@ -292,9 +302,9 @@
 
         <div id="title_intro" class="title fullscreen">
             <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2019</h1>
-            <div class="animated zoomInDown delay-10s">
+            <div class="animated zoomInDown delay-18s">
                 <h2>Teams</h2>
-                <table class="table is-bordered is-centered" cellspacing="2">
+                <table class="teamtable table is-bordered is-centered" cellspacing="2">
                     <thead>
                         <tr>
                             <th>Turkeys</th>
@@ -497,7 +507,8 @@
                     canvasCtx = canvas.getContext("2d"),
                     canvasW   = 350,
                     canvasH   = 350; // Must match incoming canvas data!
-                socket.on('pictionary init', function (team, totalQuestions, timer) {
+                socket.on('pictionary init', function (team, totalQuestions, timerVal) {
+                    $('section').hide();
                     $('#pictionary').show();
                     $('#pictionary h2').html("Team " + team);
                     $('#pictionary h3').html("<span>0</span> of " + totalQuestions + " pictures");
@@ -508,16 +519,17 @@
                     var timer = $('#timer').clone();
                     timerId = "timer_" + Math.floor(Math.random() * 1000);
                     $(timer).attr("id", timerId)
-                            .attr('data-time', timer)
+                            .attr('data-time', timerVal)
                             .show();
                     $('#pictionary div').append(timer);
-                    $('#' + timerId + ' span').html(timer);
+                    $('#' + timerId + ' span').html(timerVal);
                 })
                 .on('pictionary start', function () {
                     timerTimer = setInterval(timerRun, 1000);
                 })
                 .on('pictionary end', function () {
                     clearInterval(timerTimer);
+                    $('#' + timerId).remove();
                 })
                 .on('pictionary active', function (active, score) {
                     $('#pictionary h3 span').html(parseInt(active) + 1);

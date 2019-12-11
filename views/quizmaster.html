@@ -142,14 +142,14 @@
                 <button type="button" id="game_skip" class="btn is-warning">Skip</button><br>
                 <button type="button" id="game_audio" class="btn is-success" style="display: none;">Play Audio</button>
 
-
                 <div id="game_pictionary">
                     Pictures<br />
                     <ul></ul><br />
 
                     <button type="button" id="game_pictionary_start" class="btn is-success">Start</button>
                     <button type="button" id="game_pictionary_correct" class="btn is-primary">Correct</button>
-                    <button type="button" id="game_pictionary_skip" class="btn is-warning">Skip</button><br />
+                    <button type="button" id="game_pictionary_skip" class="btn is-warning">Skip</button>
+                    <button type="button" id="game_pictionary_end" class="btn is-error">End</button><br />
                 </div>
 
                 <br />
@@ -260,12 +260,20 @@
                                 $('#game_timer_pause').hide();
                                 $('#game_timer_reset').hide();
 
+                                $('#game_pictionary').hide();
+                                $('#game_pictionary_end').hide();
+                                $('#game_pictionary_start').hide();
+                                $('#game_pictionary_correct').hide();
+                                $('#game_pictionary_skip').hide();
+
                                 if (v.type == 'audio') {
                                     $('#game_audio').show();
                                 } else if (v.type == 'timer' || v.type == 'catchphrase' || v.type == 'pictionary') {
                                     $('#game_timer_start').show();
                                     $('#game_timer_pause').show();
                                     $('#game_timer_reset').show();
+                                } else {
+                                    $('#game_actions').show();
                                 }
 
                                 if (v.type == 'pictionary') {
@@ -273,6 +281,7 @@
                                     $('#game_actions').hide();
                                     $('#game_skip').hide();
                                     $('#game_pictionary').show();
+                                    $('#game_pictionary_start').show();
                                 }
                             })
 
@@ -321,6 +330,10 @@
                     $('#game_pictionary ul li').removeClass('active');
                     $('#game_pictionary ul li[data-qid=' + activeQ + ']').addClass('active');
                 })
+                .on('pictionary end', function(activeQ) {
+                    $('#game_pictionary_correct').hide();
+                    $('#game_pictionary_skip').hide();
+                })
                 .on('game state', function(state) {
                     if ($('body').hasClass('curtain')) {
                         $('body').removeClass('curtain');
@@ -335,6 +348,10 @@
 
                         $('#game_skip').show();
                         $('#game_actions').show();
+
+                        $('#game_pictionary').hide();
+                        $('#game_pictionary_end').hide();
+                        $('#game_pictionary_skip').hide();
 
                         if (state.question.type == 'audio') {
                             $('#game_audio').show();
@@ -442,11 +459,19 @@
 
                 $('#game_pictionary_start').on('click', function() {
                     $('#game_pictionary_start').hide();
+                    $('#game_pictionary_correct').show();
+                    $('#game_pictionary_skip').show();
                     socket.emit('pictionary start');
                 });
                 $('#game_pictionary_correct').on('click', function() {
                     $('#game_pictionary ul li.active').addClass('correct');
                     socket.emit('pictionary correct');
+                });
+                $('#game_pictionary_end').on('click', function() {
+                    $('#game_pictionary_start').hide();
+                    $('#game_pictionary_correct').hide();
+                    $('#game_pictionary_skip').hide();
+                    socket.emit('pictionary end');
                 });
                 $('#game_pictionary_skip').on('click', function() {
                     $('#game_pictionary ul li.active').addClass('skip');
