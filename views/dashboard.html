@@ -285,7 +285,8 @@
         <audio src="sounds/timer_horn.wav" id="timer_horn" preload></audio>
         <audio src="sounds/cheer.wav" id="cheer" preload></audio>
         <audio src="sounds/laugh.wav" id="laugh" preload></audio>
-        <audio src="sounds/penalty.wav" id="penalty" preload></audio>
+        <audio src="sounds/penalty.wav" id="penalty_0" preload></audio>
+        <audio src="sounds/penalty2.wav" id="penalty_1" preload></audio>
 
         <audio src="sounds/awesome.wav" id="awesome" preload></audio>
         <audio src="sounds/nextround.wav" id="nextround" preload></audio>
@@ -887,7 +888,7 @@
                 })
                 .on('penalty', function (teamName) {
                     console.log("Penality for Team[" + teamName + "]");
-                    $('#penalty')[0].play();
+                    $('#penalty_' + parseInt(Math.floor(Math.random() * 2)))[0].play();
                     $('#penalty_popup span').html('PENALTY for ' + teamName + ' -1 point');
                     $('#penalty_popup').show(0, function() {
                         $(this).fadeOut(5000);
