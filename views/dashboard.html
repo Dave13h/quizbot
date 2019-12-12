@@ -11,6 +11,11 @@
         <link href="css/style.css" rel="stylesheet" />
 
         <style>
+            body {
+                background: url("images/background.png");
+                background-size: 100%;
+                text-shadow: 4px 4px 2px black;
+            }
             .fullscreen {
                 text-align: center;
                 position: absolute;
@@ -20,8 +25,8 @@
                 width: 100%;
                 box-shadow: inset 0 0 100px black;
                 padding: 50px;
-                background: url("images/tree.png") #384335 no-repeat bottom left;
-                background-size: 540px auto;
+                background: url("images/background.png");
+                background-size: 100%;
             }
 
             #presskey {
@@ -50,7 +55,7 @@
             #question div {
                 margin-top: 25px;
                 text-align: center;
-                height: 100%;
+                /*height: 100%;*/
                 width: 100%;
             }
 
@@ -87,14 +92,29 @@
                 text-align: center;
                 display: none;
             }
+            #teamoverlay .team_logo {
+                text-align: center;
+            }
+            #teamoverlay .team_logo  img{
+                background-color: #fff;
+            }
 
             #teamscores { display: none; text-align: center; color: #fff; }
             #teamscores h1 { font-size: 350%; }
-            #teamscorelist .teamscorelist { font-size: 200%; }
+            #teamscorelist { font-size: 200%; }
+            #teamscores span.green { color: #0f0; }
+            #teamscores span.red { color: #f00; }
 
             .title { display: none; }
             .title h1 { font-size: 350%; margin-bottom: 50px; }
+            .title h2 { font-size: 350%; margin-bottom: 50px; }
             .title p { text-align: center; color: #fff; font-size: 200%; }
+
+            .teamtable {
+                margin-top: 50px;
+                /*text-shadow: initial;*/
+                font-size: 200%;
+            }
 
             .table {
                 width: 100%;
@@ -103,14 +123,16 @@
                 margin-right: auto;
             }
             .table th {
-                background-color: #ccc;
-                color: #000;
+                color: #fff;
                 border-left: 2px solid #fff;
                 border-top: 2px solid #fff;
+                border-bottom: 0;
+                font-weight: bold;
             }
             .table td {
-                background-color: #999;
-                color: #000;
+                border-top: 0;
+                color: #fff;
+                padding: 15px;
                 border-left: 2px solid #fff;
                 border-top: 2px solid #fff;
                 border-bottom: 2px solid #fff;
@@ -123,20 +145,97 @@
               -webkit-animation-delay: 10s;
               animation-delay: 10s;
             }
+            .animated.delay-18s {
+              -webkit-animation-delay: 18s;
+              animation-delay: 18s;
+            }
 
             .animated.delay-intro {
-              -webkit-animation-delay: 80s;
-              animation-delay: 80s;
+              -webkit-animation-delay: 22s;
+              animation-delay: 22s;
             }
 
             .timer {
                 font-size: 450%;
             }
+
+            .catchphrase {
+                position: relative;
+            }
+
+            .catchphrase_hide {
+                content: '';
+                position: absolute;
+                width: 960px !important;
+                height: 540px;
+                background: url("images/catchphrase_1.png");
+                left: 430px;
+                animation: reveal 25.0s;
+                animation-play-state: paused;
+                top: 0;
+                margin-top: 0 !important;
+            }
+
+            @keyframes reveal {
+                from {transform: scale(1); }
+                to {transform: scale(0) };
+            }
+
+            #pictionary {
+                display: none;
+            }
+            #pictionary h1 {
+                text-align: center;
+                color: #fff;
+                font-size: 200%;
+            }
+            #pictionary h3 {
+                text-align: center;
+                color: #fff;
+            }
+
+            #pictionary div {
+                margin-top: 25px;
+                text-align: center;
+                /*height: 100%;*/
+                width: 100%;
+            }
+
+            #pictionary .canvas {
+                height: 700px;
+                width: 700px;
+                border: 2px solid #fff;
+                background-color: #fff;
+            }
+
+            #penalty_popup {
+                display: none;
+                background-color: #922;
+                border: 1px solid #955;
+                color: #fff;
+                position: absolute;
+                top: 0;
+                left: 0;
+                margin: 10px;
+            }
+            #penalty_popup span {
+                margin: 10px;
+            }
+
+            #title_rules h2 {
+                font-size: 450%;
+            }
+            .rules_list {
+                width: 685px;
+                margin: 50px;
+                margin-top: 200px;
+                font-size: 200%;
+            }
         </style>
     </head>
     <body>
         <header>
-            <h1 class="animated zoomInDown">D3R Xmas Charity Quiz 2018!</h1>
+            <h1 class="animated zoomInDown">D3R Xmas Charity Quiz 2019!</h1>
         </header>
 
         <div id="presskey">
@@ -151,9 +250,19 @@
 
         <section id="question" class="fullscreen"></section>
 
+        <section id="pictionary" class="fullscreen">
+            <h1>Round 4 - Pictionary</h1>
+            <h2>Team Name</h2>
+            <h3>Pictures</h3>
+            <h4>Score</h4>
+            <div>
+                <canvas id="pictionary_canvas" class="canvas" width="350" height="350"></canvas>
+            </div>
+        </section>
+
         <div style="display: none;">
             <img id="icon_music" class="animated zoomInDown delay-1s" src="images/icon_music.png" />
-            <div id="timer" class="animated zoomInDown delay-1s timer"><span>60</span> seconds</div>
+            <div id="timer" class="animated zoomInDown delay-1s timer" data-time="60"><span>60</span> seconds</div>
         </div>
 
         <section id="answer_correct" class="fullscreen">CORRECT!</section>
@@ -176,6 +285,8 @@
         <audio src="sounds/timer_horn.wav" id="timer_horn" preload></audio>
         <audio src="sounds/cheer.wav" id="cheer" preload></audio>
         <audio src="sounds/laugh.wav" id="laugh" preload></audio>
+        <audio src="sounds/penalty.wav" id="penalty_0" preload></audio>
+        <audio src="sounds/penalty2.wav" id="penalty_1" preload></audio>
 
         <audio src="sounds/awesome.wav" id="awesome" preload></audio>
         <audio src="sounds/nextround.wav" id="nextround" preload></audio>
@@ -188,20 +299,20 @@
         <audio src="music/intro.wav" id="music_intro" preload></audio>
         <audio src="music/we_are_the_champions.wav" id="music_outro" preload></audio>
 
-        <audio src="music/all_i_want_for_christmas.wav" id="music_all_i_want_for_christmas" preload></audio>
-        <audio src="music/do_they_know_its_christmas.wav" id="music_do_they_know_its_christmas" preload></audio>
-        <audio src="music/have_your_self_a_merry_little_christmas.wav" id="music_have_your_self_a_merry_little_christmas" preload></audio>
-        <audio src="music/i_wish_it_could_be_christmas_everyday.wav" id="music_i_wish_it_could_be_christmas_everyday" preload></audio>
-        <audio src="music/jingle_bells.wav" id="music_jingle_bells" preload></audio>
-        <audio src="music/last_chistmas.wav" id="music_last_chistmas" preload></audio>
-        <audio src="music/let_it_snow.wav" id="music_let_it_snow" preload></audio>
-        <audio src="music/merry_christmas_everybody.wav" id="music_merry_christmas_everybody" preload></audio>
-        <audio src="music/santa_claus_is_coming_to_town.wav" id="music_santa_claus_is_coming_to_town" preload></audio>
-        <audio src="music/white_christmas.wav" id="music_white_christmas" preload></audio>
+        <audio src="music/chorus_1.wav" id="music_chorus_1" preload></audio>
+        <audio src="music/chorus_2.wav" id="music_chorus_2" preload></audio>
+        <audio src="music/chorus_3.wav" id="music_chorus_3" preload></audio>
+        <audio src="music/chorus_4.wav" id="music_chorus_4" preload></audio>
+        <audio src="music/chorus_5.wav" id="music_chorus_5" preload></audio>
+        <audio src="music/chorus_6.wav" id="music_chorus_6" preload></audio>
+        <audio src="music/chorus_7.wav" id="music_chorus_7" preload></audio>
+        <audio src="music/chorus_8.wav" id="music_chorus_8" preload></audio>
+        <audio src="music/chorus_9.wav" id="music_chorus_9" preload></audio>
+        <audio src="music/chorus_10.wav" id="music_chorus_10" preload></audio>
 
         <div id="title_wait" class="title fullscreen">
-            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2018</h1>
-            <div class="animated zoomInDown delay-1s">
+            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2019</h1>
+            <div class="animated zoomInDown delay-2s">
                 <p class="animated pulse infinite">Please Wait</p>
             </div>
         </div>
@@ -210,7 +321,10 @@
             <h1 class="animated zoomInDown">Hack the game and change your score to win!</h1>
             <div class="animated zoomInDown delay-1s">
                 <p class="animated pulse infinite">
-                    Sourcecode available at<br>https://github.com/Dave13h/quizbot
+                    2019 Challenge - Security by obscurity!<br>
+                    No Source Code this time!<br>
+                    https://quiz.d3r.com/quizmaster<br>
+                    Good Luck!
                 </p>
             </div>
         </div>
@@ -221,10 +335,10 @@
         </div>
 
         <div id="title_intro" class="title fullscreen">
-            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2018</h1>
-            <div class="animated zoomInDown delay-10s">
+            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2019</h1>
+            <div class="animated zoomInDown delay-18s">
                 <h2>Teams</h2>
-                <table class="table is-bordered is-centered" cellspacing="2">
+                <table class="teamtable table is-bordered is-centered" cellspacing="2">
                     <thead>
                         <tr>
                             <th>Turkeys</th>
@@ -237,44 +351,49 @@
                     <tbody>
                         <tr>
                             <td>
-                                Dom<br>
-                                James<br>
-                                Kevin<br>
-                                Adam
+                                Oliver<br />
+                                Stuart H<br />
+                                Jason<br />
+                                Mark W<br />
+                                Joe B<br />
+                                Rob
                             </td>
 
                             <td>
-                                Dave S<br>
-                                Mat<br>
-                                Joe<br>
-                                Dave F
+                                Lexi<br />
+                                Alfi<br />
+                                Sean<br />
+                                Dale<br />
+                                Tamas<br />
+                                Jahidul
                             </td>
 
                             <td>
-                                Stuart L<br>
-                                Joe B<br>
-                                Phil<br>
-                                Alfi
+                                Roberto<br />
+                                Lynton<br />
+                                James<br />
+                                Mark S<br />
+                                Joe B
                             </td>
 
                             <td>
-                                Lynton<br>
-                                Roberto<br>
-                                Tamas<br>
-                                Dan B
+                                Brett<br />
+                                Adam<br />
+                                David F<br />
+                                Joe A<br />
+                                Dan<br />
+                                Sara
                             </td>
 
                             <td>
-                                Brett<br>
-                                Neil<br>
-                                Sean<br>
-                                Ronan<br>
-                                Mark W
+                                Ronan<br />
+                                Dom<br />
+                                Neil<br />
+                                Kevin<br />
                             </td>
                         </tr>
                     </tbody>
                 </table>
-
             </div>
 
             <div class="animated zoomInDown delay-intro" style="margin-top: 20px;">
@@ -286,15 +405,126 @@
             </div>
         </div>
 
+        <div id="title_teams" class="title fullscreen">
+            <h2>Teams</h2>
+            <table class="teamtable table is-bordered is-centered" cellspacing="2">
+                <thead>
+                    <tr>
+                        <th>Turkeys</th>
+                        <th>Sprouts</th>
+                        <th>Spuds</th>
+                        <th>Puddings</th>
+                        <th>Roasters</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            Oliver<br />
+                            Stuart H<br />
+                            Jason<br />
+                            Mark W<br />
+                            Joe B<br />
+                            Rob
+                        </td>
+
+                        <td>
+                            Lexi<br />
+                            Alfi<br />
+                            Sean<br />
+                            Dale<br />
+                            Tamas<br />
+                            Jahidul
+                        </td>
+
+                        <td>
+                            Roberto<br />
+                            Lynton<br />
+                            James<br />
+                            Mark S<br />
+                            Joe B
+                        </td>
+
+                        <td>
+                            Brett<br />
+                            Adam<br />
+                            David F<br />
+                            Joe A<br />
+                            Dan<br />
+                            Sara
+                        </td>
+
+                        <td>
+                            Ronan<br />
+                            Dom<br />
+                            Neil<br />
+                            Kevin<br />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="title_rules" class="title fullscreen">
+            <h2>QUIZ RULES</h2>
+
+            <ol class="rules_list">
+                <li>NO INTERNET SEARCHES</li>
+                <li>NO INTERNET SEARCHES</li>
+                <li>NO INTERNET SEARCHES</li>
+            </ol>
+        </div>
+
+        <div id="title_rounds" class="title fullscreen">
+            <h2>The Quiz - 7 Rounds</h2>
+
+            <table class="teamtable table is-bordered is-centered" cellspacing="2">
+                <tbody>
+                    <tr>
+                        <td style="text-align: left;">1. D3R and Clients</td>
+                        <td>Buzz in</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">2. Movie Quotes</td>
+                        <td>Buzz in</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">3. Catchphrase</td>
+                        <td>Buzz in</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">4. Pictionary</td>
+                        <td>Each team takes a turn - draw</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">5. Sing that Chorus</td>
+                        <td>Buzz in</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">6. Question of sport</td>
+                        <td>Each team takes a turn - act/talk</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">7. Beat the buzzer </td>
+                        <td>Buzz in</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
         <div id="teambuzzers" style="display: none;"></div>
+
+        <div id="penalty_popup">
+            <span>Penalty</span>
+        </div>
 
         <script src="/socket.io/socket.io.js"></script>
         <script src="js/jquery-1.11.1.js"></script>
 
         <script>
             $(function () {
-                var teams = [];
-                var timerId, timerTimer;
+                var teams = [], logos = [];
+                var timerId, timerTimer, questionType;
 
                 // Mmmm shimmy
                 function toggleFullScreen() {
@@ -346,6 +576,7 @@
                     $('header').hide();
                     $('section').hide();
                     $('.title').hide();
+                    $('#pictionary').hide();
                     $('#question').html('');
 
                     $('#question')
@@ -356,6 +587,7 @@
                             .html(msg.question.title)
                     );
 
+                    questionType = msg.question.type;
                     switch (msg.question.type) {
                         case 'timer':
                         case 'text':
@@ -371,12 +603,40 @@
                             );
 
                             if (msg.question.type == 'timer') {
-                                let timer = $('#timer').clone();
+                                var timer = $('#timer').clone();
                                 timerId = "timer_" + Math.floor(Math.random() * 1000);
-                                $(timer).attr("id", timerId);
-                                $(timer).show();
+                                $(timer).attr("id", timerId)
+                                        .attr("data-time", msg.question.timer)
+                                        .show(msg.question.timer);
                                 $('#question div').append(timer);
+                                $('span', timer).html(msg.question.timer);
                             }
+                            break;
+
+                        case 'catchphrase':
+                            $('#question').append(
+                                $('<div />').addClass('qhead').append(
+                                    $('<div />').addClass('catchphrase').append(
+                                        $('<img />')
+                                            .addClass('content')
+                                            .prop('src', '/images/' + msg.question.image)
+                                    ).append(
+                                        $('<div />').addClass('catchphrase_hide')
+                                    )
+                                )
+                            );
+
+                            var timer = $('#timer').clone();
+                            timerId = "timer_" + Math.floor(Math.random() * 1000);
+                            $(timer).attr("id", timerId)
+                                    .attr("data-time", msg.question.timer)
+                                    .show(msg.question.timer);
+                            $('#question div.qhead').append(timer);
+                            $('span', timer).html(msg.question.timer);
+                            break;
+
+                        case 'pictionary':
+                            // Done in "pictionary init"
                             break;
 
                         case 'audio':
@@ -389,6 +649,64 @@
                     $('#question').show();
                 });
 
+                // ------------------------------------------------------------
+                // Pictionary
+                // ------------------------------------------------------------
+                var canvasId  = 'pictionary_canvas',
+                    canvas    = document.getElementById(canvasId),
+                    canvasCtx = canvas.getContext("2d"),
+                    canvasW   = 350,
+                    canvasH   = 350; // Must match incoming canvas data!
+                socket.on('pictionary init', function (team, totalQuestions, timerVal) {
+                    $('section').hide();
+                    $('#pictionary').show();
+                    $('#pictionary h2').html("Team " + team);
+                    $('#pictionary h3').html("<span>0</span> of " + totalQuestions + " pictures");
+                    $('#pictionary h4').html("<span>0</span> Correct Answer(s)");
+
+                    canvasCtx.clearRect(0, 0, canvasW, canvasH);
+
+                    var timer = $('#timer').clone();
+                    timerId = "timer_" + Math.floor(Math.random() * 1000);
+                    $(timer).attr("id", timerId)
+                            .attr('data-time', timerVal)
+                            .show();
+                    $('#pictionary div').append(timer);
+                    $('#' + timerId + ' span').html(timerVal);
+                })
+                .on('pictionary start', function () {
+                    timerTimer = setInterval(timerRun, 1000);
+                })
+                .on('pictionary end', function () {
+                    clearInterval(timerTimer);
+                    $('#' + timerId).remove();
+                })
+                .on('pictionary active', function (active, score) {
+                    $('#pictionary h3 span').html(parseInt(active) + 1);
+                    $('#pictionary h4 span').html(score);
+                    canvasCtx.clearRect(0, 0, canvasW, canvasH);
+                })
+                .on('pictionary update', function(data) {
+                    canvasCtx.beginPath();
+                        canvasCtx.moveTo(data.x1, data.y1);
+                        canvasCtx.lineTo(data.x2, data.y2);
+                        canvasCtx.strokeStyle = data.c;
+                        canvasCtx.lineWidth = data.s;
+                        canvasCtx.stroke();
+                    canvasCtx.closePath();
+                })
+                .on('pictionary clear', function(data) {
+                    canvasCtx.clearRect(0, 0, canvasW, canvasH);
+                })
+                .on('pictionary fill', function(data) {
+                    canvasCtx.fillStyle = data.c;
+                    canvasCtx.fillRect(0, 0, canvasW, canvasH);
+                    canvasCtx.fillStyle = '#fff';
+                })
+
+                // ------------------------------------------------------------
+                // Timer
+                // ------------------------------------------------------------
                 function timerRun () {
                     let time = parseInt($('#' + timerId + ' span').html());
                     --time;
@@ -409,15 +727,25 @@
                     switch (event.action) {
                         case 'start':
                             timerTimer = setInterval(timerRun, 1000);
+                            if (questionType == 'catchphrase') {
+                                $('#question div.catchphrase_hide').css('animation-play-state', 'running');
+                            }
                             break;
 
                         case 'pause':
                             clearInterval(timerTimer);
+                            if (questionType == 'catchphrase') {
+                                $('#question div.catchphrase_hide').css('animation-play-state', 'paused');
+                            }
                             break;
 
                         case 'reset':
                             clearInterval(timerTimer);
-                            $('#' + timerId + ' span').html(60);
+
+                            $('#' + timerId + ' span').html($('#' + timerId).attr("data-time"));
+                            if (questionType == 'catchphrase') {
+                                $('#question div.catchphrase_hide').css('animation-play-state', 'running');
+                            }
                             break;
                     }
                 });
@@ -467,12 +795,25 @@
                         $('#' + event.sound)[0].play();
                     }
 
+                    if (questionType == 'catchphrase') {
+                        clearInterval(timerTimer);
+                        $('#question div.catchphrase_hide').css('animation-play-state', 'paused');
+                    }
+
                     $('#teamoverlay').html('').append(
                         $('<div />')
                             .addClass('animated')
                             .addClass('zoomInDown')
                             .html(event.team.name)
+                    ).append(
+                        $('<div />')
+                            .addClass('animated')
+                            .addClass('zoomInDown')
+                            .addClass('team_logo')
+                            .html(logos[event.team.id])
                     ).show();
+
+                    console.log(logos[event.team.id]);
                 })
                 .on('question wrong', function (event) {
                     $('#' + event.sound)[0].play();
@@ -482,9 +823,14 @@
                     wrongTimer = window.setTimeout(
                         function() {
                             $('#answer_wrong').hide();
+                            if (questionType == 'catchphrase') {
+                                timerTimer = setInterval(timerRun, 1000);
+                                $('#question div.catchphrase_hide').css('animation-play-state', 'running');
+                            }
                         },
                         3000
                     );
+
                 })
                 .on('question correct', function (event) {
                     window.clearTimeout(wrongTimer);
@@ -498,7 +844,7 @@
                     $('#teamoverlay').html('').hide();
                     $('#answer_losers').show();
                 })
-                .on('teams list', function(ts) {
+                .on('teams list', function (ts) {
                     teams = ts;
                     for (let t in teams) {
                         let team = teams[t];
@@ -519,7 +865,13 @@
                         updateTeamScores();
                     }
                 })
-                .on('teams scores', function(event) {
+                .on('teams logo', function (tid, data) {
+                    console.log("Got logo for Team[" + tid + "]");
+                    var img = new Image();
+                    img.src = data;
+                    logos[tid] = img;
+                })
+                .on('teams scores', function (event) {
                     teams = event.teams;
 
                     updateTeamScores();
@@ -533,22 +885,44 @@
                         },
                         3000
                     );
+                })
+                .on('penalty', function (teamName) {
+                    console.log("Penality for Team[" + teamName + "]");
+                    $('#penalty_' + parseInt(Math.floor(Math.random() * 2)))[0].play();
+                    $('#penalty_popup span').html('PENALTY for ' + teamName + ' -1 point');
+                    $('#penalty_popup').show(0, function() {
+                        $(this).fadeOut(5000);
+                    });
                 });
 
-                function updateTeamScores() {
+                var lastScores = [];
+                function updateTeamScores () {
                     $('#teamscorelist').empty();
                     var ts = teams;
                     ts.sort((a, b) => parseFloat(b.points) - parseFloat(a.points));
 
-                    var s = 1;
+                    var s = 500, size = 1;
                     for (let t in ts) {
+                        var diff = '';
+                        // The bodge is too hard on this one, doesn't work :P
+                        // if (lastScores[ts[t].name]) {
+                        //     diff = parseInt(ts[t].points) - parseInt(lastScores[ts[t].name]);
+                        //     if (diff > 0)
+                        //         diff = '<span class="green">+' + diff + '</span>';
+                        //     else if (diff < 0)
+                        //         diff = '<span class="red">' + diff + '</span>';
+                        //     else
+                        //         diff = '';
+                        // }
                         $('#teamscorelist').append(
-                            '<div class="animated zoomInDown delay-' + s +
-                            's" style="font-size: ' + (200 - (20 * s)) + '%;">' +
+                            '<div class="animated zoomInDown" style="font-size: ' + (250 - (12 * (size++))) +
+                                '%; animation-delay: ' + s + 'ms;">' +
                             ts[t].name + ' (' + ts[t].points +
-                            (ts[t].points == 1 ? ' point' : ' points') + ')</div>'
+                            (ts[t].points == 1 ? ' point' : ' points') + ') ' + diff + '</div>'
                         );
-                        s++;
+                        s += 200;
+
+                        lastScores[ts[t].name] = ts[t].points;
                     }
                 }
             });

@@ -86,6 +86,7 @@ class oTeam {
         this.answered = false;
         this.points   = 0;
         this.buzzer   = null;
+        this.logo     = null;
     }
 
     getId () {
@@ -98,6 +99,14 @@ class oTeam {
 
     setBuzzer (blob) {
         this.buzzer = blob;
+    }
+
+    getLogo () {
+        return this.logo;
+    }
+
+    setLogo (blob) {
+        this.logo = blob;
     }
 
     getName () {
@@ -141,6 +150,21 @@ class oQuestion {
         this.title  = data.title;
         this.text   = data.text;
         this.audio  = data.audio;
+        this.image  = data.image;
+
+        this.points  = 1;
+        if (!isNaN(data.points))
+            this.points = parseInt(data.points);
+
+        this.timer  = 60;
+        if (!isNaN(data.timer))
+            this.timer = parseInt(data.timer);
+
+        this.questions = [];
+        if (this.type == 'pictionary') {
+            this.team = data.team;
+            this.questions = data.questions;
+        }
     }
 
     getType () {
@@ -151,12 +175,32 @@ class oQuestion {
         return this.audio;
     }
 
+    getImage () {
+        return this.image;
+    }
+
     getTitle () {
         return this.title;
     }
 
+    getTeam () {
+        return this.team;
+    }
+
+    getQuestions () {
+        return this.questions;
+    }
+
+    getPoints() {
+        return this.points;
+    }
+
     getText () {
         return this.text;
+    }
+
+    getTimer () {
+        return this.timer;
     }
 }
 

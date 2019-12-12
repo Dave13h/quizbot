@@ -12,8 +12,8 @@ var express = require('express'),
     fs      = require('fs')
     objects = require('./objects');
 
-var port       = process.env.PORT  || 80,
-    portSecure = process.env.PORTS || 443;
+var port       = process.env.PORT  || 13080,
+    portSecure = process.env.PORTS || 13443;
 
 var credentials = {
     key: fs.readFileSync('./keys/key.pem'),
@@ -174,15 +174,43 @@ function notifyConnectionList (skipDash) {
     }
 }
 
+function notifyLogo (team, data) {
+    sDashboard.emit('teams logo', team, data);
+}
+
 sDashboard.on('connection', function (socket) {
     console.log('[SOCKET] Dashboard connected on socket: ' + socket.id);
+    for (let t in teams) {
+        let l = teams[t].getLogo();
+        if (!l)
+            continue;
+        sDashboard.emit('teams logo', t, l);
+    }
 });
 
+const QMPIN = 4576;
 sQuizMaster.on('connection', function (socket) {
     var qmid = null;
     console.log('[SOCKET] QM connected on socket: ' + socket.id);
 
-    socket.on('ident', function(id) {
+    socket.on('ident', function(pin, id) {
+        // Level 2 security!
+        if (!pin || pin.length != 4) {
+            socket.emit('bad auth', {'result': 'bad len'});
+            return;
+        } else if (isNaN(pin)) {
+            socket.emit('bad auth', {'result': 'malformed'});
+            return;
+        } else if (pin == "0000") {
+            socket.emit('bad auth', {'result': Math.round((Math.random()*9999))});
+            return;
+        } else if (pin == "1234") {
+            socket.emit('bad auth', {'result': 'Success... password is "password1"'});
+            return;
+        } else if (pin != QMPIN) {
+            socket.emit('bad auth', {'result': Math.abs(pin - QMPIN)});
+            return;
+        }
         qmid = ident('quizmaster', id, socket);
 
         let state = {
@@ -193,6 +221,10 @@ sQuizMaster.on('connection', function (socket) {
     });
 
     socket.on('disconnect', function () {
+        if (qmid == null) {
+            console.log('[SOCKET] QM [Un-Authed] disconnected');
+            return;
+        }
         console.log('[SOCKET] QM [' + qmid + '] disconnected');
         connections.quizmasters[qmid].setState('disconnected');;
     });
@@ -204,8 +236,37 @@ sQuizMaster.on('connection', function (socket) {
         notifyConnectionList();
     });
 
+    var activePictionaryQuestion = 0, pictionaryScore = 0;
     socket.on('question play', function (qid) {
         console.log('[SOCKET] QM [' + qmid + '] play question => ' + qid);
+
+        activeQuestion = qid;
+        questions[qid].played = true;
+
+        if (questions[qid].getType() == 'pictionary') {
+            activePictionaryQuestion = 0;
+            pictionaryScore = 0;
+
+            activeTeam = questions[qid].getTeam();
+
+            for (var c in connections.contestants) {
+                if (connections.contestants[c].getTeam() != activeTeam)
+                    continue;
+                connections.contestants[c].getSocket().emit('pictionary init', questions[qid].getQuestions());
+            }
+
+            sQuizMaster.emit(
+                'pictionary init',
+                questions[qid].getQuestions()
+            );
+            sDashboard.emit(
+                'pictionary init',
+                teamNames[activeTeam],
+                questions[qid].getQuestions().length,
+                questions[qid].getTimer()
+            );
+            return;
+        }
 
         activeTeam = -1;
         for (let t in teams) {
@@ -214,14 +275,91 @@ sQuizMaster.on('connection', function (socket) {
         sQuizMaster.emit('teams list', teams);
 
         sDashboard.emit('question play', {
-            round: "Round " + roundNo + "!", // @note(dave13h): not in use at the moment
+            round: "Round " + roundNo + "!",
             question: questions[qid]
         });
 
-        activeQuestion = qid;
-        questions[qid].played = true;
-
         sContestant.emit('question play');
+    });
+
+    socket.on('pictionary start', function () {
+        sDashboard.emit('pictionary start');
+        for (var c in connections.contestants) {
+            if (connections.contestants[c].getTeam() != activeTeam)
+                continue;
+            connections.contestants[c].getSocket().emit('pictionary start');
+        }
+    });
+
+    socket.on('pictionary end', function () {
+        sDashboard.emit('pictionary end', pictionaryScore, questions[activeQuestion].getQuestions().length);
+        sQuizMaster.emit('pictionary end');
+        sQuizMaster.emit('teams list', teams);
+        for (var c in connections.contestants) {
+            if (connections.contestants[c].getTeam() != activeTeam)
+                continue;
+            connections.contestants[c].getSocket().emit('wait');
+        }
+    });
+
+    socket.on('pictionary correct', function () {
+        var worth = questions[activeQuestion].getPoints();
+
+        teams[activeTeam].points += worth;
+        pictionaryScore += worth;
+        activePictionaryQuestion++;
+
+        console.log("[Pictionary] Correct Answer");
+
+        if (activePictionaryQuestion >= questions[activeQuestion].getQuestions().length) {
+            sDashboard.emit('pictionary end', pictionaryScore, questions[activeQuestion].getQuestions().length);
+            sQuizMaster.emit('pictionary end');
+            sQuizMaster.emit('teams list', teams);
+
+            for (var c in connections.contestants) {
+                if (connections.contestants[c].getTeam() != activeTeam)
+                    continue;
+                connections.contestants[c].getSocket().emit('wait');
+            }
+            return;
+        }
+
+        sQuizMaster.emit('pictionary active', activePictionaryQuestion);
+        sDashboard.emit('pictionary active', activePictionaryQuestion, pictionaryScore);
+
+        for (var c in connections.contestants) {
+            if (connections.contestants[c].getTeam() != activeTeam)
+                continue;
+            connections.contestants[c].getSocket().emit('pictionary active', activePictionaryQuestion);
+        }
+    });
+
+    socket.on('pictionary skip', function () {
+        activePictionaryQuestion++;
+
+        console.log("[Pictionary] Skip picture");
+
+        if (activePictionaryQuestion >= questions[activeQuestion].getQuestions().length) {
+            sDashboard.emit('pictionary end', pictionaryScore, questions[activeQuestion].getQuestions().length);
+            sQuizMaster.emit('pictionary end');
+            sQuizMaster.emit('teams list', teams);
+
+            for (var c in connections.contestants) {
+                if (connections.contestants[c].getTeam() != activeTeam)
+                    continue;
+                connections.contestants[c].getSocket().emit('wait');
+            }
+            return;
+        }
+
+        sQuizMaster.emit('pictionary active', activePictionaryQuestion);
+        sDashboard.emit('pictionary active', activePictionaryQuestion, pictionaryScore);
+
+        for (var c in connections.contestants) {
+            if (connections.contestants[c].getTeam() != activeTeam)
+                continue;
+            connections.contestants[c].getSocket().emit('pictionary active', activePictionaryQuestion);
+        }
     });
 
     socket.on('question audio play', function () {
@@ -238,14 +376,15 @@ sQuizMaster.on('connection', function (socket) {
         if (activeQuestion == -1)
             return;
 
-        if (questions[activeQuestion].type != 'timer')
+        if (questions[activeQuestion].type != 'timer' && questions[activeQuestion].type != 'catchphrase')
             return;
 
+        console.log('[SOCKET] QM [' + qmid + '] timer => ' + msg.action);
         sDashboard.emit('question timer', { action: msg.action });
     });
 
     socket.on('question correct', function (qid) {
-        teams[activeTeam].points++;
+        teams[activeTeam].points += questions[activeQuestion].getPoints();
 
         activeTeam = -1;
         for (let t in teams)
@@ -264,6 +403,11 @@ sQuizMaster.on('connection', function (socket) {
         for (let c in connections.contestants) {
             let con = connections.contestants[c],
                 team = teams[con.getTeam()];
+
+            if (!team) {
+                console.error("Invalid team connection:", con.getTeam());
+                continue;
+            }
 
             if (team.getAnswered())
                 continue;
@@ -317,12 +461,15 @@ sQuizMaster.on('connection', function (socket) {
     });
 
     socket.on('team score', function (team) {
+        var penalty = team.penalty || false;
         if (teams[team.id] == undefined) {
             return;
         }
 
         teams[team.id].setPoints(team.points);
         notifyConnectionList(); // @todo(dave13h): optimise
+        if (penalty)
+            sDashboard.emit('penalty', teams[team.id].getName());
     });
 });
 
@@ -336,7 +483,9 @@ sContestant.on('connection', function (socket) {
         if (!connections.contestants[cid].hasTeam()) {
             socket.emit('teams list', teams);
         } else {
-            if (activeQuestion == -1)
+            socket.emit('team logo', teams[connections.contestants[cid].getTeam()].getLogo());
+            socket.emit('team buzzer', teams[connections.contestants[cid].getTeam()].getBuzzer());
+            if (activeQuestion == -1 || questions[activeQuestion].type == 'pictionary')
                 socket.emit('wait');
         }
     });
@@ -381,6 +530,19 @@ sContestant.on('connection', function (socket) {
         notifyConnectionList();
     });
 
+    socket.on('team logo', function (data) {
+        if (!data)
+            return;
+
+        var c = connections.contestants[cid];
+        if (!c.hasTeam())
+            return;
+
+        var team = teams[c.getTeam()];
+        team.setLogo(data);
+        notifyLogo(c.getTeam(), data);
+    });
+
     socket.on('buzzer send', function (cid) {
         if (!connections.contestants[cid].hasTeam()) {
             console.log('[BUZZER] ' + cid + ' is not on a team');
@@ -408,8 +570,23 @@ sContestant.on('connection', function (socket) {
         }
     });
 
+    socket.on('pictionary pen', function (data) {
+        if (!data)
+            return;
+
+        sDashboard.emit('pictionary update', data);
+    })
+    .on('pictionary clear', function () {
+        sDashboard.emit('pictionary clear');
+    })
+    .on('pictionary fill', function (data) {
+        if (!data)
+            return;
+        sDashboard.emit('pictionary fill', data);
+    });
+
     socket.on('disconnect', function () {
-        console.log('[SOCKET] contestant [' + cid + '] disconnected');
+        console.log('[SOCKET] Contestant [' + cid + '] disconnected');
         if (connections.contestants[cid])
             connections.contestants[cid].setState('disconnected');
         notifyConnectionList();

@@ -1,7 +1,7 @@
 {
-    "name": "ChatBot",
-    "version": "0.0.1",
-    "description": "Quit Bot",
+    "name": "QuizBot",
+    "version": "1.1.0",
+    "description": "Quiz Bot",
     "license": "BSD-2-Clause",
     "repository": {
         "type": "git",
