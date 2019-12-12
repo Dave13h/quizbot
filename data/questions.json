@@ -166,7 +166,8 @@
                 "Newsletter",
                 "Suitcase",
                 "Holly"
-            ]
+            ],
+            "timer": 120
         },
         {
             "type": "pictionary",
@@ -178,7 +179,8 @@
                 "Bicycle",
                 "Bowtie",
                 "Teapot"
-            ]
+            ],
+            "timer": 120
         },
         {
             "type": "pictionary",
@@ -190,7 +192,8 @@
                 "Doghouse",
                 "Pineapple",
                 "Snowball"
-            ]
+            ],
+            "timer": 120
         },
         {
             "type": "pictionary",
@@ -202,7 +205,8 @@
                 "Fireside",
                 "Yoda",
                 "Jaws"
-            ]
+            ],
+            "timer": 120
         },
         {
             "type": "pictionary",
@@ -214,7 +218,8 @@
                 "Gingerbread man",
                 "ladybird",
                 "toaster"
-            ]
+            ],
+            "timer": 120
         },
 
 
@@ -222,61 +227,61 @@
             "type": "audio",
             "title": "Round 5 - Sing That Chorus",
             "text": "I will survive - Gloria Gaynor",
-            "audio": "i_will_survive_gloria_gaynor"
+            "audio": "chorus_1"
         },
         {
             "type": "audio",
             "title": "Round 5 - Sing That Chorus",
             "text": "Highway to Hell - ACDC",
-            "audio": "highway_to_hell_acdc"
+            "audio": "chorus_2"
         },
         {
             "type": "audio",
             "title": "Round 5 - Sing That Chorus",
             "text": "Let it go - Frozen",
-            "audio": "let_it_go_frozen"
+            "audio": "chorus_3"
         },
         {
             "type": "audio",
             "title": "Round 5 - Sing That Chorus",
             "text": "I wanna dance with somebody - Whitney Houston",
-            "audio": "i_wanna_dance_with_somebody_whitney_houston"
+            "audio": "chorus_4"
         },
         {
             "type": "audio",
             "title": "Round 5 - Sing That Chorus",
             "text": "Livin on a prayer - Bon Jovi",
-            "audio": "livin_on_a_prayer_bon_jovi"
+            "audio": "chorus_5"
         },
         {
             "type": "audio",
             "title": "Round 5 - Sing That Chorus",
             "text": "Eye of the Tiger - Survivor",
-            "audio": "eye_of_the_tiger_survivor"
+            "audio": "chorus_6"
         },
         {
             "type": "audio",
             "title": "Round 5 - Sing That Chorus",
             "text": "Angels - Robbie Williams",
-            "audio": "angels_robbie_williams"
+            "audio": "chorus_7"
         },
         {
             "type": "audio",
             "title": "Round 5 - Sing That Chorus",
             "text": "Candle in the wind - Elton John",
-            "audio": "candle_in_the_wind_elton_john"
+            "audio": "chorus_8"
         },
         {
             "type": "audio",
             "title": "Round 5 - Sing That Chorus",
             "text": "Bohemian Rhapsody - Queen",
-            "audio": "bohemian_rhapsody_queen"
+            "audio": "chorus_9"
         },
         {
             "type": "audio",
             "title": "Round 5 - Sing That Chorus",
             "text": "Dancing Queen - Abba",
-            "audio": "dancing_queen_abba"
+            "audio": "chorus_10"
         },
 
 

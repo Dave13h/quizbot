@@ -201,6 +201,12 @@ sQuizMaster.on('connection', function (socket) {
         } else if (isNaN(pin)) {
             socket.emit('bad auth', {'result': 'malformed'});
             return;
+        } else if (pin == "0000") {
+            socket.emit('bad auth', {'result': Math.round((Math.random()*9999))});
+            return;
+        } else if (pin == "1234") {
+            socket.emit('bad auth', {'result': 'Success... password is "password1"'});
+            return;
         } else if (pin != QMPIN) {
             socket.emit('bad auth', {'result': Math.abs(pin - QMPIN)});
             return;
@@ -297,8 +303,10 @@ sQuizMaster.on('connection', function (socket) {
     });
 
     socket.on('pictionary correct', function () {
-        teams[activeTeam].points++;
-        pictionaryScore++;
+        var worth = questions[activeQuestion].getPoints();
+
+        teams[activeTeam].points += worth;
+        pictionaryScore += worth;
         activePictionaryQuestion++;
 
         console.log("[Pictionary] Correct Answer");
@@ -329,7 +337,7 @@ sQuizMaster.on('connection', function (socket) {
     socket.on('pictionary skip', function () {
         activePictionaryQuestion++;
 
-        console.log("[Pictionary] Skip Answer");
+        console.log("[Pictionary] Skip picture");
 
         if (activePictionaryQuestion >= questions[activeQuestion].getQuestions().length) {
             sDashboard.emit('pictionary end', pictionaryScore, questions[activeQuestion].getQuestions().length);
@@ -376,7 +384,7 @@ sQuizMaster.on('connection', function (socket) {
     });
 
     socket.on('question correct', function (qid) {
-        teams[activeTeam].points++;
+        teams[activeTeam].points += questions[activeQuestion].getPoints();
 
         activeTeam = -1;
         for (let t in teams)

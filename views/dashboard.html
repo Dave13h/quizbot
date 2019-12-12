@@ -299,16 +299,16 @@
         <audio src="music/intro.wav" id="music_intro" preload></audio>
         <audio src="music/we_are_the_champions.wav" id="music_outro" preload></audio>
 
-        <audio src="music/all_i_want_for_christmas.wav" id="music_all_i_want_for_christmas" preload></audio>
-        <audio src="music/do_they_know_its_christmas.wav" id="music_do_they_know_its_christmas" preload></audio>
-        <audio src="music/have_your_self_a_merry_little_christmas.wav" id="music_have_your_self_a_merry_little_christmas" preload></audio>
-        <audio src="music/i_wish_it_could_be_christmas_everyday.wav" id="music_i_wish_it_could_be_christmas_everyday" preload></audio>
-        <audio src="music/jingle_bells.wav" id="music_jingle_bells" preload></audio>
-        <audio src="music/last_chistmas.wav" id="music_last_chistmas" preload></audio>
-        <audio src="music/let_it_snow.wav" id="music_let_it_snow" preload></audio>
-        <audio src="music/merry_christmas_everybody.wav" id="music_merry_christmas_everybody" preload></audio>
-        <audio src="music/santa_claus_is_coming_to_town.wav" id="music_santa_claus_is_coming_to_town" preload></audio>
-        <audio src="music/white_christmas.wav" id="music_white_christmas" preload></audio>
+        <audio src="music/chorus_1.wav" id="music_chorus_1" preload></audio>
+        <audio src="music/chorus_2.wav" id="music_chorus_2" preload></audio>
+        <audio src="music/chorus_3.wav" id="music_chorus_3" preload></audio>
+        <audio src="music/chorus_4.wav" id="music_chorus_4" preload></audio>
+        <audio src="music/chorus_5.wav" id="music_chorus_5" preload></audio>
+        <audio src="music/chorus_6.wav" id="music_chorus_6" preload></audio>
+        <audio src="music/chorus_7.wav" id="music_chorus_7" preload></audio>
+        <audio src="music/chorus_8.wav" id="music_chorus_8" preload></audio>
+        <audio src="music/chorus_9.wav" id="music_chorus_9" preload></audio>
+        <audio src="music/chorus_10.wav" id="music_chorus_10" preload></audio>
 
         <div id="title_wait" class="title fullscreen">
             <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2019</h1>
@@ -904,15 +904,16 @@
                     var s = 500, size = 1;
                     for (let t in ts) {
                         var diff = '';
-                        if (lastScores[ts[t].name]) {
-                            diff = parseInt(ts[t].points) - parseInt(lastScores[ts[t].name]);
-                            if (diff > 0)
-                                diff = '<span class="green">+' + diff + '</span>';
-                            else if (diff < 0)
-                                diff = '<span class="red">' + diff + '</span>';
-                            else
-                                diff = '';
-                        }
+                        // The bodge is too hard on this one, doesn't work :P
+                        // if (lastScores[ts[t].name]) {
+                        //     diff = parseInt(ts[t].points) - parseInt(lastScores[ts[t].name]);
+                        //     if (diff > 0)
+                        //         diff = '<span class="green">+' + diff + '</span>';
+                        //     else if (diff < 0)
+                        //         diff = '<span class="red">' + diff + '</span>';
+                        //     else
+                        //         diff = '';
+                        // }
                         $('#teamscorelist').append(
                             '<div class="animated zoomInDown" style="font-size: ' + (250 - (12 * (size++))) +
                                 '%; animation-delay: ' + s + 'ms;">' +

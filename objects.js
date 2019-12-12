@@ -151,6 +151,11 @@ class oQuestion {
         this.text   = data.text;
         this.audio  = data.audio;
         this.image  = data.image;
+
+        this.points  = 1;
+        if (!isNaN(data.points))
+            this.points = parseInt(data.points);
+
         this.timer  = 60;
         if (!isNaN(data.timer))
             this.timer = parseInt(data.timer);
@@ -184,6 +189,10 @@ class oQuestion {
 
     getQuestions () {
         return this.questions;
+    }
+
+    getPoints() {
+        return this.points;
     }
 
     getText () {
