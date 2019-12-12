@@ -138,7 +138,7 @@ class oTeam {
     }
 
     setPoints (points) {
-        this.points = points;
+        this.points = parseInt(points);
     }
 }
 

@@ -303,18 +303,18 @@ Enjoy
                         console.log($(this).data('tid'));
                         var $team = $('.teamscore[data-tid=' + $(this).data('tid') + ']');
                         console.log($team.val());
-                        $team.val($team.val() - 1);
+                        $team.val(parseInt($team.val()) - 1);
 
                         // Oooh look at this! the Quizmaster can manipulate the scores using this callback!
                         // What could this possibly mean?
-                        socket.emit('team score', { id: $(this).data('tid'), points: $team.val(), penalty: true});
+                        socket.emit('team score', { id: $(this).data('tid'), points: parseInt($team.val()), penalty: true});
                     });
 
                     $('.teamname').on('focusout', function() {
-                        socket.emit('team name', { id: $(this).data('tid'), name: $(this).val() });
+                        socket.emit('team name', { id: $(this).data('tid'), name: parseInt($(this).val()) });
                     });
                     $('.teamscore').on('focusout', function() {
-                        socket.emit('team score', { id: $(this).data('tid'), points: $(this).val() });
+                        socket.emit('team score', { id: $(this).data('tid'), points: parseInt($(this).val()) });
                     });
                 })
                 .on('questions list', function(questions){
@@ -351,6 +351,8 @@ Enjoy
                                 $('#game_timer_pause').hide();
                                 $('#game_timer_reset').hide();
 
+                                $('#game_skip').show();
+
                                 $('#game_pictionary').hide();
                                 $('#game_pictionary_end').hide();
                                 $('#game_pictionary_start').hide();
@@ -363,8 +365,6 @@ Enjoy
                                     $('#game_timer_start').show();
                                     $('#game_timer_pause').show();
                                     $('#game_timer_reset').show();
-                                } else {
-                                    $('#game_actions').show();
                                 }
 
                                 // #noshame
@@ -444,7 +444,7 @@ Enjoy
                         $('#active_state').show();
 
                         $('#game_skip').show();
-                        $('#game_actions').show();
+                        $('#game_actions').hide();
 
                         // There must be some important bits missing here, suspiciously like the
                         // questions list routine but much less code. I'm sure a peer review would
@@ -456,7 +456,8 @@ Enjoy
                         if (state.question.type == 'audio') {
                             $('#game_audio').show();
                         } else if (state.question.type == 'timer' ||
-                            state.question.type == 'catchphrase'
+                            state.question.type == 'catchphrase' ||
+                            state.question.type == 'pictionary'
                         ) {
                             $('#game_timer_start').show();
                             $('#game_timer_pause').show();

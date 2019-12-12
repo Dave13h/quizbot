@@ -250,8 +250,10 @@ sQuizMaster.on('connection', function (socket) {
             activeTeam = questions[qid].getTeam();
 
             for (var c in connections.contestants) {
-                if (connections.contestants[c].getTeam() != activeTeam)
+                if (connections.contestants[c].getTeam() != activeTeam) {
+                    connections.contestants[c].getSocket().emit('wait');
                     continue;
+                }
                 connections.contestants[c].getSocket().emit('pictionary init', questions[qid].getQuestions());
             }
 
@@ -293,6 +295,8 @@ sQuizMaster.on('connection', function (socket) {
 
     socket.on('pictionary end', function () {
         sDashboard.emit('pictionary end', pictionaryScore, questions[activeQuestion].getQuestions().length);
+        sDashboard.emit('teams scores', {teams: teams});
+
         sQuizMaster.emit('pictionary end');
         sQuizMaster.emit('teams list', teams);
         for (var c in connections.contestants) {
@@ -305,14 +309,16 @@ sQuizMaster.on('connection', function (socket) {
     socket.on('pictionary correct', function () {
         var worth = questions[activeQuestion].getPoints();
 
-        teams[activeTeam].points += worth;
-        pictionaryScore += worth;
+        teams[activeTeam].points += parseInt(worth);
+        pictionaryScore += parseInt(worth);
         activePictionaryQuestion++;
 
         console.log("[Pictionary] Correct Answer");
 
         if (activePictionaryQuestion >= questions[activeQuestion].getQuestions().length) {
             sDashboard.emit('pictionary end', pictionaryScore, questions[activeQuestion].getQuestions().length);
+            sDashboard.emit('teams scores', {teams: teams});
+
             sQuizMaster.emit('pictionary end');
             sQuizMaster.emit('teams list', teams);
 
@@ -341,6 +347,8 @@ sQuizMaster.on('connection', function (socket) {
 
         if (activePictionaryQuestion >= questions[activeQuestion].getQuestions().length) {
             sDashboard.emit('pictionary end', pictionaryScore, questions[activeQuestion].getQuestions().length);
+            sDashboard.emit('teams scores', {teams: teams});
+
             sQuizMaster.emit('pictionary end');
             sQuizMaster.emit('teams list', teams);
 
@@ -384,7 +392,10 @@ sQuizMaster.on('connection', function (socket) {
     });
 
     socket.on('question correct', function (qid) {
-        teams[activeTeam].points += questions[activeQuestion].getPoints();
+        if (activeTeam < 0)
+            return;
+
+        teams[activeTeam].points += parseInt(questions[activeQuestion].getPoints());
 
         activeTeam = -1;
         for (let t in teams)

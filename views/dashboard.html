@@ -101,7 +101,7 @@
 
             #teamscores { display: none; text-align: center; color: #fff; }
             #teamscores h1 { font-size: 350%; }
-            #teamscorelist { font-size: 200%; }
+            #teamscorelist, #outroteams { font-size: 200%; }
             #teamscores span.green { color: #0f0; }
             #teamscores span.red { color: #f00; }
 
@@ -571,6 +571,7 @@
                     wrongTimer = null;
 
                 socket.on('question play', function (msg) {
+                    nukeTimer();
                     stopAllSound();
 
                     $('header').hide();
@@ -658,6 +659,7 @@
                     canvasW   = 350,
                     canvasH   = 350; // Must match incoming canvas data!
                 socket.on('pictionary init', function (team, totalQuestions, timerVal) {
+                    nukeTimer();
                     $('section').hide();
                     $('#pictionary').show();
                     $('#pictionary h2').html("Team " + team);
@@ -707,6 +709,12 @@
                 // ------------------------------------------------------------
                 // Timer
                 // ------------------------------------------------------------
+                function nukeTimer() {
+                    if (timerTimer)
+                        clearInterval(timerTimer);
+                    if (timerId)
+                        $('#' + timerId).remove();
+                }
                 function timerRun () {
                     let time = parseInt($('#' + timerId + ' span').html());
                     --time;
@@ -757,6 +765,7 @@
 
                 socket.on('title show', function (event) {
                     stopAllSound();
+                    nukeTimer();
                     $('header').hide();
                     $('section').hide();
                     $('.title').hide();
@@ -872,6 +881,7 @@
                     logos[tid] = img;
                 })
                 .on('teams scores', function (event) {
+                    nukeTimer();
                     teams = event.teams;
 
                     updateTeamScores();
