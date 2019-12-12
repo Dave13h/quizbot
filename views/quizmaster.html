@@ -1,4 +1,41 @@
 <!doctype html>
+<!--
+______ ___________  __   __                      _____       _
+|  _  \____ | ___ \ \ \ / /                     |  _  |     (_)
+| | | |   / / |_/ /  \ V / _ __ ___   __ _ ___  | | | |_   _ _ ____
+| | | |   \ \    /   /   \| '_ ` _ \ / _` / __| | | | | | | | |_  /
+| |/ /.___/ / |\ \  / /^\ \ | | | | | (_| \__ \ \ \/' / |_| | |/ /
+|___/ \____/\_| \_| \/   \/_| |_| |_|\__,_|___/  \_/\_\\__,_|_/___|
+
+
+Hello mr adventurous person, are you looking for holes in this application to exploit?
+
+Well you are in luck! There is at least one security flaw (that I know of)
+in this interface you just need to try your luck.
+
+Whilst on your way down this abomination of a html file please refrain for judging the
+horrific crimes against CSS and HTML, I do not claim to be a Front End developer and
+there was little planning involved in the making of this and just like any good developer
+I threw this all together in a complete rush and bodged it until it works.
+
+Have I managed to distract you from actually finding the flaw in this enough? you are
+burning precious time reading this nonsense rather than trying to break the system and
+change your score eh?
+
+Seriously, you will want to look a lot further down.. *hint* the fun things happen in
+the javascript section ;)
+
+While I have you all here, anyone fancy contributing to this project for next year?
+This seriously needs some cleaning up and it would be nice to try and polish this up
+just a tad so that its not such a cobbled together hash of game code :P
+
+https://github.com/Dave13h/QuizBot - if its not public, shoot me a message.
+
+Enjoy
+
+-- Dave, the resident code bodger.
+
+-->
 <html>
     <head>
         <meta charset="UTF-8" />
@@ -10,6 +47,7 @@
         <link href="css/animate.css" rel="stylesheet" />
         <link href="css/style.css" rel="stylesheet" />
 
+        <!-- you would have thought I would have moved this into a separate file by now eh? -->
         <style>
             #questions_view, #teams_view, #sounds_view, #game_view, #titles_view { display: none; }
 
@@ -122,6 +160,7 @@
                 <button type="button" data-title="intro" data-audio="music_intro" class="btn">Intro</button>
                 <button type="button" data-title="teams" class="btn">Teams</button>
                 <button type="button" data-title="rules" class="btn">Rules</button>
+                <button type="button" data-title="rounds" class="btn">Rounds</button>
                 <button type="button" data-title="scores" class="btn">Scores</button>
                 <button type="button" data-title="break" class="btn">Break the game</button>
                 <button type="button" data-title="outro" data-audio="music_outro" class="btn">Outro</button>
@@ -164,10 +203,19 @@
             </div>
         </section>
 
+        <!--
+            totally legit javascript section,
+            keep going sir, you've survived the html section.
+            You are doing great! Don't let anyone ever tell you otherwise.
+        -->
         <script src="/socket.io/socket.io.js"></script>
         <script src="js/jquery-1.11.1.js"></script>
         <script>
           $(function () {
+                /**
+                 * Docblock... nah just kidding
+                 * @author Responsable Developer <dev@d3r.com>
+                 */
                 function selectView () {
                     if (!$(this).data('target'))
                         return;
@@ -180,9 +228,9 @@
                     $(this).removeClass('is-success').addClass('is-primary');
                 }
 
-                var pin    = prompt("Enter Pin"),
-                    socket = io.connect('/quizmaster'),
-                    qmid   = window.localStorage.getItem('qmid');
+                var pin    = prompt("Enter Pin"), // this looks interesting right?
+                    socket = io.connect('/quizmaster'), // This MUST be important... its a socket!
+                    qmid   = window.localStorage.getItem('qmid'); // ooh could be exploitable right?
 
                 socket
                 .on('connections list', function(contestants){
@@ -197,6 +245,7 @@
                             .addClass('is-error')
                             .html('<i class="icon close"></i>')
                             .on('click', function() {
+                                // Kill the other player... or don't it's your life, I can't tell you what to do.
                                 socket.emit('client forcedisconnect', v.cid);
                             })
                         var con = v.str + "<br/>";
@@ -215,6 +264,13 @@
                         let teamName = '<input type="text" class="input teamname" data-tid="' + k +
                             '" style="display: inline-block" value="' + v.name + '" />';
 
+                        // I feel like this should have constructed using a Jquery object, I'm sure
+                        // I had my reasons. It does make the code messier at least so you'll likely
+                        // waste your time reading this rahter than finding the exploit?
+                        // Yeah lets go with that, just to be slightly helpful, no the exploit isn't
+                        // in the next few lines :P
+                        // But I guess you could do something with the data-tid field right?
+                        // oh crap, did I remember to bounds check the team id lookup in the backend? :thinking:
                         let teamPoints = '<input type="text" class="input teamscore" data-tid="' + k +
                             '" style="display: inline-block" value="' + v.points + '" />';
                         let t = teamName + " => Points: " + teamPoints +
@@ -225,11 +281,32 @@
                         $('#teams').append(t);
                     });
 
+//
+// Mmm distraction cake...
+//           )
+//          (.)
+//          .|.
+//          l8J
+//          | |
+//      _.--| |--._
+//   .-';  ;`-'& ; `&.
+//  & &  ;  &   ; ;   \
+//  \      ;    &   &_/
+//   F"""---...---"""J
+//   | | | | | | | | |
+//   J | | | | | | | F
+//    `---.|.|.|.---'
+//       ... I hope you aren't using Tabs for indenting ;)
+//
+
                     $('.teampenalty').on('click', function() {
                         console.log($(this).data('tid'));
                         var $team = $('.teamscore[data-tid=' + $(this).data('tid') + ']');
                         console.log($team.val());
                         $team.val($team.val() - 1);
+
+                        // Oooh look at this! the Quizmaster can manipulate the scores using this callback!
+                        // What could this possibly mean?
                         socket.emit('team score', { id: $(this).data('tid'), points: $team.val(), penalty: true});
                     });
 
@@ -268,6 +345,7 @@
                                 $('#game_audio').hide();
                                 $('button[data-target="game"]').click();
 
+                                // This could have been a single command really, meh 'organic' code :P
                                 $('#game_audio').hide();
                                 $('#game_timer_start').hide();
                                 $('#game_timer_pause').hide();
@@ -289,6 +367,7 @@
                                     $('#game_actions').show();
                                 }
 
+                                // #noshame
                                 if (v.type == 'pictionary') {
                                     $('#active_state').hide();
                                     $('#game_actions').hide();
@@ -347,6 +426,11 @@
                     $('#game_pictionary_correct').hide();
                     $('#game_pictionary_skip').hide();
                 })
+
+                //
+                // The game state eh? obviously comes from the server, how can we trick it?
+                // Does the /dashboard use this too? oops, did I just leak the endpoint for the dashboard?
+                // Nothing exploitable there at all is there?
                 .on('game state', function(state) {
                     if ($('body').hasClass('curtain')) {
                         $('body').removeClass('curtain');
@@ -362,6 +446,9 @@
                         $('#game_skip').show();
                         $('#game_actions').show();
 
+                        // There must be some important bits missing here, suspiciously like the
+                        // questions list routine but much less code. I'm sure a peer review would
+                        // have spotted this.
                         $('#game_pictionary').hide();
                         $('#game_pictionary_end').hide();
                         $('#game_pictionary_skip').hide();
@@ -392,24 +479,37 @@
                     $('#game_actions').show();
                 })
                 .on('reconnect', function(msg) {
-                    socket.emit('ident', pin, qmid);
+                    socket.emit('ident', pin, qmid); // Whoa... the pin is in plain text IN THE PAGE?!
+                                                     // Is that important?
                     console.log("Reconnected", ret);
                 })
                 .on('connect', function(msg) {
+                    // Hmm, we 'ident' using the 'pin'. Interesting, what could that possibly mean?
                     socket.emit('ident', pin, qmid);
                     console.log("Connected");
                 })
                 .on('bad auth', function(msg) {
+                    // @todo(dave13h): remove this _useful_ debugging output *before* launch...
+                    //                  really wouldn't want prying eyes to see this would we.
                     console.log("Bad auth", msg);
-                    var c = confirm("bad pin");
+                    var c = confirm("bad pin"); // Block the reload incase we need to /debug/ the response
                     window.location.reload(false);
                 })
                 .on('id', function(id){
                     console.log('Got ID: ' + id);
                     qmid = id;
-                    window.localStorage.setItem('qmid', qmid);
+                    window.localStorage.setItem('qmid', qmid); // Careless or Carefree?
                 })
                 .on('canvas pen', function(data){
+                    // Interesting tidbit.. sending the entire canvas over to the server each time there
+                    // is a change is B-RU-TAL! Good way to DOS your node server, so we just send the changes
+                    // as they happen, the receiver of the event just simulates the same draw call that comes
+                    // over from the client.
+                    //
+                    // Even more interesting is that this routine isn't even used on the quizmaster side.
+                    //
+                    // Its just left over from the proof of concept and I've only literally just realised
+                    // I left this in here as I am typing this comment *sips coffee*
                     canvasCtx.beginPath();
                         canvasCtx.moveTo(data.x1, data.y1);
                         canvasCtx.lineTo(data.x2, data.y2);
@@ -447,6 +547,7 @@
                     socket.emit('question timer', {action: 'reset'});
                 });
 
+                // Are you sure you want to be all the way down here? Don't think there is anything useful here
                 $('#game_correct').on('click', function() {
                     socket.emit('question correct');
                     $('#game_actions').hide();
@@ -470,6 +571,7 @@
                     $('button[data-target="teams"]').click();
                 });
 
+                // Pictionary bits, yeah you can't break what is already broken. move along.
                 $('#game_pictionary_start').on('click', function() {
                     $('#game_pictionary_start').hide();
                     $('#game_pictionary_correct').show();
@@ -480,6 +582,7 @@
                     $('#game_pictionary ul li.active').addClass('correct');
                     socket.emit('pictionary correct');
                 });
+                // Look at all these event handlers, its miraculous that this all even works tbh
                 $('#game_pictionary_end').on('click', function() {
                     $('#game_pictionary_start').hide();
                     $('#game_pictionary_correct').hide();
@@ -495,6 +598,7 @@
                     socket.emit('sound play', $(this).data('sound'));
                 });
 
+                // Bring Dave a bottle of Ale for a hint ;)
                 $('#titles button').on('click', function() {
                     var title = {title: $(this).data('title'), audio: null};
                     if ($(this).data('audio')) {
@@ -502,7 +606,36 @@
                     }
                     socket.emit('title show', title);
                 });
+
+ // Well there you go, we are out of the valley javascript...
+ //
+ // Ahead of you is a stream...
+ // Adventurer: [n,e,s,w,look,pickup,help]
+ //                                  _
+ //                        .-.      / \        _
+ //            ^^         /   \    /^./\__   _/ \
+ //          _        .--'\/\_ \__/.      \ /    \  ^^  ___
+ //         / \_    _/ ^      \/  __  :'   /\/\  /\  __/   \
+ //        /    \  /    .'   _/  /  \   ^ /    \/  \/ .`'\_/\
+ //       /\/\  /\/ :' __  ^/  ^/    `--./.'  ^  `-.\ _    _:\ _
+ //      /    \/  \  _/  \-' __/.' ^ _   \_   .'\   _/ \ .  __/ \
+ //    /\  .-   `. \/     \ / -.   _/ \ -. `_/   \ /    `._/  ^  \
+ //   /  `-.__ ^   / .-'.--'    . /    `--./ .-'  `-.  `-. `.  -  `.
+ // @/        `.  / /      `-.   /  .-'   / .   .'   \    \  \  .-  \%
+ // @(88%@)@%% @)&@&(88&@.-_=_-=_-=_-=_-=_.8@% &@&&8(8%@%8)(8@%8 8%@)%
+ // @88:::&(&8&&8::JGS:&`.~-_~~-~~_~-~_~-~~=.'@(&%::::%@8&8)::&#@8::::
+ // `::::::8%@@%:::::@%&8:`.=~~-.~~-.~~=..~'8::::::::&@8:::::&8::::::'
+ //  `::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::'
+ //                     "Thankfully no one got hurt."
+ //                             - Some person in the news, probably
+
             });
         </script>
     </body>
+
+    <!--
+
+    Hope you all have a great Xmas and New Years! Good luck in 2020!
+                                                            - Dave :)
+    -->
 </html>

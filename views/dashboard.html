@@ -12,6 +12,8 @@
 
         <style>
             body {
+                background: url("images/background.png");
+                background-size: 100%;
                 text-shadow: 4px 4px 2px black;
             }
             .fullscreen {
@@ -99,15 +101,20 @@
 
             #teamscores { display: none; text-align: center; color: #fff; }
             #teamscores h1 { font-size: 350%; }
-            #teamscorelist .teamscorelist { font-size: 200%; }
+            #teamscorelist { font-size: 200%; }
             #teamscores span.green { color: #0f0; }
             #teamscores span.red { color: #f00; }
 
             .title { display: none; }
             .title h1 { font-size: 350%; margin-bottom: 50px; }
+            .title h2 { font-size: 350%; margin-bottom: 50px; }
             .title p { text-align: center; color: #fff; font-size: 200%; }
 
-            .teamtable { text-shadow: initial; }
+            .teamtable {
+                margin-top: 50px;
+                /*text-shadow: initial;*/
+                font-size: 200%;
+            }
 
             .table {
                 width: 100%;
@@ -116,14 +123,16 @@
                 margin-right: auto;
             }
             .table th {
-                background-color: #ccc;
-                color: #000;
+                color: #fff;
                 border-left: 2px solid #fff;
                 border-top: 2px solid #fff;
+                border-bottom: 0;
+                font-weight: bold;
             }
             .table td {
-                background-color: #999;
-                color: #000;
+                border-top: 0;
+                color: #fff;
+                padding: 15px;
                 border-left: 2px solid #fff;
                 border-top: 2px solid #fff;
                 border-bottom: 2px solid #fff;
@@ -242,7 +251,7 @@
         <section id="question" class="fullscreen"></section>
 
         <section id="pictionary" class="fullscreen">
-            <h1>Pictionary!</h1>
+            <h1>Round 4 - Pictionary</h1>
             <h2>Team Name</h2>
             <h3>Pictures</h3>
             <h4>Score</h4>
@@ -463,6 +472,43 @@
                 <li>NO INTERNET SEARCHES</li>
                 <li>NO INTERNET SEARCHES</li>
             </ol>
+        </div>
+
+        <div id="title_rounds" class="title fullscreen">
+            <h2>The Quiz - 7 Rounds</h2>
+
+            <table class="teamtable table is-bordered is-centered" cellspacing="2">
+                <tbody>
+                    <tr>
+                        <td style="text-align: left;">1. D3R and Clients</td>
+                        <td>Buzz in</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">2. Movie Quotes</td>
+                        <td>Buzz in</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">3. Catchphrase</td>
+                        <td>Buzz in</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">4. Pictionary</td>
+                        <td>Each team takes a turn - draw</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">5. Sing that Chorus</td>
+                        <td>Buzz in</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">6. Question of sport</td>
+                        <td>Each team takes a turn - act/talk</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">7. Beat the buzzer </td>
+                        <td>Buzz in</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <div id="teambuzzers" style="display: none;"></div>

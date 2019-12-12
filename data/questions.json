@@ -1,38 +1,117 @@
 {
     "questions": [
         {
-            "type": "pictionary",
-            "title": "Team Turkeys",
-            "team": 0,
-            "questions": [
-                "fish",
-                "horse",
-                "chair",
-                "house",
-                "banana"
-            ]
+            "type": "text",
+            "title": "Round 1 - D3R & Clients",
+            "text": "Name three new clients from 2019"
         },
         {
-            "type": "pictionary",
-            "title": "Team Sprouts",
-            "team": 1,
-            "questions": [
-                "car",
-                "tree",
-                "sea",
-                "uk",
-                "toilet"
-            ]
+            "type": "text",
+            "title": "Round 1 - D3R & Clients",
+            "text": "Name 4 clients who have a configurator"
         },
+        {
+            "type": "text",
+            "title": "Round 1 - D3R & Clients",
+            "text": "Name 3 new venues based in the Twickenham east stand"
+        },
+        {
+            "type": "text",
+            "title": "Round 1 - D3R & Clients",
+            "text": "Who am I: Founded in 1998, first location Cotswolds, locations now in New York, London, Miami, Amsterdam amongst others"
+        },
+        {
+            "type": "text",
+            "title": "Round 1 - D3R & Clients",
+            "text": "Which client has a logo that looks like a key"
+        },
+        {
+            "type": "text",
+            "title": "Round 1 - D3R & Clients",
+            "text": "Who am I : I have two founders, I was founded in 2011, we deliver your orders to your door within 48hrs"
+        },
+        {
+            "type": "text",
+            "title": "Round 1 - D3R & Clients",
+            "text": "Which iconic location featured on one of our sites  has been going since 1909?"
+        },
+        {
+            "type": "text",
+            "title": "Round 1 - D3R & Clients",
+            "text": "New team members 2019"
+        },
+        {
+            "type": "text",
+            "title": "Round 1 - D3R & Clients",
+            "text": "Team member who won the last sweepstake"
+        },
+        {
+            "type": "text",
+            "title": "Round 1 - D3R & Clients",
+            "text": "Name 3 out of the 4 oldest active clients we have at D3R - for a bonus point, what year did the relationship start?"
+        },
+
+
+        {
+            "type": "text",
+            "title": "Round 2 - Movie Quotes",
+            "text": "You is kind, you is smart, you is important"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Movie Quotes",
+            "text": "I’ll get you, my pretty, and your little dog too!"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Movie Quotes",
+            "text": "You can't handle the truth"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Movie Quotes",
+            "text": "Heeere's Johnny!"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Movie Quotes",
+            "text": "I feel the need..... the need for speed"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Movie Quotes",
+            "text": "Even though some of you are pretty thin, you all have fat hearts, and that’s what matters."
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Movie Quotes",
+            "text": "Though we adore men individually, we agree that as a group they're rather stupid."
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Movie Quotes",
+            "text": "Get busy livin' or get busy dyin'. (That's goddamn right.)"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Movie Quotes",
+            "text": "Everything you see—exists together in a delicate balance. While others search for what they can take, a true king searches for what he can give."
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Movie Quotes",
+            "text": "When the Grey Hair is dead, Magua will eat his heart. Before he dies, Magua will put his children under the knife, so the Grey Hair will know his seed is wiped out forever."
+        },
+
 
         {
             "type": "catchphrase",
-            "title": "Round 1 - CATCHPHRASE",
+            "title": "Round 3 - CATCHPHRASE",
             "image": "catchphrase_2.png"
         },
         {
             "type": "catchphrase",
-            "title": "Round 2 - CATCHPHRASE",
+            "title": "Round 3 - CATCHPHRASE",
             "image": "catchphrase_3.png"
         },
         {
@@ -42,306 +121,163 @@
         },
         {
             "type": "catchphrase",
-            "title": "Round 4 - CATCHPHRASE",
+            "title": "Round 3 - CATCHPHRASE",
             "image": "catchphrase_5.png"
         },
         {
             "type": "catchphrase",
-            "title": "Round 5 - CATCHPHRASE",
+            "title": "Round 3 - CATCHPHRASE",
             "image": "catchphrase_6.png"
         },
         {
             "type": "catchphrase",
-            "title": "Round 6 - CATCHPHRASE",
+            "title": "Round 3 - CATCHPHRASE",
             "image": "catchphrase_7.png"
         },
         {
             "type": "catchphrase",
-            "title": "Round 7 - CATCHPHRASE",
+            "title": "Round 3 - CATCHPHRASE",
             "image": "catchphrase_8.png"
         },
         {
             "type": "catchphrase",
-            "title": "Round 8 - CATCHPHRASE",
+            "title": "Round 3 - CATCHPHRASE",
             "image": "catchphrase_9.png"
         },
         {
             "type": "catchphrase",
-            "title": "Round 9 - CATCHPHRASE",
+            "title": "Round 3 - CATCHPHRASE",
             "image": "catchphrase_10.png"
         },
         {
             "type": "catchphrase",
-            "title": "Round 10 - CATCHPHRASE",
+            "title": "Round 30 - CATCHPHRASE",
             "image": "catchphrase_11.png"
         },
 
 
         {
-            "type": "text",
-            "title": "Round 1 - GEOGRAPHY",
-            "text": "Which two cities did the original Orient Express travel between?"
+            "type": "pictionary",
+            "title": "Team Turkeys",
+            "team": 0,
+            "questions": [
+                "Einstein",
+                "Clog",
+                "Newsletter",
+                "Suitcase",
+                "Holly"
+            ]
         },
         {
-            "type": "text",
-            "title": "Round 1 - GEOGRAPHY",
-            "text": "Where in Britain would you find a large waterwheel and popular tourist attraction called the Laxey Wheel?"
+            "type": "pictionary",
+            "title": "Team Sprouts",
+            "team": 1,
+            "questions": [
+                "Barbie",
+                "Tinsel",
+                "Bicycle",
+                "Bowtie",
+                "Teapot"
+            ]
         },
         {
-            "type": "text",
-            "title": "Round 1 - GEOGRAPHY",
-            "text": "Which American architect designed New York's Guggenheim Museum?"
+            "type": "pictionary",
+            "title": "Team Spuds",
+            "team": 2,
+            "questions": [
+                "Trump",
+                "Santa",
+                "Doghouse",
+                "Pineapple",
+                "Snowball"
+            ]
         },
         {
-            "type": "text",
-            "title": "Round 1 - GEOGRAPHY",
-            "text": "Teams must identify the European countries marked by each of the numbers, writing their answers onto the map in the spaces provided."
+            "type": "pictionary",
+            "title": "Team Puddings",
+            "team": 3,
+            "questions": [
+                "Scooby Do",
+                "Bauble",
+                "Fireside",
+                "Yoda",
+                "Jaws"
+            ]
         },
         {
-            "type": "text",
-            "title": "Round 1 - GEOGRAPHY",
-            "text": "The Sahara Desert extends into how many countries 5, 10 or 13?"
-        },
-        {
-            "type": "text",
-            "title": "Round 1 - GEOGRAPHY",
-            "text": "Near which Egyptian city would you visit the Colossi of Memnon?"
-        },
-        {
-            "type": "text",
-            "title": "Round 1 - GEOGRAPHY",
-            "text": "Please identify the South American flags"
-        },
-        {
-            "type": "text",
-            "title": "Round 1 - GEOGRAPHY",
-            "text": "What year was the Sydney Opera House completed? 1951, 1962, 1973"
-        },
-        {
-            "type": "text",
-            "title": "Round 1 - GEOGRAPHY",
-            "text": "In which country would you find the original Legoland?"
-        },
-        {
-            "type": "text",
-            "title": "Round 1 - GEOGRAPHY",
-            "text": "Approx how many euro's worth are put in the Trevi Fountain per day - 3000, 5000, 7000"
+            "type": "pictionary",
+            "title": "Team Roasters",
+            "team": 4,
+            "questions": [
+                "Captain Hook",
+                "Reindeer ",
+                "Gingerbread man",
+                "ladybird",
+                "toaster"
+            ]
         },
 
 
-
-
         {
-            "type": "text",
-            "title": "Round 2 - Food & Drink",
-            "text": "What is the main seasoning of Goulash, one of the national dishes of Hungary?"
+            "type": "audio",
+            "title": "Round 5 - Sing That Chorus",
+            "text": "I will survive - Gloria Gaynor",
+            "audio": "i_will_survive_gloria_gaynor"
         },
         {
-            "type": "text",
-            "title": "Round 2 - Food & Drink",
-            "text": "What is the name for the french classic fish soup?"
+            "type": "audio",
+            "title": "Round 5 - Sing That Chorus",
+            "text": "Highway to Hell - ACDC",
+            "audio": "highway_to_hell_acdc"
         },
         {
-            "type": "text",
-            "title": "Round 2 - Food & Drink",
-            "text": "What cocktail contains Tequila, Grenadine and orange juice"
+            "type": "audio",
+            "title": "Round 5 - Sing That Chorus",
+            "text": "Let it go - Frozen",
+            "audio": "let_it_go_frozen"
         },
         {
-            "type": "text",
-            "title": "Round 2 - Food & Drink",
-            "text": "One quarter of all the hops in the world are grown in which country?"
+            "type": "audio",
+            "title": "Round 5 - Sing That Chorus",
+            "text": "I wanna dance with somebody - Whitney Houston",
+            "audio": "i_wanna_dance_with_somebody_whitney_houston"
         },
         {
-            "type": "text",
-            "title": "Round 2 - Food & Drink",
-            "text": "Which fish is the traditional ingredient of the Scandinavian dish called Gravad Lax?"
+            "type": "audio",
+            "title": "Round 5 - Sing That Chorus",
+            "text": "Livin on a prayer - Bon Jovi",
+            "audio": "livin_on_a_prayer_bon_jovi"
         },
         {
-            "type": "text",
-            "title": "Round 2 - Food & Drink",
-            "text": "If you were eating this in South Africa what is it?"
+            "type": "audio",
+            "title": "Round 5 - Sing That Chorus",
+            "text": "Eye of the Tiger - Survivor",
+            "audio": "eye_of_the_tiger_survivor"
         },
         {
-            "type": "text",
-            "title": "Round 2 - Food & Drink",
-            "text": "If you saw ‘chou-fleur’ on a French menu which vegetable would the dish include?"
+            "type": "audio",
+            "title": "Round 5 - Sing That Chorus",
+            "text": "Angels - Robbie Williams",
+            "audio": "angels_robbie_williams"
         },
         {
-            "type": "text",
-            "title": "Round 2 - Food & Drink",
-            "text": "Which Swedish word beginning with the letter s is a term for a buffet-style meal with a selection of hot and cold dishes?"
+            "type": "audio",
+            "title": "Round 5 - Sing That Chorus",
+            "text": "Candle in the wind - Elton John",
+            "audio": "candle_in_the_wind_elton_john"
         },
         {
-            "type": "text",
-            "title": "Round 2 - Food & Drink",
-            "text": "What are the two main ingredients of a ‘Dark and Stormy’ cocktail?"
-        },
-
-
-
-
-        {
-            "type": "text",
-            "title": "Round 3 - D3R & Clients",
-            "text": "Name three new clients from 2018"
+            "type": "audio",
+            "title": "Round 5 - Sing That Chorus",
+            "text": "Bohemian Rhapsody - Queen",
+            "audio": "bohemian_rhapsody_queen"
         },
         {
-            "type": "text",
-            "title": "Round 3 - D3R & Clients",
-            "text": "How much did MV beat their target by for Black Friday to the nearest million? 1 million, 2 million or 3 million to the nearest million"
+            "type": "audio",
+            "title": "Round 5 - Sing That Chorus",
+            "text": "Dancing Queen - Abba",
+            "audio": "dancing_queen_abba"
         },
-        {
-            "type": "text",
-            "title": "Round 3 - D3R & Clients",
-            "text": "Who are Twickenhams new sponsor"
-        },
-        {
-            "type": "text",
-            "title": "Round 3 - D3R & Clients",
-            "text": "Who am I: My postcode is SW1X 9BZ, I was launched in 1985, my products are always wrapped in my signature navy blue and gold boxes and tied up with ribbon "
-        },
-        {
-            "type": "text",
-            "title": "Round 3 - D3R & Clients",
-            "text": "Can you name the 4 D3R pillars"
-        },
-        {
-            "type": "text",
-            "title": "Round 3 - D3R & Clients",
-            "text": "Who am I : My founder has been called the Indiana Jones of my industry, I was established in 1978 in Richmond London, I set up the interior design awards 20 years ago. "
-        },
-        {
-            "type": "text",
-            "title": "Round 3 - D3R & Clients",
-            "text": "What does ADM stand for"
-        },
-        {
-            "type": "text",
-            "title": "Round 3 - D3R & Clients",
-            "text": "Which client works with Crystal, Regent and Silversea"
-        },
-        {
-            "type": "text",
-            "title": "Round 3 - D3R & Clients",
-            "text": "Name one client which added a configurator this year"
-        },
-        {
-            "type": "text",
-            "title": "Round 3 - D3R & Clients",
-            "text": "Which client am I : I was established in 1983 in London, I have two founders, we have a factory in Hampshire"
-        },
-
-
-
-
-
-        {
-            "type": "text",
-            "title": "Round 4 - Languages",
-            "text": "Frohe Weihnachten"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Languages",
-            "text": "réinfhianna"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Languages",
-            "text": "Chants"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Languages",
-            "text": "La Neve"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Languages",
-            "text": "Pai Natal"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Languages",
-            "text": "Gaeaf"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Languages",
-            "text": "Komst"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Languages",
-            "text": "Gluhwein"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Languages",
-            "text": "enkeli"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Languages",
-            "text": "Genzai"
-        },
-
-
-
-
-
-        {
-            "type": "text",
-            "title": "Round 5 - Christmas Trivia",
-            "text": "In the song Twelve Days of Christmas, what is given on the 7th day?"
-        },
-        {
-            "type": "text",
-            "title": "Round 5 - Christmas Trivia",
-            "text": "What was the first year that the Rockefeller Center Christmas Tree was put up? 1933, 1949, 1952"
-        },
-        {
-            "type": "text",
-            "title": "Round 5 - Christmas Trivia",
-            "text": "Who created the first electric christmas tree light display?"
-        },
-        {
-            "type": "text",
-            "title": "Round 5 - Christmas Trivia",
-            "text": "Which of Santa's reindeer are named after the weather?"
-        },
-        {
-            "type": "text",
-            "title": "Round 5 - Christmas Trivia",
-            "text": "Which Christmas movie was based on a popular children's book written by Chris Van Allsburg in 1985?"
-        },
-        {
-            "type": "text",
-            "title": "Round 5 - Christmas Trivia",
-            "text": "Sir Henry Cole is credited with introducing the world to which popular Christmas tradition in 1843?"
-        },
-        {
-            "type": "text",
-            "title": "Round 5 - Christmas Trivia",
-            "text": "Which department store released a Xmas TV advertisement in 2015 featuring a young girl looking at the moon through a telescope?"
-        },
-        {
-            "type": "text",
-            "title": "Round 5 - Christmas Trivia",
-            "text": "Which country donates the Christmas tree at Trafalgar Square, London to Great Britain every year?"
-        },
-        {
-            "type": "text",
-            "title": "Round 5 - Christmas Trivia",
-            "text": "How many points does a snowflake have? 4,5,6"
-        },
-        {
-            "type": "text",
-            "title": "Round 5 - Christmas Trivia",
-            "text": "Which famous English composer created the soundtrack for the Christmas film 'The Snowman'?"
-        },
-
-
 
 
         {
@@ -352,122 +288,65 @@
         },
 
 
-
-
-
         {
             "type": "text",
             "title": "Round 7 - Beat the Buzzer",
-            "text": "Who is He-Man's nemesis?"
-        },
-        {
-            "type": "text",
-            "title": "Round 7 - Beat the Buzzer",
-            "text": "What singer is the subject of the movie 'Walk the Line'?"
+            "text": "Name the largest freshwater lake in the world? (By surface area)",
+            "points": 2
         },
         {
             "type": "text",
             "title": "Round 7 - Beat the Buzzer",
-            "text": "Who was the first woman to win a Nobel Prize?"
+            "text": "Who invented the rabies vaccination?",
+            "points": 2
         },
         {
             "type": "text",
             "title": "Round 7 - Beat the Buzzer",
-            "text": "What comet passes near Earth every 76 years?"
+            "text": "Which four British cities have underground rail systems?",
+            "points": 2
         },
         {
             "type": "text",
             "title": "Round 7 - Beat the Buzzer",
-            "text": "What comes in Pillbox, Panama, and Fez varieties?"
+            "text": "Name the actress whose career began at the age of 3, and who went on to star in films such as Contact, Maverick and The Silence of the Lambs?",
+            "points": 2
         },
         {
             "type": "text",
             "title": "Round 7 - Beat the Buzzer",
-            "text": "What nation is scheduled to host the 2022 World Cup?"
+            "text": "In what year did the Eurostar train service between Britain and France start running?",
+            "points": 2
         },
         {
             "type": "text",
             "title": "Round 7 - Beat the Buzzer",
-            "text": "On which real-life person was Count Dracula based? (According to many)"
+            "text": "If you had Lafite-Rothschild on your dinner table, what would it be?",
+            "points": 2
         },
         {
             "type": "text",
             "title": "Round 7 - Beat the Buzzer",
-            "text": "What beats 4 of a kind?"
+            "text": "What is the painting 'La Gioconda' more usually known as?",
+            "points": 2
         },
         {
             "type": "text",
             "title": "Round 7 - Beat the Buzzer",
-            "text": "Who had an affair with Queen Guinevere?"
+            "text": "Name the country where you would find the Cresta Run",
+            "points": 2
         },
         {
             "type": "text",
             "title": "Round 7 - Beat the Buzzer",
-            "text": "What is the common name of the mandible?"
-        },
-
-
-
-
-        {
-            "type": "audio",
-            "title": "Round 8 - Christmas Hits",
-            "text": "Last Christmas - Wham",
-            "audio": "last_chistmas"
+            "text": "By what nickname was the criminal Albert De Salvo better known?",
+            "points": 2
         },
         {
-            "type": "audio",
-            "title": "Round 8 - Christmas Hits",
-            "text": "All I want for Christmas is You - Maria Carey",
-            "audio": "all_i_want_for_christmas"
-        },
-        {
-            "type": "audio",
-            "title": "Round 8 - Christmas Hits",
-            "text": "Merry Xmas Everybody - Slade",
-            "audio": "merry_christmas_everybody"
-        },
-        {
-            "type": "audio",
-            "title": "Round 8 - Christmas Hits",
-            "text": "Santa Claus is coming to town - Bruce Springsteen",
-            "audio": "santa_claus_is_coming_to_town"
-        },
-        {
-            "type": "audio",
-            "title": "Round 8 - Christmas Hits",
-            "text": "Do they know it's Christmas - BandAid",
-            "audio": "do_they_know_its_christmas"
-        },
-        {
-            "type": "audio",
-            "title": "Round 8 - Christmas Hits",
-            "text": "Let it Snow, Let it Snow, Let it Snow - Frank Sinatra",
-            "audio": "let_it_snow"
-        },
-        {
-            "type": "audio",
-            "title": "Round 8 - Christmas Hits",
-            "text": "Have yourself a merry little Christmas - Orig. Judy Garland",
-            "audio": "have_your_self_a_merry_little_christmas"
-        },
-        {
-            "type": "audio",
-            "title": "Round 8 - Christmas Hits",
-            "text": "Jingle Bells",
-            "audio": "jingle_bells"
-        },
-        {
-            "type": "audio",
-            "title": "Round 8 - Christmas Hits",
-            "text": "White Christmas - Bing Crosby",
-            "audio": "white_christmas"
-        },
-        {
-            "type": "audio",
-            "title": "Round 8 - Christmas Hits",
-            "text": "i wish it could be christmas everyday - Wizzard",
-            "audio": "i_wish_it_could_be_christmas_everyday"
+            "type": "text",
+            "title": "Round 7 - Beat the Buzzer",
+            "text": "Divali, or the Festival of Lights, is a celebration in which religion?",
+            "points": 2
         }
     ]
 }
