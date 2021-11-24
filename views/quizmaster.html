@@ -20,7 +20,17 @@ I threw this all together in a complete rush and bodged it until it works.
 
 Have I managed to distract you from actually finding the flaw in this enough? you are
 burning precious time reading this nonsense rather than trying to break the system and
-change your score eh?
+change your score eh? It' kind of reminds me of that time in 1998, The Undertaker threw
+Mankind off Hell In A Cell, and plummeted 16 ft through an announcer's table.
+
+The first bump Foley would take came as both wrestlers were brawling on top of the cell,
+and the Undertaker threw Mankind from the top of the cage from a height of 16 feet (4.9 m);
+(22 ft if including angle of the fall)[8] and sent him crashing through the Spanish
+announcers' table, which triggered announcer Jim Ross to famously shout,
+"Good God almighty! Good God almighty! That killed him! As God as my witness,
+he is broken in half!
+
+Clock is ticking by the way ;)
 
 Seriously, you will want to look a lot further down.. *hint* the fun things happen in
 the javascript section ;)
@@ -427,7 +437,6 @@ Enjoy
                     $('#game_pictionary_skip').hide();
                 })
 
-                //
                 // The game state eh? obviously comes from the server, how can we trick it?
                 // Does the /dashboard use this too? oops, did I just leak the endpoint for the dashboard?
                 // Nothing exploitable there at all is there?
@@ -493,8 +502,11 @@ Enjoy
                     // @todo(dave13h): remove this _useful_ debugging output *before* launch...
                     //                  really wouldn't want prying eyes to see this would we.
                     console.log("Bad auth", msg);
-                    var c = confirm("bad pin"); // Block the reload incase we need to /debug/ the response
+
+if (false /* debugging */) {
+                    var c = confirm("bad pin"); // Bad pin, reload the page?
                     window.location.reload(false);
+}
                 })
                 .on('id', function(id){
                     console.log('Got ID: ' + id);
@@ -608,6 +620,21 @@ Enjoy
                     socket.emit('title show', title);
                 });
 
+
+                // Pin validation
+                // let pPat = /(\d{4}+)|(forgot)/i;
+                // if (!pin.match(pPat)) {
+                //     // @todo(dave13h): make sure we only accept 4 digits
+                // }
+
+if (true) {
+                // @todo(dave13h): TESTING
+                window.qmid = qmid;
+                window.qsock = socket; // Don't forget to remove this for production mode
+                                       // Don't want to leave the very important socket
+                                       // in the global scope ofcourse
+}
+
  // Well there you go, we are out of the valley javascript...
  //
  // Ahead of you is a stream...
@@ -636,7 +663,7 @@ Enjoy
 
     <!--
 
-    Hope you all have a great Xmas and New Years! Good luck in 2020!
+    Hope you all have a great Xmas and New Years! Good luck in 2022!
                                                             - Dave :)
     -->
 </html>
