@@ -2,105 +2,176 @@
     "questions": [
         {
             "type": "text",
-            "title": "Round 1 - Where am I if?",
-            "text": "A temple complex in Cambodia and is the largest religious monument in the world. Where am I?"
-        },
-        {
-            "type": "text",
-            "title": "Round 1 - Where am I if?",
-            "text": "I am standing about three miles west of the town of Amesbury, Wiltshire, England, admiring a megalithic structure that has puzzled scholars for millennia. What am I looking at?"
-        },
-        {
-            "type": "text",
-            "title": "Round 1 - Where am I if?",
-            "text": "I am standing on a remote Siberian hillside, looking at the remains of a devastating explosion that occurred in the early part of the twentieth century. Where am I?"
-        },
-        {
-            "type": "text",
-            "title": "Round 1 - Where am I if?",
-            "text": "I am a merchant of the late Minoan civilization, I have left my home of Crete to set up shop on this island in the center of the Aegean Sea. My life is ended suddenly by a catastrophic event that is quite possibly going to give rise to the myth of Atlantis. Where am I?"
-        },
-        {
-            "type": "text",
-            "title": "Round 1 - Where am I if?",
-            "text": "I am standing on top of one of the world's most famous rocks, a true Herculean Pillar, two countries have bickered over control of this small peninsula for many years. There is a theory that, in the remote past, this was the site of a gigantic waterfall, the like of which has not been seen on Earth again."
-        },
-        {
-            "type": "text",
-            "title": "Round 1 - Where am I if?",
-            "text": "I am standing on top of one of the oldest and biggest man made structures on the planet which is at least 6,352 km (3,948 miles) long. What is it?"
-        },
-        {
-            "type": "text",
-            "title": "Round 1 - Where am I if?",
-            "text": "A spooky ghost town that is abandoned due to a nuclear accident. Where am I?"
-        },
-        {
-            "type": "text",
-            "title": "Round 1 - Where am I if?",
-            "text": "The burial site of Carolus Magnus, King of the Franks, anxiously anticipating the next public exhibition of his relics, which occurs every seven years. Where am I?"
-        },
-        {
-            "type": "text",
-            "title": "Round 1 - Where am I if?",
-            "text": "The oldest and largest of three pyramids in Greater Cairo, Egypt. Where am I?"
-        },
-        {
-            "type": "text",
-            "title": "Round 1 - Where am I if?",
-            "text": "It sits on Borovitsky Hill, rising above the Moscow River in the centre of the city. Where am I?"
-        },
-
-        {
-            "type": "text",
-            "title": "Round 2 - D3R & Clients",
+            "title": "Round 1 - D3R & Clients",
             "text": "Name three new clients from 2021"
         },
         {
             "type": "text",
-            "title": "Round 2 - D3R & Clients",
+            "title": "Round 1 - D3R & Clients",
             "text": "What date was Black Friday in 2021"
         },
         {
             "type": "text",
-            "title": "Round 2 - D3R & Clients",
+            "title": "Round 1 - D3R & Clients",
             "text": "Name one client who has implemented Cylindo this year"
         },
         {
             "type": "text",
-            "title": "Round 2 - D3R & Clients",
+            "title": "Round 1 - D3R & Clients",
             "text": "Which restaurant had a site refresh earlier this year"
         },
         {
             "type": "text",
-            "title": "Round 2 - D3R & Clients",
+            "title": "Round 1 - D3R & Clients",
             "text": "Which client celebrated their 50th anniversary this year"
         },
         {
             "type": "text",
-            "title": "Round 2 - D3R & Clients",
+            "title": "Round 1 - D3R & Clients",
             "text": "Which client opened a store on Kings Road earlier this year?"
         },
         {
             "type": "text",
-            "title": "Round 2 - D3R & Clients",
+            "title": "Round 1 - D3R & Clients",
             "text": "Name 3 sites launches on the D3R platform this year"
         },
         {
             "type": "text",
-            "title": "Round 2 - D3R & Clients",
+            "title": "Round 1 - D3R & Clients",
             "text": "If I wanted to see the Calcutta Cup Trophy where would I need to go"
         },
         {
             "type": "text",
-            "title": "Round 2 - D3R & Clients",
+            "title": "Round 1 - D3R & Clients",
             "text": "Which D3R team member got married this year"
         },
         {
             "type": "text",
-            "title": "Round 2 - D3R & Clients",
+            "title": "Round 1 - D3R & Clients",
             "text": "Which client has products called Sugar Bum, Smooch Corner and Squishmeister?"
         },
+
+
+        {
+            "type": "text",
+            "title": "Round 2 - Where am I if?",
+            "text": "A temple complex in Cambodia and is the largest religious monument in the world. Where am I?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Where am I if?",
+            "text": "I am standing about three miles west of the town of Amesbury, Wiltshire, England, admiring a megalithic structure that has puzzled scholars for millennia. What am I looking at?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Where am I if?",
+            "text": "I am standing on a remote Siberian hillside, looking at the remains of a devastating explosion that occurred in the early part of the twentieth century. Where am I?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Where am I if?",
+            "text": "I am a merchant of the late Minoan civilization, I have left my home of Crete to set up shop on this island in the center of the Aegean Sea. My life is ended suddenly by a catastrophic event that is quite possibly going to give rise to the myth of Atlantis. Where am I?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Where am I if?",
+            "text": "I am standing on top of one of the world's most famous rocks, a true Herculean Pillar, two countries have bickered over control of this small peninsula for many years. There is a theory that, in the remote past, this was the site of a gigantic waterfall, the like of which has not been seen on Earth again."
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Where am I if?",
+            "text": "I am standing on top of one of the oldest and biggest man made structures on the planet which is at least 6,352 km (3,948 miles) long. What is it?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Where am I if?",
+            "text": "A spooky ghost town that is abandoned due to a nuclear accident. Where am I?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Where am I if?",
+            "text": "The burial site of Carolus Magnus, King of the Franks, anxiously anticipating the next public exhibition of his relics, which occurs every seven years. Where am I?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Where am I if?",
+            "text": "The oldest and largest of three pyramids in Greater Cairo, Egypt. Where am I?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - Where am I if?",
+            "text": "It sits on Borovitsky Hill, rising above the Moscow River in the centre of the city. Where am I?"
+        },
+
+
+        {
+            "type": "timer",
+            "title": "Round 3 - Question of Sport",
+            "text": "Charades but with speaking!"
+        },
+
+
+        {
+            "type": "catchphrase",
+            "title": "Round 4 - Skylines",
+            "image": "skyline_1.png",
+            "timer": 10
+        },
+        {
+            "type": "catchphrase",
+            "title": "Round 4 - Skylines",
+            "image": "skyline_2.png",
+            "timer": 10
+        },
+        {
+            "type": "catchphrase",
+            "title": "Round 4 - Skylines",
+            "image": "skyline_3.png",
+            "timer": 10
+        },
+        {
+            "type": "catchphrase",
+            "title": "Round 4 - Skylines",
+            "image": "skyline_4.png",
+            "timer": 10
+        },
+        {
+            "type": "catchphrase",
+            "title": "Round 4 - Skylines",
+            "image": "skyline_5.png",
+            "timer": 10
+        },
+        {
+            "type": "catchphrase",
+            "title": "Round 4 - Skylines",
+            "image": "skyline_6.png",
+            "timer": 10
+        },
+        {
+            "type": "catchphrase",
+            "title": "Round 4 - Skylines",
+            "image": "skyline_7.png",
+            "timer": 10
+        },
+        {
+            "type": "catchphrase",
+            "title": "Round 4 - Skylines",
+            "image": "skyline_8.png",
+            "timer": 10
+        },
+        {
+            "type": "catchphrase",
+            "title": "Round 4 - Skylines",
+            "image": "skyline_9.png",
+            "timer": 10
+        },
+        {
+            "type": "catchphrase",
+            "title": "Round 4 - Skylines",
+            "image": "skyline_10.png",
+            "timer": 10
+        },
+
 
         {
             "type": "pictionary",
@@ -195,183 +266,197 @@
 
         {
             "type": "catchphrase",
-            "title": "Round 4 - Skylines",
-            "image": "skyline_1.png"
+            "title": "Round 6 - Cryptic Quiz",
+            "image": "cryptic_1.png",
+            "timer": 10
         },
         {
             "type": "catchphrase",
-            "title": "Round 4 - Skylines",
-            "image": "skyline_2.png"
+            "title": "Round 6 - Cryptic Quiz",
+            "image": "cryptic_2.png",
+            "timer": 10
         },
         {
             "type": "catchphrase",
-            "title": "Round 4 - Skylines",
-            "image": "skyline_3.png"
+            "title": "Round 6 - Cryptic Quiz",
+            "image": "cryptic_3.png",
+            "timer": 10
         },
         {
             "type": "catchphrase",
-            "title": "Round 4 - Skylines",
-            "image": "skyline_4.png"
+            "title": "Round 6 - Cryptic Quiz",
+            "image": "cryptic_4.png",
+            "timer": 10
         },
         {
             "type": "catchphrase",
-            "title": "Round 4 - Skylines",
-            "image": "skyline_5.png"
+            "title": "Round 6 - Cryptic Quiz",
+            "image": "cryptic_5.png",
+            "timer": 10
         },
         {
             "type": "catchphrase",
-            "title": "Round 4 - Skylines",
-            "image": "skyline_6.png"
+            "title": "Round 6 - Cryptic Quiz",
+            "image": "cryptic_6.png",
+            "timer": 10
         },
         {
             "type": "catchphrase",
-            "title": "Round 4 - Skylines",
-            "image": "skyline_7.png"
+            "title": "Round 6 - Cryptic Quiz",
+            "image": "cryptic_7.png",
+            "timer": 10
         },
         {
             "type": "catchphrase",
-            "title": "Round 4 - Skylines",
-            "image": "skyline_8.png"
+            "title": "Round 6 - Cryptic Quiz",
+            "image": "cryptic_8.png",
+            "timer": 10
         },
         {
             "type": "catchphrase",
-            "title": "Round 4 - Skylines",
-            "image": "skyline_9.png"
+            "title": "Round 6 - Cryptic Quiz",
+            "image": "cryptic_9.png",
+            "timer": 10
         },
         {
             "type": "catchphrase",
-            "title": "Round 4 - Skylines",
-            "image": "skyline_10.png"
+            "title": "Round 6 - Cryptic Quiz",
+            "image": "cryptic_10.png",
+            "timer": 10
         },
-
+        {
+            "type": "catchphrase",
+            "title": "Round 6 - Cryptic Quiz",
+            "image": "cryptic_11.png",
+            "timer": 10
+        },
+        {
+            "type": "catchphrase",
+            "title": "Round 6 - Cryptic Quiz",
+            "image": "cryptic_12.png",
+            "timer": 10
+        },
 
 
         {
             "type": "audio",
-            "title": "Round 5 - Sing That Chorus",
-            "text": "I will survive - Gloria Gaynor",
+            "title": "Round 7 - Sing That Chorus",
+            "text": "Rocking around the Christmas tree",
             "audio": "chorus_1"
         },
         {
             "type": "audio",
-            "title": "Round 5 - Sing That Chorus",
-            "text": "Highway to Hell - ACDC",
+            "title": "Round 7 - Sing That Chorus",
+            "text": "Last Christmas - Wham",
             "audio": "chorus_2"
         },
         {
             "type": "audio",
-            "title": "Round 5 - Sing That Chorus",
-            "text": "Let it go - Frozen",
+            "title": "Round 7 - Sing That Chorus",
+            "text": "Rudolph the red nose reindeer",
             "audio": "chorus_3"
         },
         {
             "type": "audio",
-            "title": "Round 5 - Sing That Chorus",
-            "text": "I wanna dance with somebody - Whitney Houston",
+            "title": "Round 7 - Sing That Chorus",
+            "text": "All I want for Christmas - Maria Carey",
             "audio": "chorus_4"
         },
         {
             "type": "audio",
-            "title": "Round 5 - Sing That Chorus",
-            "text": "Livin on a prayer - Bon Jovi",
+            "title": "Round 7 - Sing That Chorus",
+            "text": "White Christmas - Bing Crosby",
             "audio": "chorus_5"
         },
         {
             "type": "audio",
-            "title": "Round 5 - Sing That Chorus",
-            "text": "Eye of the Tiger - Survivor",
+            "title": "Round 7 - Sing That Chorus",
+            "text": "It's the most wonderful time of the year",
             "audio": "chorus_6"
         },
         {
             "type": "audio",
-            "title": "Round 5 - Sing That Chorus",
-            "text": "Angels - Robbie Williams",
+            "title": "Round 7 - Sing That Chorus",
+            "text": "Let it snow let it snow let it snow - Frank Sinatra",
             "audio": "chorus_7"
         },
         {
             "type": "audio",
-            "title": "Round 5 - Sing That Chorus",
-            "text": "Candle in the wind - Elton John",
+            "title": "Round 7 - Sing That Chorus",
+            "text": "Have yourself a merry little Christmas - Frank Sinatra",
             "audio": "chorus_8"
         },
         {
             "type": "audio",
-            "title": "Round 5 - Sing That Chorus",
-            "text": "Bohemian Rhapsody - Queen",
+            "title": "Round 7 - Sing That Chorus",
+            "text": "The Christmas song - Nat King Cole",
             "audio": "chorus_9"
         },
         {
             "type": "audio",
-            "title": "Round 5 - Sing That Chorus",
-            "text": "Dancing Queen - Abba",
+            "title": "Round 7 - Sing That Chorus",
+            "text": "Sleigh ride - Ronettes",
             "audio": "chorus_10"
         },
 
 
         {
-            "type": "timer",
-            "title": "Round 6 - Sport",
-            "text": "Charades but with speaking!"
-        },
-
-
-        {
             "type": "text",
-            "title": "Round 7 - Beat the Buzzer",
+            "title": "Round 8 - Beat the Buzzer",
             "text": "Name the largest freshwater lake in the world? (By surface area)",
             "points": 2
         },
         {
             "type": "text",
-            "title": "Round 7 - Beat the Buzzer",
+            "title": "Round 8 - Beat the Buzzer",
             "text": "Who invented the rabies vaccination?",
             "points": 2
         },
         {
             "type": "text",
-            "title": "Round 7 - Beat the Buzzer",
+            "title": "Round 8 - Beat the Buzzer",
             "text": "Which four British cities have underground rail systems?",
             "points": 2
         },
         {
             "type": "text",
-            "title": "Round 7 - Beat the Buzzer",
+            "title": "Round 8 - Beat the Buzzer",
             "text": "Name the actress whose career began at the age of 3, and who went on to star in films such as Contact, Maverick and The Silence of the Lambs?",
             "points": 2
         },
         {
             "type": "text",
-            "title": "Round 7 - Beat the Buzzer",
+            "title": "Round 8 - Beat the Buzzer",
             "text": "In what year did the Eurostar train service between Britain and France start running?",
             "points": 2
         },
         {
             "type": "text",
-            "title": "Round 7 - Beat the Buzzer",
+            "title": "Round 8 - Beat the Buzzer",
             "text": "If you had Lafite-Rothschild on your dinner table, what would it be?",
             "points": 2
         },
         {
             "type": "text",
-            "title": "Round 7 - Beat the Buzzer",
+            "title": "Round 8 - Beat the Buzzer",
             "text": "What is the painting 'La Gioconda' more usually known as?",
             "points": 2
         },
         {
             "type": "text",
-            "title": "Round 7 - Beat the Buzzer",
+            "title": "Round 8 - Beat the Buzzer",
             "text": "Name the country where you would find the Cresta Run",
             "points": 2
         },
         {
             "type": "text",
-            "title": "Round 7 - Beat the Buzzer",
+            "title": "Round 8 - Beat the Buzzer",
             "text": "By what nickname was the criminal Albert De Salvo better known?",
             "points": 2
         },
         {
             "type": "text",
-            "title": "Round 7 - Beat the Buzzer",
+            "title": "Round 8 - Beat the Buzzer",
             "text": "Divali, or the Festival of Lights, is a celebration in which religion?",
             "points": 2
         }
