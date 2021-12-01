@@ -40,7 +40,7 @@ var teams      = [],
         'Sprouts',
         'Spuds',
         'Puddings',
-        'Roasters'
+        'Pies'
     ];
 for (var t = 0; t < totalTeams; ++t)
     teams.push(new objects.team(t, teamNames[t]));

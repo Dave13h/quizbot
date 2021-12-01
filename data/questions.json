@@ -85,12 +85,12 @@
         {
             "type": "text",
             "title": "Round 2 - Where am I if?",
-            "text": "A spooky ghost town that is abandoned due to a nuclear accident. Where am I?"
+            "text": "An ivory-white marble mausoleum on the southern bank of the river Yamuna in the Indian city of Agra. Where am I?"
         },
         {
             "type": "text",
             "title": "Round 2 - Where am I if?",
-            "text": "The burial site of Carolus Magnus, King of the Franks, anxiously anticipating the next public exhibition of his relics, which occurs every seven years. Where am I?"
+            "text": "An Anglican cathedral in London, which, as the cathedral of the Bishop of London, serves as the mother church of the Diocese of London. Where am I?"
         },
         {
             "type": "text",
@@ -100,7 +100,7 @@
         {
             "type": "text",
             "title": "Round 2 - Where am I if?",
-            "text": "It sits on Borovitsky Hill, rising above the Moscow River in the centre of the city. Where am I?"
+            "text": "A dormant volcano in Tanzania and Africa’s highest mountain. Where am I?"
         },
 
 
@@ -178,16 +178,11 @@
             "title": "Team Turkeys",
             "team": 0,
             "questions": [
-                "BULLS EYE",
-                "PIT STOP",
-                "GARETH SOUTHGATE",
-                "MAX VERSTAPPEN",
-                "HURDLING",
-                "AMERICA'S CUP",
-                "QUEENS TENNIS",
-                "HOCKEY PUCK",
-                "POLE POSITION",
-                "FREE DIVING"
+                "Designer",
+                "Donkey",
+                "Christmas Pudding",
+                "Tinsel",
+                "Tie"
             ],
             "timer": 120
         },
@@ -196,16 +191,11 @@
             "title": "Team Sprouts",
             "team": 1,
             "questions": [
-                "LINE OUT",
-                "HAIR PIN",
-                "MATTHEW PINSET",
-                "OLMPIC FLAME",
-                "RONNIE O'SULLIVAN",
-                "WORLD RECORD",
-                "NATIONAL ANTHEM",
-                "SUMO",
-                "SLAM DUNK",
-                "CRYSTAL PALACE"
+                "Developer",
+                "Desk Mouse",
+                "Reindeer",
+                "Notebook",
+                "Scarf"
             ],
             "timer": 120
         },
@@ -214,16 +204,11 @@
             "title": "Team Spuds",
             "team": 2,
             "questions": [
-                "PERSONAL BEST",
-                "DRESSAGE",
-                "THE HAKA",
-                "TOUCHDOWN",
-                "EDDIE THE EAGLE",
-                "POLE VAULT",
-                "OFF SIDE",
-                "LIONEL MESSI",
-                "SNOWBOARDING",
-                "POLO"
+                "Christmas Cracker",
+                "Sheep",
+                "Desktop",
+                "Spiderman",
+                "Chicken"
             ],
             "timer": 120
         },
@@ -232,34 +217,24 @@
             "title": "Team Puddings",
             "team": 3,
             "questions": [
-                "SCRUM",
-                "SWIMMING",
-                "BOBSLEIGH",
-                "START LINE",
-                "GOAL DEFENCE IN NETBALL",
-                "USAIN BOLT",
-                "SLALOM RACE",
-                "WORLD CHAMPIONSHIPS",
-                "MALLET",
-                "HAMMER"
+                "Hot Chocolate",
+                "Christmas Tree Lights",
+                "Gingerbread",
+                "Boris Johnson",
+                "Sleigh"
             ],
             "timer": 120
         },
         {
             "type": "pictionary",
-            "title": "Team Roasters",
+            "title": "Team Pies",
             "team": 4,
             "questions": [
-                "LUGE",
-                "SKI JUMP",
-                "WEMBLEY",
-                "EMMA REDUCANU",
-                "MONZA",
-                "TOM DALEY",
-                "TACKLE",
-                "RELAY RACE",
-                "PARKOUR",
-                "ZORBING"
+                "Thor",
+                "Holly",
+                "Goat",
+                "Coat",
+                "Coffee"
             ],
             "timer": 120
         },
