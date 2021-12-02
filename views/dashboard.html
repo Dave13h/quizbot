@@ -113,7 +113,7 @@
             .teamtable {
                 margin-top: 50px;
                 /*text-shadow: initial;*/
-                font-size: 200%;
+                font-size: 165%;
             }
 
             .table {
@@ -121,6 +121,7 @@
                 text-align: center;
                 margin-left: auto;
                 margin-right: auto;
+                background-color: #11111166;
             }
             .table th {
                 color: #fff;
@@ -153,10 +154,14 @@
               -webkit-animation-delay: 18s;
               animation-delay: 18s;
             }
+            .animated.delay-50s {
+              -webkit-animation-delay: 35s;
+              animation-delay: 35s;
+            }
 
             .animated.delay-intro {
-              -webkit-animation-delay: 22s;
-              animation-delay: 22s;
+              -webkit-animation-delay: 40s;
+              animation-delay: 40s;
             }
 
             .timer {
@@ -174,15 +179,17 @@
                 height: 540px;
                 background: url("images/catchphrase_1.png");
                 left: 430px;
-                animation: reveal 25.0s;
+                animation: reveal 5.0s;
                 animation-play-state: paused;
-                top: 0;
+                top: 120px;
                 margin-top: 0 !important;
+                scale: 0;
+                opacity: 0;
             }
 
             @keyframes reveal {
-                from {transform: scale(1); }
-                to {transform: scale(0) };
+                from {transform: scale(1.5); opacity: 1; }
+                to {transform: scale(0); opacity: 0; };
             }
 
             #pictionary {
@@ -239,7 +246,7 @@
     </head>
     <body>
         <header>
-            <h1 class="animated zoomInDown">D3R Xmas Charity Quiz 2019!</h1>
+            <h1 class="animated zoomInDown">D3R Xmas Charity Quiz 2021!</h1>
         </header>
 
         <div id="presskey">
@@ -255,7 +262,7 @@
         <section id="question" class="fullscreen"></section>
 
         <section id="pictionary" class="fullscreen">
-            <h1>Round 4 - Pictionary</h1>
+            <h1>Round 5 - Pictionary</h1>
             <h2>Team Name</h2>
             <h3>Pictures</h3>
             <h4>Score</h4>
@@ -299,6 +306,7 @@
         <audio src="sounds/nice_to_see_you.wav" id="nice_to_see_you" preload></audio>
         <audio src="sounds/catchphrase.wav" id="catchphrase" preload></audio>
         <audio src="sounds/weakest_link.wav" id="weakest_link" preload></audio>
+        <audio src="sounds/im_in_charge.wav" id="im_in_charge" preload></audio>
 
         <audio src="music/intro.wav" id="music_intro" preload></audio>
         <audio src="music/we_are_the_champions.wav" id="music_outro" preload></audio>
@@ -315,7 +323,7 @@
         <audio src="music/chorus_10.wav" id="music_chorus_10" preload></audio>
 
         <div id="title_wait" class="title fullscreen">
-            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2019</h1>
+            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2021</h1>
             <div class="animated zoomInDown delay-2s">
                 <p class="animated pulse infinite">Please Wait</p>
             </div>
@@ -325,10 +333,11 @@
             <h1 class="animated zoomInDown">Hack the game and change your score to win!</h1>
             <div class="animated zoomInDown delay-1s">
                 <p class="animated pulse infinite">
-                    2019 Challenge - Security by obscurity!<br>
+                    2021 Challenge - Security by obscurity redux!<br>
                     No Source Code this time!<br>
-                    https://quiz.d3r.com/quizmaster<br>
-                    Good Luck!
+                    https://quiz.d3r.com/qm<br>
+                    Good Luck!<br><br><br>
+                    <strong>Unplugging the router will result in disqualification this time Dom! ;)</strong>
                 </p>
             </div>
         </div>
@@ -339,9 +348,8 @@
         </div>
 
         <div id="title_intro" class="title fullscreen">
-            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2019</h1>
-            <div class="animated zoomInDown delay-18s">
-                <h2>Teams</h2>
+            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2021</h1>
+            <div class="animated zoomInDown delay-50s">
                 <table class="teamtable table is-bordered is-centered" cellspacing="2">
                     <thead>
                         <tr>
@@ -349,50 +357,65 @@
                             <th>Sprouts</th>
                             <th>Spuds</th>
                             <th>Puddings</th>
-                            <th>Roasters</th>
+                            <th>Pies</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>
-                                Oliver<br />
-                                Stuart H<br />
-                                Jason<br />
-                                Mark W<br />
-                                Rob
+                                Andy Hartley<br />
+                                --<br />
+                                Mike Ponsford<br />
+                                --<br />
+                                Ronan Chilvers<br />
+                                --<br />
+                                Joe Brisley<br />
+                                --<br />
+                                Kevin Elvin
                             </td>
 
                             <td>
-                                Lexi<br />
-                                Alfi<br />
-                                Dale<br />
-                                Tamas<br />
-                                Jahidul
+                                Sara Zaccarelli<br />
+                                --<br />
+                                Mark Sommerschield<br />
+                                --<br />
+                                James Atkin<br />
+                                --<br />
+                                Tamas Feiszt<br />
+                                --<br />
+                                Jason Shallcross
                             </td>
 
                             <td>
-                                Roberto<br />
-                                Lynton<br />
-                                James<br />
-                                Mark S<br />
-                                Joe B
+                                Sean Clark<br />
+                                --<br />
+                                Stuart Loxton<br />
+                                --<br />
+                                Roberto Martin<br />
+                                --<br />
+                                Joe Adcock<br />
+                                --<br />
+                                Dom Morgan
                             </td>
 
                             <td>
-                                Brett<br />
-                                Adam<br />
-                                David F<br />
-                                Joe A<br />
-                                Dan<br />
-                                Sara
+                                Lexi Fontein<br />
+                                --<br />
+                                Adam Jarrold<br />
+                                --<br />
+                                Brett Godfrey<br />
+                                --<br />
+                                Dan Bissonnet<br />
                             </td>
 
                             <td>
-                                Ronan<br />
-                                Dom<br />
-                                Neil<br />
-                                Kevin<br />
-                                Sean
+                                Lynton Morgan<br />
+                                --<br />
+                                Mark Wingfield<br />
+                                --<br />
+                                Jahidul Pabel Islam<br />
+                                --<br />
+                                Robert Mills
                             </td>
                         </tr>
                     </tbody>
@@ -426,50 +449,65 @@
                         <th>Sprouts</th>
                         <th>Spuds</th>
                         <th>Puddings</th>
-                        <th>Roasters</th>
+                        <th>Pies</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>
-                            Oliver<br />
-                            Stuart H<br />
-                            Jason<br />
-                            Mark W<br />
-                            Rob
+                            Andy Hartley<br />
+                            --<br />
+                            Mike Ponsford<br />
+                            --<br />
+                            Ronan Chilvers<br />
+                            --<br />
+                            Joe Brisley<br />
+                            --<br />
+                            Kevin Elvin
                         </td>
 
                         <td>
-                            Lexi<br />
-                            Alfi<br />
-                            Dale<br />
-                            Tamas<br />
-                            Jahidul
+                            Sara Zaccarelli<br />
+                            --<br />
+                            Mark Sommerschield<br />
+                            --<br />
+                            James Atkin<br />
+                            --<br />
+                            Tamas Feiszt<br />
+                            --<br />
+                            Jason Shallcross
                         </td>
 
                         <td>
-                            Roberto<br />
-                            Lynton<br />
-                            James<br />
-                            Mark S<br />
-                            Joe B
+                            Sean Clark<br />
+                            --<br />
+                            Stuart Loxton<br />
+                            --<br />
+                            Roberto Martin<br />
+                            --<br />
+                            Joe Adcock<br />
+                            --<br />
+                            Dom Morgan
                         </td>
 
                         <td>
-                            Brett<br />
-                            Adam<br />
-                            David F<br />
-                            Joe A<br />
-                            Dan<br />
-                            Sara
+                            Lexi Fontein<br />
+                            --<br />
+                            Adam Jarrold<br />
+                            --<br />
+                            Brett Godfrey<br />
+                            --<br />
+                            Dan Bissonnet<br />
                         </td>
 
                         <td>
-                            Ronan<br />
-                            Dom<br />
-                            Neil<br />
-                            Kevin<br />
-                            Sean
+                            Lynton Morgan<br />
+                            --<br />
+                            Mark Wingfield<br />
+                            --<br />
+                            Jahidul Pabel Islam<br />
+                            --<br />
+                            Robert Mills
                         </td>
                     </tr>
                 </tbody>
@@ -496,7 +534,7 @@
         </div>
 
         <div id="title_rounds" class="title fullscreen">
-            <h2>The Quiz - 7 Rounds</h2>
+            <h2>The Quiz - 8 Rounds</h2>
 
             <table class="teamtable table is-bordered is-centered" cellspacing="2">
                 <tbody>
@@ -505,27 +543,31 @@
                         <td>Buzz in</td>
                     </tr>
                     <tr>
-                        <td style="text-align: left;">2. Movie Quotes</td>
+                        <td style="text-align: left;">2. Where are you if?</td>
                         <td>Buzz in</td>
                     </tr>
                     <tr>
-                        <td style="text-align: left;">3. Catchphrase</td>
-                        <td>Buzz in</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left;">4. Pictionary</td>
-                        <td>Each team takes a turn - draw</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left;">5. Sing that Chorus</td>
-                        <td>Buzz in</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left;">6. Question of sport</td>
+                        <td style="text-align: left;">3. Question of Sport</td>
                         <td>Each team takes a turn - act/talk</td>
                     </tr>
                     <tr>
-                        <td style="text-align: left;">7. Beat the buzzer </td>
+                        <td style="text-align: left;">4. City Skylines</td>
+                        <td>Buzz in</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">5. Pictionary</td>
+                        <td>Each team takes a turn - draw</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">6. Cryptic Quiz</td>
+                        <td>Buzz in</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">7. Sing that tune</td>
+                        <td>Buzz in</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">8. Beat the buzzer </td>
                         <td>Buzz in</td>
                     </tr>
                 </tbody>

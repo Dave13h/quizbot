@@ -16,7 +16,7 @@ var port       = process.env.PORT  || 13080,
     portSecure = process.env.PORTS || 13443;
 
 var credentials = {
-    key: fs.readFileSync('./keys/key.pem'),
+    key: fs.readFileSync('./keys/skey.pem'),
     cert: fs.readFileSync('./keys/cert.pem')
 };
 
@@ -40,7 +40,7 @@ var teams      = [],
         'Sprouts',
         'Spuds',
         'Puddings',
-        'Roasters'
+        'Pies'
     ];
 for (var t = 0; t < totalTeams; ++t)
     teams.push(new objects.team(t, teamNames[t]));
@@ -67,6 +67,9 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/views/contestant.html');
 })
 .get('/quizmaster', function (req, res) {
+    res.sendFile(__dirname + '/views/fools.html');
+})
+.get('/qm', function (req, res) {
     res.sendFile(__dirname + '/views/quizmaster.html');
 })
 .get('/dashboard', function (req, res) {
@@ -188,14 +191,17 @@ sDashboard.on('connection', function (socket) {
     }
 });
 
-const QMPIN = 4576;
+const QMPIN = 1298;
 sQuizMaster.on('connection', function (socket) {
     var qmid = null;
     console.log('[SOCKET] QM connected on socket: ' + socket.id);
 
     socket.on('ident', function(pin, id) {
         // Level 2 security!
-        if (!pin || pin.length != 4) {
+        if (pin == "forgot") {
+            socket.emit('bad auth', {'result': "Forgot your pin? I got you fam... Your pin is... " + QMPIN});
+            return;
+        } else if (!pin || pin.length != 4) {
             socket.emit('bad auth', {'result': 'bad len'});
             return;
         } else if (isNaN(pin)) {
