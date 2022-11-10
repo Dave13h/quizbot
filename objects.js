@@ -87,6 +87,7 @@ class oTeam {
         this.points   = 0;
         this.buzzer   = null;
         this.logo     = null;
+        this.avatar   = null;
     }
 
     getId () {
@@ -99,6 +100,14 @@ class oTeam {
 
     setBuzzer (blob) {
         this.buzzer = blob;
+    }
+
+    getAvatar () {
+        return this.avatar;
+    }
+
+    setAvatar (blob) {
+        this.avatar = blob;
     }
 
     getLogo () {

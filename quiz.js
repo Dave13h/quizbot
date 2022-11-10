@@ -180,6 +180,9 @@ function notifyConnectionList (skipDash) {
 function notifyLogo (team, data) {
     sDashboard.emit('teams logo', team, data);
 }
+function notifyAvatar (team, data) {
+    sDashboard.emit('teams avatar', team, data);
+}
 
 sDashboard.on('connection', function (socket) {
     console.log('[SOCKET] Dashboard connected on socket: ' + socket.id);
@@ -191,21 +194,17 @@ sDashboard.on('connection', function (socket) {
     }
 });
 
-const QMPIN = 1298;
+const QMPIN = 1388;
 sQuizMaster.on('connection', function (socket) {
     var qmid = null;
     console.log('[SOCKET] QM connected on socket: ' + socket.id);
 
     socket.on('ident', function(pin, id) {
-        // Level 2 security!
-        if (pin == "forgot") {
-            socket.emit('bad auth', {'result': "Forgot your pin? I got you fam... Your pin is... " + QMPIN});
-            return;
-        } else if (!pin || pin.length != 4) {
+        if (!pin || pin.length != 4) {
             socket.emit('bad auth', {'result': 'bad len'});
             return;
         } else if (isNaN(pin)) {
-            socket.emit('bad auth', {'result': 'malformed'});
+            socket.emit('bad auth', {'result': 'bad encryption descriptor'});
             return;
         } else if (pin == "0000") {
             socket.emit('bad auth', {'result': Math.round((Math.random()*9999))});
@@ -214,7 +213,7 @@ sQuizMaster.on('connection', function (socket) {
             socket.emit('bad auth', {'result': 'Success... password is "password1"'});
             return;
         } else if (pin != QMPIN) {
-            socket.emit('bad auth', {'result': Math.abs(pin - QMPIN)});
+            socket.emit('bad auth', {'result': 'hint: check under Paul\'s chair'});
             return;
         }
         qmid = ident('quizmaster', id, socket);
@@ -488,6 +487,13 @@ sQuizMaster.on('connection', function (socket) {
         if (penalty)
             sDashboard.emit('penalty', teams[team.id].getName());
     });
+
+    socket.on('debug teams', function () {
+        var debugData = {
+            teams: teams
+        };
+        sQuizMaster.emit('debug teams', debugData);
+    });
 });
 
 sContestant.on('connection', function (socket) {
@@ -558,6 +564,19 @@ sContestant.on('connection', function (socket) {
         var team = teams[c.getTeam()];
         team.setLogo(data);
         notifyLogo(c.getTeam(), data);
+    });
+
+    socket.on('team avatar', function (data) {
+        if (!data)
+            return;
+
+        var c = connections.contestants[cid];
+        if (!c.hasTeam())
+            return;
+
+        var team = teams[c.getTeam()];
+        team.setAvatar(data);
+        notifyAvatar(c.getTeam(), data);
     });
 
     socket.on('buzzer send', function (cid) {

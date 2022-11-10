@@ -48,6 +48,11 @@
                 right: 0;
             }
 
+            #avatar-video { display: none; }
+            #avatar-capture { display: none; }
+            #avatar { display: none; }
+            #team_avatar { text-align: center; }
+
             #pictionary       { display: none; }
             #pictionary_guide { display: none; }
             #pictionary_guide ul li { font-size: 80%; }
@@ -117,11 +122,15 @@
                 <input type="text" id="name_field" class="input" style="display: inline-block">
             </div> -->
 
+            <h3>Buzzer</h3>
             <audio id="aBuzzer"></audio>
-            Buzzer <button type="button" id="bRecord" class="btn is-success">Record</button>
+            <button type="button" id="bRecord" class="btn is-success">Record</button>
             <button type="button" id="bPlay" class="btn is-success">Play</button><br><br>
 
+            <hr />
+
             <div class="team_logo">
+                <h3>Logo</h3>
                 <canvas id="team_logo" class="team_logo_canvas" width="350" height="350"></canvas><br />
                 <div id="pens" class="item">
                     <label>
@@ -146,7 +155,22 @@
                 <button type="button" data-colour="#e76e55" class="btn btn-sm is-error">&nbsp;</button><br /><br />
                 <button type="button" class="canvas_fill btn btn-sm is-warning">Fill</button>
                 <button type="button" class="canvas_clear btn btn-sm is-primary">Clear</button>
+
             </div>
+
+            <hr />
+
+            <div class="team_avatar">
+                <h3>Avatar</h3>
+                <center>
+                    <button id="avatar-start-camera" type="button" class="btn btn-sm is-primary">Update Avatar</button>
+                    <button id="avatar-capture" type="button" class="btn btn-sm is-error">Capture</button>
+                </center>
+                <video id="avatar-video" width="512" height="512" style="width: 100%;" autoplay></video>
+                <canvas id="avatar" width="512" height="512" style="width: 100%;"></canvas>
+            </div>
+
+            <hr />
 
             <br>
             <button type="button" id="bCancel" class="btn btn-sm is-warning">CANCEL</button>
@@ -222,6 +246,9 @@
 
                 $('#buzzer').on('click', function () {
                     socket.emit('buzzer send', cid);
+                    if (navigator.vibrate) {
+                        navigator.vibrate(200);
+                    }
                     $('#buzzer').removeClass('is-success').addClass('is-error').prop("disabled", true);
                 });
 
@@ -237,6 +264,7 @@
                     socket.emit('team update', settings);
                     socket.emit('team buzzer', buzzerBlob);
                     socket.emit('team logo', tl_canvas.toDataURL());
+                    socket.emit('team avatar', avatar_canvas.toDataURL('image/jpg'));
                     $('#menu').hide();
                     $('#bMenu').show();
                 });
@@ -413,39 +441,6 @@
                     tl_canvasH   = tl_canvas.height;
 
                 var px = 0, py = 0, cx = 0, cy = 0, penDown = false, colour = "#000", penSize = 5.0;
-                // $(canvas).on('mousemove mousedown mouseup mouseout', function(e) {
-                //     px = cx;
-                //     py = cy;
-
-                //     var rect = canvas.getBoundingClientRect();
-                //     cx = e.clientX - rect.left;
-                //     cy = e.clientY - rect.top;
-
-                //     switch (e.type) {
-                //         case 'mousedown':
-                //             penDown = true;
-                //             break;
-
-                //         case 'mouseup':
-                //         case 'mouseout':
-                //             penDown = false;
-                //             break;
-
-                //         case 'mousemove':
-                //             if (penDown) {
-                //                 canvasCtx.beginPath();
-                //                     canvasCtx.moveTo(px, py);
-                //                     canvasCtx.lineTo(cx, cy);
-                //                     canvasCtx.strokeStyle = colour;
-                //                     canvasCtx.lineWidth = penSize;
-                //                     canvasCtx.stroke();
-                //                 canvasCtx.closePath();
-
-                //                 sendPen(px, py, cx, cy, colour, penSize);
-                //             }
-                //             break;
-                //     }
-                // });
 
                 $(tl_canvas).on('touchstart touchend touchmove', function(e) {
                     px = cx;
@@ -499,6 +494,39 @@
 
                 $('.team_logo input[name=pen_size]').on('change', function() {
                     penSize = $(this).val();
+                });
+
+                // Camera capture for team avatar
+                let avatar_camera_button = document.querySelector("#avatar-start-camera"),
+                    avatar_video = document.querySelector("#avatar-video"),
+                    avatar_capture_button = document.querySelector("#avatar-capture"),
+                    avatar_canvas = document.querySelector("#avatar");
+
+                avatar_camera_button.addEventListener('click', async function() {
+                    avatar_video.style.display = 'block';
+                    let stream = await navigator.mediaDevices.getUserMedia({
+                        video: { width: 512, height: 512 },
+                        audio: false
+                    });
+                    avatar_video.srcObject = stream;
+                    avatar_canvas.style.display = 'none';
+                    avatar_camera_button.style.display = 'none';
+                    avatar_capture_button.style.display = 'block';
+                });
+
+                avatar_capture_button.addEventListener('click', function() {
+                    avatar_canvas.style.display = 'block';
+                    avatar_canvas.getContext('2d').drawImage(
+                        avatar_video,
+                        0,
+                        0,
+                        avatar_canvas.width,
+                        avatar_canvas.height
+                    );
+
+                    avatar_video.style.display = 'none';
+                    avatar_camera_button.style.display = 'block';
+                    avatar_capture_button.style.display = 'none';
                 });
 
                 // ------------------------------------------------------------

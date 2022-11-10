@@ -59,7 +59,7 @@ Enjoy
 
         <!-- you would have thought I would have moved this into a separate file by now eh? -->
         <style>
-            #questions_view, #teams_view, #sounds_view, #game_view, #titles_view { display: none; }
+            #questions_view, #teams_view, #sounds_view, #game_view, #titles_view, #debug_view { display: none; }
 
             #game_actions { display: none; }
 
@@ -129,6 +129,7 @@ Enjoy
                 <button type="button" data-target="sounds" class="btn is-success">Sounds</button>
                 <button type="button" data-target="titles" class="btn is-success">Titles</button>
                 <button type="button" data-target="game" class="btn is-success">Game</button>
+                <button type="button" data-target="debug" class="btn is-success">Debug</button>
             </div>
         </section>
 
@@ -212,6 +213,12 @@ Enjoy
                     <button type="button" id="game_wrong" class="btn is-error">Wrong</button>
                 </div>
             </div>
+        </section>
+
+        <section class="container with-title" id="debug_view">
+            <h2 class="title">Debug</h2>
+            <button type="button" id="fetch_debug_teams" class="btn is-warning">Debug Teams</button>
+            <div class="containers" id="debug"></div>
         </section>
 
         <!--
@@ -326,6 +333,30 @@ Enjoy
                     });
                     $('.teamscore').on('focusout', function() {
                         socket.emit('team score', { id: $(this).data('tid'), points: parseInt($(this).val()) });
+                    });
+                })
+                .on('debug teams', function(debugData) {
+                    $('#debug').html('');
+                    console.log(debugData);
+                    $(debugData.teams).each(function(k, v) {
+                        let teamName = '<h2>' + v.name + '</h2>';
+                        $('#debug').append(teamName);
+
+                        if (v.logo) {
+                            $('#debug').append('Logo<br/>');
+                            let limg = new Image();
+                            limg.src = v.logo;
+                            $('#debug').append($('<br/><div />').html(limg));
+                        }
+
+                        if (v.avatar) {
+                            $('#debug').append('Avatar<br/>');
+                            let aimg = new Image();
+                            aimg.src = v.avatar;
+                            $('#debug').append($('<br/><div />').html(aimg));
+                        }
+
+                        $('#debug').append('Buzzer: ' + (v.buzzer ? 'yes' : 'no') + '<br/>');
                     });
                 })
                 .on('questions list', function(questions){
@@ -500,14 +531,8 @@ Enjoy
                     console.log("Connected");
                 })
                 .on('bad auth', function(msg) {
-                    // @todo(dave13h): remove this _useful_ debugging output *before* launch...
-                    //                  really wouldn't want prying eyes to see this would we.
-                    console.log("Bad auth", msg);
-
-if (false /* debugging */) {
                     var c = confirm("bad pin"); // Bad pin, reload the page?
                     window.location.reload(false);
-}
                 })
                 .on('id', function(id){
                     console.log('Got ID: ' + id);
@@ -561,6 +586,10 @@ if (false /* debugging */) {
                     socket.emit('question timer', {action: 'reset'});
                 });
 
+                $('#fetch_debug_teams').on('click', function() {
+                    socket.emit('debug teams');
+                });
+
                 // Are you sure you want to be all the way down here? Don't think there is anything useful here
                 $('#game_correct').on('click', function() {
                     socket.emit('question correct');
@@ -612,7 +641,6 @@ if (false /* debugging */) {
                     socket.emit('sound play', $(this).data('sound'));
                 });
 
-                // Bring Dave a bottle of Ale for a hint ;)
                 $('#titles button').on('click', function() {
                     var title = {title: $(this).data('title'), audio: null};
                     if ($(this).data('audio')) {
@@ -621,20 +649,6 @@ if (false /* debugging */) {
                     socket.emit('title show', title);
                 });
 
-
-                // Pin validation
-                // let pPat = /(\d{4}+)|(forgot)/i;
-                // if (!pin.match(pPat)) {
-                //     // @todo(dave13h): make sure we only accept 4 digits
-                // }
-
-if (true) {
-                // @todo(dave13h): TESTING
-                window.qmid = qmid;
-                window.qsock = socket; // Don't forget to remove this for production mode
-                                       // Don't want to leave the very important socket
-                                       // in the global scope ofcourse
-}
 
  // Well there you go, we are out of the valley javascript...
  //
