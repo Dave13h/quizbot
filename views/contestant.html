@@ -288,7 +288,7 @@
                                 .addClass('btn')
                                 .addClass('is-error')
                                 .text(v.name)
-                                .on('click', function() {
+                                .on('click', function () {
                                     $('#err').html("").hide();
                                     socket.emit('team join', k);
                                     $('#teamname').html(v.name);
@@ -300,18 +300,20 @@
                 .on('teams invalid', function () {
                     $('#err').html("Invalid Team Choice").show();
                 })
-                .on('team logo', function (data) {
-                    console.log("Restoring Team Logo");
-                    var img = new Image();
-                    img.onload = function(){
-                      tl_canvasCtx.drawImage(img, 0, 0);
+                .on('team state', function (data) {
+                    var logo = new Image();
+                    logo.onload = function(){
+                      tl_canvasCtx.drawImage(logo, 0, 0);
                     };
-                    img.src = data;
-                })
-                .on('team buzzer', function (data) {
-                    console.log("Restoring Team Buzzer - @Todo(dave13): =(");
-                    // console.log(data);
-                    // createMediaRecorder(data);
+                    logo.src = data.logo;
+
+                    var avatar = new Image();
+                    avatar.onload = function(){
+                      tl_canvasCtx.drawImage(avatar, 0, 0);
+                    };
+                    avatar.src = data.avatar;
+
+                    // data.buzzer
                 })
                 .on('wait', function() {
                     $('section').hide();

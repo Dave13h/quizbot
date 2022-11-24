@@ -115,10 +115,30 @@ Enjoy
             body.curtain {
                 display:none;
             }
+
+            .headerbar {
+                display: flex;
+            }
+            .headerbar div {
+                flex-basis: 50%;
+                height: 48px;
+                margin: 5px;
+                vertical-align: center;
+            }
         </style>
     </head>
     <body class="curtain">
-        <h1>Quiz Master</h1>
+        <div class="headerbar">
+            <div>
+                <h1>Quiz Master</h1>
+            </div>
+            <div style="text-align: right;line-height: 48px;">
+                <label>
+                    <input id="autosave" type="checkbox" class="nes-checkbox" value="1">
+                    <span>AutoSave</span>
+                </label>
+            </div>
+        </div>
 
         <section class="container with-title">
             <h2 class="title">Modes</h2>
@@ -584,6 +604,9 @@ Enjoy
                 });
                 $('#game_timer_reset').on('click', function() {
                     socket.emit('question timer', {action: 'reset'});
+                });
+                $('#autosave').on('click', function() {
+                    socket.emit('autosave', $(this).is(':checked'));
                 });
 
                 $('#fetch_debug_teams').on('click', function() {

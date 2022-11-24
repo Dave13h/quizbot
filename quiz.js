@@ -7,7 +7,7 @@
 //
 var express = require('express'),
     app     = express(),
-    https   = require('https'), //.Server(app),
+    https   = require('https'),
     uuid    = require('uuid'),
     fs      = require('fs')
     objects = require('./objects');
@@ -94,15 +94,90 @@ function notifyQuestions () {
     sDashboard.emit('questions list', questions);
 }
 
+const questionsFile = 'data/questions.json';
 function loadQuestions () {
-    var content = fs.readFileSync('data/questions.json');
+    if (!fs.existsSync(questionsFile)) {
+        console.error('[QUESTIONS] File not found => ' + questionsFile);
+        process.exit(-1);
+    }
+
+    var content = fs.readFileSync(questionsFile);
     json = JSON.parse(content);
     for (let q in json.questions) {
-        questions.push(new objects.question(json.questions[q]));
+        questions.push(new objects.question(q, json.questions[q]));
     }
+
+    console.error('[QUESTIONS] Loaded');
     notifyQuestions();
 }
 loadQuestions();
+
+// ------------------------------------------------------------------------------------------------
+// AutoSave
+// ------------------------------------------------------------------------------------------------
+const saveFile = 'data/savestate.json';
+function saveState () {
+    console.log('[SAVE] Saving state');
+    var start = process.hrtime();
+    var state = {
+        questions: [],
+        teams: []
+    };
+    for (let q in questions) {
+        state.questions.push(questions[q].toJson());
+    }
+    for (let t in teams) {
+        state.teams.push(teams[t].toJson());
+    }
+    fs.writeFileSync(saveFile, JSON.stringify(state));
+    var end = process.hrtime(start);
+    console.log('[SAVE] Complete (' + Math.round((end[0]*1000) + (end[1]/1000000)) + 'ms)');
+}
+
+function restoreState () {
+    console.log('[SAVE] Restoring State');
+    if (!fs.existsSync(saveFile)) {
+        console.error('[SAVE] File not found => ' + saveFile);
+        return;
+    }
+
+    var stateRaw = fs.readFileSync(saveFile);
+    state = JSON.parse(stateRaw);
+    for (var q in state.questions) {
+        let rQ = state.questions[q];
+        questions[rQ.id].setPlayed(rQ.played);
+    }
+    for (var t in state.teams) {
+        let rT = state.teams[t];
+        teams[rT.id]
+            .setPoints(rT.points)
+            .setBuzzer(rT.buzzer)
+            .setLogo(rT.logo)
+            .setAvatar(rT.avatar);
+    }
+    console.log('[SAVE] State Restored!');
+}
+
+var autoSave = null;
+function enableAutoSave () {
+    if (autoSave != null)
+        disableAutoSave();
+
+    autoSave = setInterval(saveState, 60000);
+}
+function disableAutoSave () {
+    if (autoSave == null)
+        return;
+
+    clearInterval(autoSave);
+    autoSave = null;
+}
+const cliArgs = process.argv.slice(1);
+switch (cliArgs[1]) {
+    case '--restore':
+        restoreState();
+        break;
+}
 
 // ------------------------------------------------------------------------------------------------
 // Handle connections
@@ -125,6 +200,13 @@ function sendClientState (cid) {
     }
 
     c.getSocket().emit('game state', state);
+}
+
+function sendTeamState (cid, team) {
+    connections
+        .contestants[cid]
+        .getSocket()
+        .emit('team state', teams[team]);
 }
 
 function ident (type, cid, socket) {
@@ -241,12 +323,21 @@ sQuizMaster.on('connection', function (socket) {
         notifyConnectionList();
     });
 
+    socket.on('autosave', function (enabled) {
+        console.log('[SOCKET] QM [AUTOSAVE] => ' + (enabled ? 'Enabled' : 'Disabled'));
+        if (enabled && autoSave == null) {
+            enableAutoSave();
+        } else if (!enabled) {
+            disableAutoSave();
+        }
+    });
+
     var activePictionaryQuestion = 0, pictionaryScore = 0;
     socket.on('question play', function (qid) {
         console.log('[SOCKET] QM [' + qmid + '] play question => ' + qid);
 
         activeQuestion = qid;
-        questions[qid].played = true;
+        questions[qid].setPlayed(true);
 
         if (questions[qid].getType() == 'pictionary') {
             activePictionaryQuestion = 0;
@@ -521,6 +612,7 @@ sContestant.on('connection', function (socket) {
         }
         connections.contestants[cid].setTeam(team);
         socket.emit('wait');
+        sendTeamState(cid, team);
         sendClientState(cid);
         notifyConnectionList();
     });

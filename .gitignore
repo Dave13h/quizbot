@@ -62,3 +62,5 @@ typings/
 
 keys/*
 # public/music/*
+
+data/savestate.json

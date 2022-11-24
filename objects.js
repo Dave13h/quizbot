@@ -90,6 +90,17 @@ class oTeam {
         this.avatar   = null;
     }
 
+    toJson () {
+        return {
+            id: this.id,
+            name: this.name,
+            points: this.points,
+            buzzer: this.buzzer,
+            logo: this.logo,
+            avatar: this.avatar
+        };
+    }
+
     getId () {
         return this.id;
     }
@@ -100,6 +111,7 @@ class oTeam {
 
     setBuzzer (blob) {
         this.buzzer = blob;
+        return this;
     }
 
     getAvatar () {
@@ -116,6 +128,7 @@ class oTeam {
 
     setLogo (blob) {
         this.logo = blob;
+        return this;
     }
 
     getName () {
@@ -124,6 +137,7 @@ class oTeam {
 
     setName (name) {
         this.name = name;
+        return this;
     }
 
     getAnswered () {
@@ -132,6 +146,7 @@ class oTeam {
 
     setAnswered (answered) {
         this.answered = answered;
+        return this;
     }
 
     getPoints () {
@@ -140,19 +155,23 @@ class oTeam {
 
     addPoints (incr) {
         this.points += incr;
+        return this;
     }
 
     decPoints (decr) {
         this.points -= decr;
+        return this;
     }
 
     setPoints (points) {
         this.points = parseInt(points);
+        return this;
     }
 }
 
 class oQuestion {
-    constructor (data) {
+    constructor (qid, data) {
+        this.id     = qid;
         this.played = false;
 
         this.type   = data.type;
@@ -174,6 +193,13 @@ class oQuestion {
             this.team = data.team;
             this.questions = data.questions;
         }
+    }
+
+    toJson () {
+        return {
+            id: this.id,
+            played: this.played,
+        };
     }
 
     getType () {
@@ -210,6 +236,11 @@ class oQuestion {
 
     getTimer () {
         return this.timer;
+    }
+
+    setPlayed (played) {
+        this.played = played;
+        return this;
     }
 }
 
