@@ -1,0 +1,66 @@
+#questions_view, #teams_view, #sounds_view, #game_view, #titles_view, #debug_view { display: none; }
+
+#game_actions { display: none; }
+
+span.played { color: #aaa; }
+
+.teamname { width: 200px; }
+.teamscore { width: 100px; }
+
+.containers {
+    /* mmm hack for too many questions in list */
+    background-color: #00b5cc;
+}
+#questions { font-size: 80%; }
+#questions .btn { padding: 5px 6px; }
+#questions div { margin-bottom: 20px; border: 1px solid #fff; }
+
+.canvas {
+    background-color: #fff;
+    border: 2px solid #000;
+    height: 800px;
+    width: 800px;
+}
+
+.toggle_image {
+    height: 5%;
+    width: 5%;
+}
+.toggle_image:hover {
+    height: 25%;
+    width: 25%;
+}
+
+#game_pictionary ul li.active {
+    font-weight: bold;
+    color: #FF9;
+}
+#game_pictionary ul li.active:after {
+    content: " <=="
+}
+#game_pictionary ul li.correct {
+    color: #9F9;
+}
+#game_pictionary ul li.correct:after {
+    content: " - Correct!"
+}
+#game_pictionary ul li.skip {
+    color: #F99;
+}
+#game_pictionary ul li.skip:after {
+    content: " - Skipped!"
+}
+
+body.curtain {
+    display:none;
+}
+
+.headerbar {
+    display: flex;
+}
+.headerbar div {
+    flex-basis: 50%;
+    height: 48px;
+    margin: 5px;
+    vertical-align: center;
+}
