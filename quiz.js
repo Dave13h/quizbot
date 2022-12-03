@@ -597,8 +597,9 @@ sContestant.on('connection', function (socket) {
         if (!connections.contestants[cid].hasTeam()) {
             socket.emit('teams list', teams);
         } else {
-            socket.emit('team logo', teams[connections.contestants[cid].getTeam()].getLogo());
-            socket.emit('team buzzer', teams[connections.contestants[cid].getTeam()].getBuzzer());
+            socket.emit('team state', teams[connections.contestants[cid].getTeam()]);
+            // socket.emit('team logo', teams[connections.contestants[cid].getTeam()].getLogo());
+            // socket.emit('team buzzer', teams[connections.contestants[cid].getTeam()].getBuzzer());
             if (activeQuestion == -1 || questions[activeQuestion].type == 'pictionary')
                 socket.emit('wait');
         }

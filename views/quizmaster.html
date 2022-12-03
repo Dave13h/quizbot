@@ -357,7 +357,6 @@ Enjoy
                 })
                 .on('debug teams', function(debugData) {
                     $('#debug').html('');
-                    console.log(debugData);
                     $(debugData.teams).each(function(k, v) {
                         let teamName = '<h2>' + v.name + '</h2>';
                         $('#debug').append(teamName);
@@ -376,7 +375,7 @@ Enjoy
                             $('#debug').append($('<br/><div />').html(aimg));
                         }
 
-                        $('#debug').append('Buzzer: ' + (v.buzzer ? 'yes' : 'no') + '<br/>');
+                        $('#debug').append('Buzzer: ' + (v.buzzer ? 'yes' : 'no') + '<br/><hr/>');
                     });
                 })
                 .on('questions list', function(questions){
@@ -701,7 +700,7 @@ Enjoy
 
     <!--
 
-    Hope you all have a great Xmas and New Years! Good luck in 2022!
+    Hope you all have a great Xmas and New Years! Good luck in 2023!
                                                             - Dave :)
     -->
 </html>
