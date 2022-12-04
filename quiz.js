@@ -34,7 +34,7 @@ var connections = {
 };
 
 var teams      = [],
-    teamNames  =[
+    teamNames  = [
         'Turkeys',
         'Sprouts',
         'Spuds',
@@ -363,31 +363,50 @@ sQuizMaster.on('connection', function (socket) {
         activeQuestion = qid;
         questions[qid].setPlayed(true);
 
-        if (questions[qid].getType() == 'pictionary') {
-            activePictionaryQuestion = 0;
-            pictionaryScore = 0;
+        switch (questions[qid].getType()) {
+            case 'pictionary':
+                activePictionaryQuestion = 0;
+                pictionaryScore = 0;
 
-            activeTeam = questions[qid].getTeam();
+                activeTeam = questions[qid].getTeam();
 
-            for (var c in connections.contestants) {
-                if (connections.contestants[c].getTeam() != activeTeam) {
-                    connections.contestants[c].getSocket().emit('wait');
-                    continue;
+                for (var c in connections.contestants) {
+                    if (connections.contestants[c].getTeam() != activeTeam) {
+                        connections.contestants[c].getSocket().emit('wait');
+                        continue;
+                    }
+                    connections.contestants[c].getSocket().emit('pictionary init', questions[qid].getQuestions());
                 }
-                connections.contestants[c].getSocket().emit('pictionary init', questions[qid].getQuestions());
-            }
 
-            sQuizMaster.emit(
-                'pictionary init',
-                questions[qid].getQuestions()
-            );
-            sDashboard.emit(
-                'pictionary init',
-                teamNames[activeTeam],
-                questions[qid].getQuestions().length,
-                questions[qid].getTimer()
-            );
-            return;
+                sQuizMaster.emit(
+                    'pictionary init',
+                    questions[qid].getQuestions()
+                );
+                sDashboard.emit(
+                    'pictionary init',
+                    teamNames[activeTeam],
+                    questions[qid].getQuestions().length,
+                    questions[qid].getTimer()
+                );
+                return;
+
+            case 'santassleighride':
+                sQuizMaster.emit(
+                    'santassleighride init',
+                    questions[qid].getQuestions()
+                );
+
+                var avatars = [];
+                for (var t in teams) {
+                    avatars.push(teams[t].getAvatar());
+                }
+
+                sDashboard.emit(
+                    'santassleighride init',
+                    teamNames,
+                    avatars
+                );
+                return;
         }
 
         activeTeam = -1;

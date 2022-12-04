@@ -75,6 +75,15 @@ $(function () {
         }
     }, false);
 
+    function resetScreen() {
+        $('header').hide();
+        $('section').hide();
+        $('.title').hide();
+        $('#pictionary').hide();
+        $('#ssr').hide();
+        $('#question').html('');
+    }
+
     var socket = io.connect('/dashboard'),
         wrongTimer = null;
 
@@ -113,67 +122,87 @@ $(function () {
         }
     });
 
-    // ______ _      _   _
-    // | ___ (_)    | | (_)
-    // | |_/ /_  ___| |_ _  ___  _ __   __ _ _ __ _   _
-    // |  __/| |/ __| __| |/ _ \| '_ \ / _` | '__| | | |
-    // | |   | | (__| |_| | (_) | | | | (_| | |  | |_| |
-    // \_|   |_|\___|\__|_|\___/|_| |_|\__,_|_|   \__, |
-    //                                             __/ |
-    //                                            |___/
-    var canvasId  = 'pictionary_canvas',
-        canvas    = document.getElementById(canvasId),
-        canvasCtx = canvas.getContext("2d"),
-        canvasW   = 350,
-        canvasH   = 350; // Must match incoming canvas data!
+
+    //  _____
+    // |_   _|
+    //   | | ___  __ _ _ __ ___  ___
+    //   | |/ _ \/ _` | '_ ` _ \/ __|
+    //   | |  __/ (_| | | | | | \__ \
+    //   \_/\___|\__,_|_| |_| |_|___/
+    //
     socket
-    .on('pictionary init', function (team, totalQuestions, timerVal) {
+    .on('teams list', function (ts) {
+        teams = ts;
+        for (let t in teams) {
+            let team = teams[t];
+            if (team.buzzer != null) {
+                if (!$('#audio_team_' + team.id).length) {
+                    var audio = document.createElement('audio');
+                    audio.setAttribute('controls', '');
+                    audio.setAttribute('id', 'audio_team_' + team.id);
+                    $('#teambuzzers')[0].appendChild(audio);
+                }
+
+                var buzzerBlob = new Blob([team.buzzer], { 'type' : 'audio/ogg; codecs=opus' }),
+                    audioURL = window.URL.createObjectURL(buzzerBlob);
+                $('#audio_team_' + team.id)[0].src = audioURL;
+            }
+        }
+        if ($('#teamscores').is(':visible')) {
+            updateTeamScores();
+        }
+    })
+    .on('teams logo', function (tid, data) {
+        console.log("Got logo for Team[" + tid + "]");
+        var img = new Image();
+        img.src = data;
+        logos[tid] = img;
+    })
+    .on('teams scores', function (event) {
         nukeTimer();
-        $('section').hide();
-        $('#pictionary').show();
-        $('#pictionary h2').html("Team " + team);
-        $('#pictionary h3').html("<span>0</span> of " + totalQuestions + " pictures");
-        $('#pictionary h4').html("<span>0</span> Correct Answer(s)");
+        teams = event.teams;
 
-        canvasCtx.clearRect(0, 0, canvasW, canvasH);
+        updateTeamScores();
 
-        var timer = $('#timer').clone();
-        timerId = "timer_" + Math.floor(Math.random() * 1000);
-        $(timer).attr("id", timerId)
-                .attr('data-time', timerVal)
-                .show();
-        $('#pictionary div').append(timer);
-        $('#' + timerId + ' span').html(timerVal);
+        window.setTimeout(
+            function() {
+                $('header').hide();
+                $('section').hide();
+                $('.title').hide();
+                $('#teamscores').show();
+            },
+            3000
+        );
     })
-    .on('pictionary start', function () {
-        timerTimer = setInterval(timerRun, 1000);
-    })
-    .on('pictionary end', function () {
-        clearInterval(timerTimer);
-        $('#' + timerId).remove();
-    })
-    .on('pictionary active', function (active, score) {
-        $('#pictionary h3 span').html(parseInt(active) + 1);
-        $('#pictionary h4 span').html(score);
-        canvasCtx.clearRect(0, 0, canvasW, canvasH);
-    })
-    .on('pictionary update', function(data) {
-        canvasCtx.beginPath();
-            canvasCtx.moveTo(data.x1, data.y1);
-            canvasCtx.lineTo(data.x2, data.y2);
-            canvasCtx.strokeStyle = data.c;
-            canvasCtx.lineWidth = data.s;
-            canvasCtx.stroke();
-        canvasCtx.closePath();
-    })
-    .on('pictionary clear', function(data) {
-        canvasCtx.clearRect(0, 0, canvasW, canvasH);
-    })
-    .on('pictionary fill', function(data) {
-        canvasCtx.fillStyle = data.c;
-        canvasCtx.fillRect(0, 0, canvasW, canvasH);
-        canvasCtx.fillStyle = '#fff';
-    })
+    .on('penalty', function (teamName) {
+        console.log("Penality for Team[" + teamName + "]");
+        $('#penalty_' + parseInt(Math.floor(Math.random() * 2)))[0].play();
+        $('#penalty_popup span').html('PENALTY for ' + teamName + ' -1 point');
+        $('#penalty_popup').show(0, function() {
+            $(this).fadeOut(5000);
+        });
+    });
+
+    var lastScores = [];
+    function updateTeamScores () {
+        $('#teamscorelist').empty();
+        var ts = teams;
+        ts.sort((a, b) => parseFloat(b.points) - parseFloat(a.points));
+
+        var s = 500, size = 1;
+        for (let t in ts) {
+            var diff = '';
+            $('#teamscorelist').append(
+                '<div class="animated zoomInDown" style="font-size: ' + (250 - (12 * (size++))) +
+                    '%; animation-delay: ' + s + 'ms;">' +
+                ts[t].name + ' (' + ts[t].points +
+                (ts[t].points == 1 ? ' point' : ' points') + ') ' + diff + '</div>'
+            );
+            s += 200;
+
+            lastScores[ts[t].name] = ts[t].points;
+        }
+    }
 
     //  _____ _
     // |_   _(_)
@@ -265,12 +294,7 @@ $(function () {
     .on('question play', function (msg) {
         nukeTimer();
         stopAllSound();
-
-        $('header').hide();
-        $('section').hide();
-        $('.title').hide();
-        $('#pictionary').hide();
-        $('#question').html('');
+        resetScreen();
 
         $('#question')
         .append(
@@ -397,84 +421,94 @@ $(function () {
         $('#answer_losers').show();
     });
 
-    //  _____
-    // |_   _|
-    //   | | ___  __ _ _ __ ___  ___
-    //   | |/ _ \/ _` | '_ ` _ \/ __|
-    //   | |  __/ (_| | | | | | \__ \
-    //   \_/\___|\__,_|_| |_| |_|___/
-    //
+    // ______ _      _   _
+    // | ___ (_)    | | (_)
+    // | |_/ /_  ___| |_ _  ___  _ __   __ _ _ __ _   _
+    // |  __/| |/ __| __| |/ _ \| '_ \ / _` | '__| | | |
+    // | |   | | (__| |_| | (_) | | | | (_| | |  | |_| |
+    // \_|   |_|\___|\__|_|\___/|_| |_|\__,_|_|   \__, |
+    //                                             __/ |
+    //                                            |___/
+    var canvasId  = 'pictionary_canvas',
+        canvas    = document.getElementById(canvasId),
+        canvasCtx = canvas.getContext("2d"),
+        canvasW   = 350,
+        canvasH   = 350; // Must match incoming canvas data!
     socket
-    .on('teams list', function (ts) {
-        teams = ts;
-        for (let t in teams) {
-            let team = teams[t];
-            if (team.buzzer != null) {
-                if (!$('#audio_team_' + team.id).length) {
-                    var audio = document.createElement('audio');
-                    audio.setAttribute('controls', '');
-                    audio.setAttribute('id', 'audio_team_' + team.id);
-                    $('#teambuzzers')[0].appendChild(audio);
-                }
-
-                var buzzerBlob = new Blob([team.buzzer], { 'type' : 'audio/ogg; codecs=opus' }),
-                    audioURL = window.URL.createObjectURL(buzzerBlob);
-                $('#audio_team_' + team.id)[0].src = audioURL;
-            }
-        }
-        if ($('#teamscores').is(':visible')) {
-            updateTeamScores();
-        }
-    })
-    .on('teams logo', function (tid, data) {
-        console.log("Got logo for Team[" + tid + "]");
-        var img = new Image();
-        img.src = data;
-        logos[tid] = img;
-    })
-    .on('teams scores', function (event) {
+    .on('pictionary init', function (team, totalQuestions, timerVal) {
         nukeTimer();
-        teams = event.teams;
+        $('section').hide();
+        $('#pictionary').show();
+        $('#pictionary h2').html("Team " + team);
+        $('#pictionary h3').html("<span>0</span> of " + totalQuestions + " pictures");
+        $('#pictionary h4').html("<span>0</span> Correct Answer(s)");
 
-        updateTeamScores();
+        canvasCtx.clearRect(0, 0, canvasW, canvasH);
 
-        window.setTimeout(
-            function() {
-                $('header').hide();
-                $('section').hide();
-                $('.title').hide();
-                $('#teamscores').show();
-            },
-            3000
-        );
+        var timer = $('#timer').clone();
+        timerId = "timer_" + Math.floor(Math.random() * 1000);
+        $(timer).attr("id", timerId)
+                .attr('data-time', timerVal)
+                .show();
+        $('#pictionary div').append(timer);
+        $('#' + timerId + ' span').html(timerVal);
     })
-    .on('penalty', function (teamName) {
-        console.log("Penality for Team[" + teamName + "]");
-        $('#penalty_' + parseInt(Math.floor(Math.random() * 2)))[0].play();
-        $('#penalty_popup span').html('PENALTY for ' + teamName + ' -1 point');
-        $('#penalty_popup').show(0, function() {
-            $(this).fadeOut(5000);
-        });
+    .on('pictionary start', function () {
+        timerTimer = setInterval(timerRun, 1000);
+    })
+    .on('pictionary end', function () {
+        clearInterval(timerTimer);
+        $('#' + timerId).remove();
+    })
+    .on('pictionary active', function (active, score) {
+        $('#pictionary h3 span').html(parseInt(active) + 1);
+        $('#pictionary h4 span').html(score);
+        canvasCtx.clearRect(0, 0, canvasW, canvasH);
+    })
+    .on('pictionary update', function(data) {
+        canvasCtx.beginPath();
+            canvasCtx.moveTo(data.x1, data.y1);
+            canvasCtx.lineTo(data.x2, data.y2);
+            canvasCtx.strokeStyle = data.c;
+            canvasCtx.lineWidth = data.s;
+            canvasCtx.stroke();
+        canvasCtx.closePath();
+    })
+    .on('pictionary clear', function(data) {
+        canvasCtx.clearRect(0, 0, canvasW, canvasH);
+    })
+    .on('pictionary fill', function(data) {
+        canvasCtx.fillStyle = data.c;
+        canvasCtx.fillRect(0, 0, canvasW, canvasH);
+        canvasCtx.fillStyle = '#fff';
     });
 
-    var lastScores = [];
-    function updateTeamScores () {
-        $('#teamscorelist').empty();
-        var ts = teams;
-        ts.sort((a, b) => parseFloat(b.points) - parseFloat(a.points));
+    //
+    //  _____             _        _       _____ _      _       _      ______ _     _
+    // /  ___|           | |      ( )     /  ___| |    (_)     | |     | ___ (_)   | |
+    // \ `--.  __ _ _ __ | |_ __ _|/ ___  \ `--.| | ___ _  __ _| |__   | |_/ /_  __| | ___
+    //  `--. \/ _` | '_ \| __/ _` | / __|  `--. \ |/ _ \ |/ _` | '_ \  |    /| |/ _` |/ _ \
+    // /\__/ / (_| | | | | || (_| | \__ \ /\__/ / |  __/ | (_| | | | | | |\ \| | (_| |  __/
+    // \____/ \__,_|_| |_|\__\__,_| |___/ \____/|_|\___|_|\__, |_| |_| \_| \_|_|\__,_|\___|
+    //                                                     __/ |
+    //                                                    |___/
+    socket
+    .on('santassleighride init', function (teams, avatars) {
+        nukeTimer();
+        resetScreen();
 
-        var s = 500, size = 1;
-        for (let t in ts) {
-            var diff = '';
-            $('#teamscorelist').append(
-                '<div class="animated zoomInDown" style="font-size: ' + (250 - (12 * (size++))) +
-                    '%; animation-delay: ' + s + 'ms;">' +
-                ts[t].name + ' (' + ts[t].points +
-                (ts[t].points == 1 ? ' point' : ' points') + ') ' + diff + '</div>'
-            );
-            s += 200;
+        for (var t in teams) {
+            $('.ssr-player[data-player='+(parseInt(t)+1)+'] .ssr-name')
+                .html(teams[t]);
 
-            lastScores[ts[t].name] = ts[t].points;
+            if (avatars[t]) {
+                $('.ssr-player[data-player='+(parseInt(t)+1)+'] .ssr-avatar')
+                    .css({"background-image" : "url(" + avatars[t] + ")"});
+            }
         }
-    }
+
+        $('section').hide();
+        $('#ssr').show();
+    })
+
 });

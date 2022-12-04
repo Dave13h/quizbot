@@ -174,24 +174,36 @@ class oQuestion {
         this.id     = qid;
         this.played = false;
 
-        this.type   = data.type;
-        this.title  = data.title;
-        this.text   = data.text;
-        this.audio  = data.audio;
-        this.image  = data.image;
+        this.type  = data.type;
+        this.title = data.title;
+        this.text  = data.text;
 
-        this.points  = 1;
+        this.points = 1;
         if (!isNaN(data.points))
             this.points = parseInt(data.points);
 
-        this.timer  = 60;
+        this.timer = 60;
         if (!isNaN(data.timer))
             this.timer = parseInt(data.timer);
 
         this.questions = [];
-        if (this.type == 'pictionary') {
-            this.team = data.team;
-            this.questions = data.questions;
+        switch (this.type) {
+            case 'audio':
+                this.audio = data.audio;
+                break;
+
+            case 'catchphrase':
+                this.image = data.image;
+                break;
+
+            case 'pictionary':
+                this.team = data.team;
+                this.questions = data.questions;
+                break;
+
+            case 'santassleighride':
+                this.questions = data.questions;
+                break;
         }
     }
 

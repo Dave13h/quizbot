@@ -232,6 +232,7 @@ $(function () {
                     break;
 
                 case 'pictionary':
+                case 'santassleighride':
                     break;
 
                 default:

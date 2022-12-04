@@ -376,64 +376,36 @@
 
 
         {
-            "type": "text",
-            "title": "Round 8 - Beat the Buzzer",
-            "text": "What is a group of owls called?",
-            "points": 2
-        },
-        {
-            "type": "text",
-            "title": "Round 8 - Beat the Buzzer",
-            "text": "What is a material that will not carry an electrical charge called?",
-            "points": 2
-        },
-        {
-            "type": "text",
-            "title": "Round 8 - Beat the Buzzer",
-            "text": "What is the capital of Mauritius?",
-            "points": 2
-        },
-        {
-            "type": "text",
-            "title": "Round 8 - Beat the Buzzer",
-            "text": "Which four presidents are on Mount Rushmore?",
-            "points": 2
-        },
-        {
-            "type": "text",
-            "title": "Round 8 - Beat the Buzzer",
-            "text": "Name the longest river in the UK",
-            "points": 2
-        },
-        {
-            "type": "text",
-            "title": "Round 8 - Beat the Buzzer",
-            "text": "Where would you find the oldest pot plant in the world?",
-            "points": 2
-        },
-        {
-            "type": "text",
-            "title": "Round 8 - Beat the Buzzer",
-            "text": "What is a group of beavers called?",
-            "points": 2
-        },
-        {
-            "type": "text",
-            "title": "Round 8 - Beat the Buzzer",
-            "text": "Street artist Banksy is originally associated with which city?",
-            "points": 2
-        },
-        {
-            "type": "text",
-            "title": "Round 8 - Beat the Buzzer",
-            "text": "What is the most common phobia in the world?",
-            "points": 2
-        },
-        {
-            "type": "text",
-            "title": "Round 8 - Beat the Buzzer",
-            "text": "What was the Turkish city of Istanbul called before 1930",
-            "points": 2
+            "type": "santassleighride",
+            "title": "Round 8 - Santa's Sleigh Ride",
+            "text": "First past the post wins!",
+            "questions": [
+                {
+                    "a1": true,
+                    "a2": true,
+                    "a3": false
+                },
+                {
+                    "a1": true,
+                    "a2": false,
+                    "a3": false
+                },
+                {
+                    "a1": true,
+                    "a2": true,
+                    "a3": true
+                },
+                {
+                    "a1": false,
+                    "a2": false,
+                    "a3": false
+                },
+                {
+                    "a1": true,
+                    "a2": false,
+                    "a3": true
+                }
+            ]
         }
     ]
 }

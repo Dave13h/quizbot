@@ -229,3 +229,49 @@ body {
     margin-top: 200px;
     font-size: 200%;
 }
+
+#ssr {
+    display: none;
+}
+
+#ssr .ssr-container {
+    background: url("/images/ssr_background.jpg");
+    width: 1920px;
+    height: 1080px;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
+#ssr .ssr-player {
+    position: relative;
+    background: url("/images/ssr_player.png");
+    /** original: 393x165 */
+    height: 130px;
+    width: 300px;
+    background-size: contain;
+    margin-top: 70px;
+}
+
+#ssr .ssr-player .ssr-name {
+    position: relative;
+    left: 50px;
+}
+
+#ssr .ssr-player .ssr-avatar {
+    position: relative;
+    top: -30px;
+    left: 40px;
+    width: 90px;
+    height: 90px;
+
+    background: url("/images/ssr_avatar_grumpy.jpg");
+    -webkit-mask-image: url('/images/ssr_avatar_mask.png');
+    mask-image: url('/images/ssr_avatar_mask.png');
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 90px;
+    mask-size: 90px;
+    background-size: 90px;
+}
