@@ -513,6 +513,10 @@ $(function () {
         $('#ssr').show();
         $('#ssr-help').show();
         $('#ssr-timer').hide();
+
+        $('.ssr-answers').each(function() {
+            $(this).html("");
+        });
     })
     .on('santassleighride active', function (question) {
         console.log("ssr - active", question);
@@ -521,8 +525,9 @@ $(function () {
         $('#ssr-q .ssr-question h1').html(question.title);
         var answers = $('#ssr-q .ssr-question ul.ssr-answers');
         answers.empty();
+        var qno = 1;
         for (var q in question.answers) {
-            answers.append('<li>' + q + '</li>');
+            answers.append('<li>' + (qno++) + ':' + q + '</li>');
         }
         $('#ssr-q').show();
         $('#ssr-timer').html("10").show();
@@ -531,23 +536,25 @@ $(function () {
         console.log("ssr - tick");
         $('#ssr-timer').html(tVal);
     })
-    .on('santassleighride roundend', function (question, scores) {
+    .on('santassleighride roundend', function (question) {
         console.log("ssr - roundend");
         $('#ssr-timer').hide().html(10);
 
         var answers = $('#ssr-q .ssr-question ul.ssr-answers');
         answers.empty();
+        var qno = 1;
         for (var q in question.answers) {
             var correct = question.answers[q]; ;
             answers.append('<li class="ssr-' + (correct ? 'true' : 'false') + '">' +
                 (correct ? '' : '<strike>') +
-                q +
+                (qno++) + ':' + q +
                 (correct ? '' : '</strike>') +
             '</li>');
         }
     })
+    .on('santassleighride answers', function (answers) {
+        var correct = "✅", wrong = "❌";
 
-
+    })
     ;
-
 });

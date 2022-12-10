@@ -576,10 +576,11 @@ sQuizMaster.on('connection', function (socket) {
     });
 
     // Santa's Sleigh Ride Events
-    var ssrActiveQuestion = 0,
-        ssrCountdown      = 0,
-        ssrRoundTimer     = null,
-        ssrRoundCooldown  = null;
+    var ssrActiveQuestion    = 0,
+        ssrCountdown         = 0,
+        ssrRoundTimer        = null,
+        ssrRoundCooldown     = null,
+        ssrWaitingForClients = null;
 
     socket
     .on('santassleighride start', function () {
@@ -639,6 +640,50 @@ sQuizMaster.on('connection', function (socket) {
             'santassleighride roundend',
             questions[activeQuestion].questions[ssrActiveQuestion],
             []
+        );
+
+        ssrFetchAnswers();
+    }
+
+    var ssrCheckResultsTimeout = 0;
+    function ssrFetchAnswers () {
+        ssrCheckResultsTimeout = 0;
+        for (var c in connections.contestants) {
+            var cId = connections.contestants[c].getId();
+            ssrAnswered[cId] = false;
+            ssrAnswers[cId] = [false, false, false];
+            connections.contestants[c].getSocket().emit('santassleighride getanswers');
+        }
+        ssrWaitingForClients = setInterval(ssrCheckResults, 100);
+    }
+
+    function ssrCheckResults () {
+        console.log("ssr - checking results");
+        ++ssrCheckResultsTimeout;
+        if (ssrCheckResultsTimeout < 20) {
+            for (var t = 0; t < teams.length; ++t) {
+                if (ssrAnswered[t] == false) {
+                    return;
+                }
+            }
+        } else {
+            console.log("ssr - checking results timeout");
+        }
+
+        var results = [];
+        var answers = questions[activeQuestion].questions[ssrActiveQuestion].answers;
+        for (var t = 0; t < teams.length; ++t) {
+            results[t] = [
+                ssrAnswers[t][0] == answers[0],
+                ssrAnswers[t][1] == answers[1],
+                ssrAnswers[t][2] == answers[2]
+            ];
+        }
+
+        console.log("ssr - all answered", results);
+        sDashboard.emit(
+            'santassleighride answers',
+            results
         );
     }
 
@@ -709,6 +754,8 @@ sQuizMaster.on('connection', function (socket) {
 // | \__/\ (_) | | | | ||  __/\__ \ || (_| | | | | |_\__ \
 //  \____/\___/|_| |_|\__\___||___/\__\__,_|_| |_|\__|___/
 //
+var ssrAnswers = [], ssrAnswered = [];
+
 sContestant
 .on('connection', function (socket) {
     var cid = null;
@@ -844,5 +891,16 @@ sContestant
         if (!data)
             return;
         sDashboard.emit('pictionary fill', data);
+    });
+
+    // Santa's Sleigh Ride events
+    socket
+    .on('santassleighride answers', function (cid, answers) {
+        var contestant = connections.contestants[cid],
+            team = teams[contestant.getTeam()];
+
+        console.log('[SSR] ' + cid + ' => team: ' + team.getName(), answers);
+        ssrAnswers[team.getId()] = answers;
+        ssrAnswered[team.getId()] = true;
     });
 });

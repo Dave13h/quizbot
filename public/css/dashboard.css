@@ -263,7 +263,7 @@ body {
 }
 #ssr .ssr-player .ssr-avatar {
     position: relative;
-    top: -30px;
+    top: -60px;
     left: 40px;
     width: 90px;
     height: 90px;
@@ -304,7 +304,7 @@ body {
 }
 #ssr-q .ssr-question h1 {
     font-size: 250%;
-    margin-bottom: 150px;
+    margin-bottom: 70px;
 }
 #ssr-q .sr-question {
     font-size: 230%;
