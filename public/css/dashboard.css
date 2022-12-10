@@ -258,6 +258,11 @@ body {
     position: relative;
     left: 50px;
 }
+#ssr .ssr-answers {
+    position: relative;
+    left: 163px;
+    top: -25px;
+}
 
 #ssr .ssr-player .ssr-avatar {
     position: relative;
@@ -274,4 +279,35 @@ body {
     -webkit-mask-size: 90px;
     mask-size: 90px;
     background-size: 90px;
+}
+
+#ssr .ssr-qbox {
+    position: absolute;
+    top: 250px;
+    left: 900px;
+    width: 800px;
+    height: 700px;
+}
+#ssr .ssr-qbox-inner {
+    width: 800px;
+    height: 700px;
+    transform: skew(20deg, -11deg);
+    background: #999;
+}
+#ssr .ssr-qbox-outer {
+    width: 800px;
+    height: 700px;
+    transform: skew(-15deg, 10deg);
+    background: #777;
+}
+#ssr .ssr-question {
+    width: 800px;
+    height: 700px;
+    position: absolute;
+    top: 0;
+}
+#ssr ul {
+    list-style-type: none;
+    text-align: left;
+    font-size: 150%;
 }

@@ -73,7 +73,7 @@ app
 .get('/quizmaster', function (req, res) {
     res.sendFile(__dirname + '/views/fools.html');
 })
-.get('/qm', function (req, res) {
+.get('/qmaster', function (req, res) {
     res.sendFile(__dirname + '/views/quizmaster.html');
 })
 .get('/dashboard', function (req, res) {
@@ -365,7 +365,7 @@ sQuizMaster.on('connection', function (socket) {
 
         switch (questions[qid].getType()) {
             case 'pictionary':
-                activePictionaryQuestion = 0;
+                pictionaryActiveQuestion = 0;
                 pictionaryScore = 0;
 
                 activeTeam = questions[qid].getTeam();
@@ -494,7 +494,7 @@ sQuizMaster.on('connection', function (socket) {
     });
 
     // Pictionary Events
-    var activePictionaryQuestion = 0, pictionaryScore = 0;
+    var pictionaryActiveQuestion = 0, pictionaryScore = 0;
     socket
     .on('pictionary start', function () {
         sDashboard.emit('pictionary start');
@@ -521,9 +521,9 @@ sQuizMaster.on('connection', function (socket) {
 
         teams[activeTeam].points += parseInt(worth);
         pictionaryScore += parseInt(worth);
-        activePictionaryQuestion++;
+        pictionaryActiveQuestion++;
 
-        if (activePictionaryQuestion >= questions[activeQuestion].getQuestions().length) {
+        if (pictionaryActiveQuestion >= questions[activeQuestion].getQuestions().length) {
             sDashboard.emit('pictionary end', pictionaryScore, questions[activeQuestion].getQuestions().length);
             sDashboard.emit('teams scores', {teams: teams});
 
@@ -538,19 +538,19 @@ sQuizMaster.on('connection', function (socket) {
             return;
         }
 
-        sQuizMaster.emit('pictionary active', activePictionaryQuestion);
-        sDashboard.emit('pictionary active', activePictionaryQuestion, pictionaryScore);
+        sQuizMaster.emit('pictionary active', pictionaryActiveQuestion);
+        sDashboard.emit('pictionary active', pictionaryActiveQuestion, pictionaryScore);
 
         for (var c in connections.contestants) {
             if (connections.contestants[c].getTeam() != activeTeam)
                 continue;
-            connections.contestants[c].getSocket().emit('pictionary active', activePictionaryQuestion);
+            connections.contestants[c].getSocket().emit('pictionary active', pictionaryActiveQuestion);
         }
     })
     .on('pictionary skip', function () {
-        activePictionaryQuestion++;
+        pictionaryActiveQuestion++;
 
-        if (activePictionaryQuestion >= questions[activeQuestion].getQuestions().length) {
+        if (pictionaryActiveQuestion >= questions[activeQuestion].getQuestions().length) {
             sDashboard.emit('pictionary end', pictionaryScore, questions[activeQuestion].getQuestions().length);
             sDashboard.emit('teams scores', {teams: teams});
 
@@ -565,14 +565,30 @@ sQuizMaster.on('connection', function (socket) {
             return;
         }
 
-        sQuizMaster.emit('pictionary active', activePictionaryQuestion);
-        sDashboard.emit('pictionary active', activePictionaryQuestion, pictionaryScore);
+        sQuizMaster.emit('pictionary active', pictionaryActiveQuestion);
+        sDashboard.emit('pictionary active', pictionaryActiveQuestion, pictionaryScore);
 
         for (var c in connections.contestants) {
             if (connections.contestants[c].getTeam() != activeTeam)
                 continue;
-            connections.contestants[c].getSocket().emit('pictionary active', activePictionaryQuestion);
+            connections.contestants[c].getSocket().emit('pictionary active', pictionaryActiveQuestion);
         }
+    });
+
+    // Santa's Sleigh Ride Events
+    var ssrActiveQuestion = 0,
+        ssrRoundTimer     = null,
+        ssrRoundCooldown  = null;
+
+    socket
+    .on('ssr play', function () {
+        sDashboard.emit('title show', {title: title, teams: teams});
+    })
+    .on('ssr start', function () {
+
+    })
+    .on('ssr pause', function () {
+
     });
 
     // Sound events

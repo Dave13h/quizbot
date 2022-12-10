@@ -353,7 +353,8 @@ $(function () {
                 break;
 
             case 'pictionary':
-                // Done in "pictionary init"
+            case 'ssr':
+                // Done in "init"
                 break;
 
             case 'audio':
@@ -509,6 +510,7 @@ $(function () {
 
         $('section').hide();
         $('#ssr').show();
+        $('#ssr-help').show();
     })
 
 });

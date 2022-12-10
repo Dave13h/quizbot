@@ -53,7 +53,7 @@ $(function () {
     $(this).removeClass('is-success').addClass('is-primary');
     }
 
-    var pin    = prompt("Enter Pin"), // this looks interesting right?
+    var pin = prompt("Enter Pin"), // this looks interesting right?
     socket = io.connect('/quizmaster'), // This MUST be important... its a socket!
     qmid   = window.localStorage.getItem('qmid'); // ooh could be exploitable right?
 
@@ -166,11 +166,13 @@ $(function () {
         });
     })
     .on('questions list', function(questions){
+        var timerGames = ['timer','catchphrase','pictionary'];
         $('#questions').html('');
         if (questions.length == 0) {
             $('#questions').append("-- No Questions --");
             return;
         }
+
         $(questions).each(function(k, v) {
             let bClass = 'is-primary',
                 bIcon  = 'star';
@@ -207,21 +209,33 @@ $(function () {
                     $('#game_pictionary_correct').hide();
                     $('#game_pictionary_skip').hide();
 
+                    $('#game_ssr').hide();
+
                     if (v.type == 'audio') {
                         $('#game_audio').show();
-                    } else if (v.type == 'timer' || v.type == 'catchphrase' || v.type == 'pictionary') {
+                    } else if (timerGames.indexOf(v.type) !== -1 ) {
                         $('#game_timer_start').show();
                         $('#game_timer_pause').show();
                         $('#game_timer_reset').show();
                     }
 
-                    // #noshame
-                    if (v.type == 'pictionary') {
-                        $('#active_state').hide();
-                        $('#game_actions').hide();
-                        $('#game_skip').hide();
-                        $('#game_pictionary').show();
-                        $('#game_pictionary_start').show();
+                    switch (v.type) {
+                        case 'pictionary':
+                            $('#active_state').hide();
+                            $('#game_actions').hide();
+                            $('#game_skip').hide();
+                            $('#game_pictionary').show();
+                            $('#game_pictionary_start').show();
+                            break;
+
+                        case 'santassleighride':
+                            $('#active_state').hide();
+                            $('#game_actions').hide();
+                            $('#game_skip').hide();
+                            $('#game_ssr').show();
+                            $('#game_ssr_play').show();
+                            $('#game_ssr_pause').hide();
+                            break;
                     }
                 })
 
@@ -274,6 +288,10 @@ $(function () {
     .on('pictionary end', function(activeQ) {
         $('#game_pictionary_correct').hide();
         $('#game_pictionary_skip').hide();
+    })
+
+    .on('santassleighride init', function(questions) {
+
     })
 
     // The game state eh? obviously comes from the server, how can we trick it?
