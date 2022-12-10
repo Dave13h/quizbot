@@ -233,7 +233,6 @@ body {
 #ssr {
     display: none;
 }
-
 #ssr .ssr-container {
     background: url("/images/ssr_background.jpg");
     width: 1920px;
@@ -253,7 +252,6 @@ body {
     background-size: contain;
     margin-top: 70px;
 }
-
 #ssr .ssr-player .ssr-name {
     position: relative;
     left: 50px;
@@ -263,7 +261,6 @@ body {
     left: 163px;
     top: -25px;
 }
-
 #ssr .ssr-player .ssr-avatar {
     position: relative;
     top: -30px;
@@ -280,7 +277,6 @@ body {
     mask-size: 90px;
     background-size: 90px;
 }
-
 #ssr .ssr-qbox {
     position: absolute;
     top: 250px;
@@ -292,13 +288,13 @@ body {
     width: 800px;
     height: 700px;
     transform: skew(20deg, -11deg);
-    background: #999;
+    background: #666;
 }
 #ssr .ssr-qbox-outer {
     width: 800px;
     height: 700px;
     transform: skew(-15deg, 10deg);
-    background: #777;
+    background: #333;
 }
 #ssr .ssr-question {
     width: 800px;
@@ -306,8 +302,34 @@ body {
     position: absolute;
     top: 0;
 }
+#ssr-q .ssr-question h1 {
+    font-size: 250%;
+    margin-bottom: 150px;
+}
+#ssr-q .sr-question {
+    font-size: 230%;
+}
 #ssr ul {
     list-style-type: none;
     text-align: left;
     font-size: 150%;
+}
+#ssr-q .ssr-question ul.ssr-answers {
+    font-size: 200%;
+    left: 25px;
+}
+#ssr .ssr-question ul.ssr-answers li {
+    margin-bottom: 30px;
+}
+#ssr .ssr-question ul.ssr-answers li.ssr-true {
+    color: #52ff52;
+}
+#ssr .ssr-question ul.ssr-answers li.ssr-false {
+    color: #ff5252;
+}
+#ssr #ssr-timer {
+    position: absolute;
+    top: 250px;
+    left: 685px;
+    font-size: 500%;
 }

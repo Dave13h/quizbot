@@ -495,6 +495,7 @@ $(function () {
     //                                                    |___/
     socket
     .on('santassleighride init', function (teams, avatars) {
+        console.log("ssr - init");
         nukeTimer();
         resetScreen();
 
@@ -511,6 +512,42 @@ $(function () {
         $('section').hide();
         $('#ssr').show();
         $('#ssr-help').show();
+        $('#ssr-timer').hide();
     })
+    .on('santassleighride active', function (question) {
+        console.log("ssr - active", question);
+        $('#ssr-help').hide();
+
+        $('#ssr-q .ssr-question h1').html(question.title);
+        var answers = $('#ssr-q .ssr-question ul.ssr-answers');
+        answers.empty();
+        for (var q in question.answers) {
+            answers.append('<li>' + q + '</li>');
+        }
+        $('#ssr-q').show();
+        $('#ssr-timer').html("10").show();
+    })
+    .on('santassleighride tick', function (tVal) {
+        console.log("ssr - tick");
+        $('#ssr-timer').html(tVal);
+    })
+    .on('santassleighride roundend', function (question, scores) {
+        console.log("ssr - roundend");
+        $('#ssr-timer').hide().html(10);
+
+        var answers = $('#ssr-q .ssr-question ul.ssr-answers');
+        answers.empty();
+        for (var q in question.answers) {
+            var correct = question.answers[q]; ;
+            answers.append('<li class="ssr-' + (correct ? 'true' : 'false') + '">' +
+                (correct ? '' : '<strike>') +
+                q +
+                (correct ? '' : '</strike>') +
+            '</li>');
+        }
+    })
+
+
+    ;
 
 });

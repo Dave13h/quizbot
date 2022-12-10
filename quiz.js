@@ -577,19 +577,70 @@ sQuizMaster.on('connection', function (socket) {
 
     // Santa's Sleigh Ride Events
     var ssrActiveQuestion = 0,
+        ssrCountdown      = 0,
         ssrRoundTimer     = null,
         ssrRoundCooldown  = null;
 
     socket
-    .on('ssr play', function () {
-        sDashboard.emit('title show', {title: title, teams: teams});
+    .on('santassleighride start', function () {
+        console.log("ssr - starting");
+        ssrTick();
     })
-    .on('ssr start', function () {
-
+    .on('santassleighride reset', function () {
+        ssrActiveQuestion = 0;
+        if (ssrRoundTimer) {
+            clearInterval(ssrRoundTimer);
+            ssrRoundTimer = null;
+        }
+        if (ssrRoundCooldown) {
+            clearInterval(ssrRoundCooldown);
+            ssrRoundCooldown = null;
+        }
+        sDashboard.emit(
+            'santassleighride init',
+            teamNames,
+            avatars
+        );
     })
-    .on('ssr pause', function () {
-
+    .on('santassleighride pause', function () {
+        sDashboard.emit('santassleighride pause');
     });
+
+    function ssrTick () {
+        if (!ssrRoundTimer) {
+            console.log("ssr - begin tick");
+            sDashboard.emit(
+                'santassleighride active',
+                questions[activeQuestion].questions[ssrActiveQuestion]
+            );
+            ssrCountdown = 10;
+            ssrRoundTimer = setInterval(ssrTick, 1000);
+            return;
+        }
+
+        if (ssrCountdown-- < 1) {
+            console.log("ssr - countdown expired");
+            clearInterval(ssrRoundTimer);
+            ssrRoundEnd();
+            return;
+        }
+
+        console.log("ssr - tick");
+        sDashboard.emit(
+            'santassleighride tick',
+            ssrCountdown
+        );
+    }
+
+    function ssrRoundEnd () {
+        console.log("ssr - round end");
+        sDashboard.emit('sound play', {sound: 'buzzer_wrong'});
+        sDashboard.emit(
+            'santassleighride roundend',
+            questions[activeQuestion].questions[ssrActiveQuestion],
+            []
+        );
+    }
 
     // Sound events
     socket

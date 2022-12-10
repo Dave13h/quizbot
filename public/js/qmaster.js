@@ -290,10 +290,6 @@ $(function () {
         $('#game_pictionary_skip').hide();
     })
 
-    .on('santassleighride init', function(questions) {
-
-    })
-
     // The game state eh? obviously comes from the server, how can we trick it?
     // Does the /dashboard use this too? oops, did I just leak the endpoint for the dashboard?
     // Nothing exploitable there at all is there?
@@ -463,6 +459,22 @@ $(function () {
     $('#game_pictionary_skip').on('click', function() {
         $('#game_pictionary ul li.active').addClass('skip');
         socket.emit('pictionary skip');
+    });
+
+    // Santas Sleigh Ride bits
+    $('#game_ssr_start').on('click', function() {
+        socket.emit('santassleighride start');
+        $('#game_ssr_start').hide();
+        $('#game_ssr_pause').show();
+    });
+    $('#game_ssr_reset').on('click', function() {
+        socket.emit('santassleighride reset');
+        $('#game_ssr_pause').hide();
+    });
+    $('#game_ssr_pause').on('click', function() {
+        socket.emit('santassleighride pause');
+        $('#game_ssr_start').show();
+        $('#game_ssr_pause').hide();
     });
 
     $('#sounds button').on('click', function() {
