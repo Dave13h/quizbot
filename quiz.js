@@ -406,6 +406,10 @@ sQuizMaster.on('connection', function (socket) {
                     teamNames,
                     avatars
                 );
+
+                for (var c in connections.contestants) {
+                    connections.contestants[c].getSocket().emit('santassleighride init');
+                }
                 return;
         }
 
@@ -579,12 +583,23 @@ sQuizMaster.on('connection', function (socket) {
     var ssrActiveQuestion    = 0,
         ssrCountdown         = 0,
         ssrRoundTimer        = null,
-        ssrRoundCooldown     = null,
         ssrWaitingForClients = null;
 
     socket
     .on('santassleighride start', function () {
-        console.log("ssr - starting");
+        var ssrQuestion = questions[activeQuestion].questions[ssrActiveQuestion];
+        for (var c in connections.contestants) {
+            connections.contestants[c].getSocket().emit(
+                'santassleighride active',
+                ssrQuestion
+            );
+        }
+
+        ssrCountdown = 10;
+        if (ssrRoundTimer) {
+            clearInterval(ssrRoundTimer);
+            ssrRoundTimer = null;
+        }
         ssrTick();
     })
     .on('santassleighride reset', function () {
@@ -593,10 +608,11 @@ sQuizMaster.on('connection', function (socket) {
             clearInterval(ssrRoundTimer);
             ssrRoundTimer = null;
         }
-        if (ssrRoundCooldown) {
-            clearInterval(ssrRoundCooldown);
-            ssrRoundCooldown = null;
+        var avatars = [];
+        for (var t in teams) {
+            avatars.push(teams[t].getAvatar());
         }
+
         sDashboard.emit(
             'santassleighride init',
             teamNames,
@@ -609,7 +625,6 @@ sQuizMaster.on('connection', function (socket) {
 
     function ssrTick () {
         if (!ssrRoundTimer) {
-            console.log("ssr - begin tick");
             sDashboard.emit(
                 'santassleighride active',
                 questions[activeQuestion].questions[ssrActiveQuestion]
@@ -620,13 +635,11 @@ sQuizMaster.on('connection', function (socket) {
         }
 
         if (ssrCountdown-- < 1) {
-            console.log("ssr - countdown expired");
             clearInterval(ssrRoundTimer);
             ssrRoundEnd();
             return;
         }
 
-        console.log("ssr - tick");
         sDashboard.emit(
             'santassleighride tick',
             ssrCountdown
@@ -634,7 +647,6 @@ sQuizMaster.on('connection', function (socket) {
     }
 
     function ssrRoundEnd () {
-        console.log("ssr - round end");
         sDashboard.emit('sound play', {sound: 'buzzer_wrong'});
         sDashboard.emit(
             'santassleighride roundend',
@@ -648,43 +660,81 @@ sQuizMaster.on('connection', function (socket) {
     var ssrCheckResultsTimeout = 0;
     function ssrFetchAnswers () {
         ssrCheckResultsTimeout = 0;
+        for (var t = 0; t < teams.length; ++t) {
+            ssrAnswered[t] = false;
+            ssrAnswers[t] = [false, false, false];
+        }
         for (var c in connections.contestants) {
-            var cId = connections.contestants[c].getId();
-            ssrAnswered[cId] = false;
-            ssrAnswers[cId] = [false, false, false];
             connections.contestants[c].getSocket().emit('santassleighride getanswers');
         }
         ssrWaitingForClients = setInterval(ssrCheckResults, 100);
     }
 
     function ssrCheckResults () {
-        console.log("ssr - checking results");
         ++ssrCheckResultsTimeout;
         if (ssrCheckResultsTimeout < 20) {
+            var aCount = 0;
             for (var t = 0; t < teams.length; ++t) {
-                if (ssrAnswered[t] == false) {
-                    return;
+                if (ssrAnswered[t]) {
+                    ++aCount;
+                    continue;
                 }
+                console.log("[SSR] waiting for ", teams[t].getName());
+            }
+            if (aCount != teams.length) {
+                return false;
             }
         } else {
-            console.log("ssr - checking results timeout");
+            console.log("[SSR] Checking results timeout");
         }
 
-        var results = [];
-        var answers = questions[activeQuestion].questions[ssrActiveQuestion].answers;
+        clearInterval(ssrWaitingForClients);
+        ssrWaitingForClients = null;
+
+        var results = [],
+            tScores = [],
+            answers = questions[activeQuestion].questions[ssrActiveQuestion].answers,
+            aVals   = [],
+            aid     = 0;
+        for (var a in answers) { // Unroll, thanks JS for not supporting index access to key'd arrays :F
+            aVals[aid++] = answers[a];
+        }
         for (var t = 0; t < teams.length; ++t) {
-            results[t] = [
-                ssrAnswers[t][0] == answers[0],
-                ssrAnswers[t][1] == answers[1],
-                ssrAnswers[t][2] == answers[2]
-            ];
+            results[t] = [];
+
+            var tPoints = 0,
+                tLeader = false;
+
+            results[t][0] = false;
+            if (ssrAnswers[t][0] == aVals[0]) {
+                results[t][0] = true;
+                ++tPoints;
+            }
+
+            results[t][1] = false;
+            if (ssrAnswers[t][1] == aVals[1]) {
+                results[t][1] = true;
+                ++tPoints;
+            }
+
+            results[t][2] = false;
+            if (!tLeader && ssrAnswers[t][2] == aVals[2]) {
+                results[t][2] = true;
+                ++tPoints;
+            }
+
+            teams[t].addPoints(tPoints);
+            tScores[t] = teams[t].getPoints();
         }
 
-        console.log("ssr - all answered", results);
         sDashboard.emit(
             'santassleighride answers',
-            results
+            results,
+            tScores
         );
+
+        ++ssrActiveQuestion;
+        sQuizMaster.emit('santassleighride nextround');
     }
 
     // Sound events
@@ -769,8 +819,6 @@ sContestant
             socket.emit('teams list', teams);
         } else {
             socket.emit('team state', teams[connections.contestants[cid].getTeam()]);
-            // socket.emit('team logo', teams[connections.contestants[cid].getTeam()].getLogo());
-            // socket.emit('team buzzer', teams[connections.contestants[cid].getTeam()].getBuzzer());
             if (activeQuestion == -1 || questions[activeQuestion].type == 'pictionary')
                 socket.emit('wait');
         }
@@ -895,9 +943,9 @@ sContestant
 
     // Santa's Sleigh Ride events
     socket
-    .on('santassleighride answers', function (cid, answers) {
-        var contestant = connections.contestants[cid],
-            team = teams[contestant.getTeam()];
+    .on('santassleighride answers', function (answers) {
+        var c = connections.contestants[cid],
+            team = teams[c.getTeam()];
 
         console.log('[SSR] ' + cid + ' => team: ' + team.getName(), answers);
         ssrAnswers[team.getId()] = answers;

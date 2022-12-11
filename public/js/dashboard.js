@@ -84,6 +84,12 @@ $(function () {
         $('#question').html('');
     }
 
+    function delay(n){
+        return new Promise(function(resolve){
+            setTimeout(resolve, n * 1000);
+        });
+    }
+
     var socket = io.connect('/dashboard'),
         wrongTimer = null;
 
@@ -515,12 +521,16 @@ $(function () {
         $('#ssr-timer').hide();
 
         $('.ssr-answers').each(function() {
-            $(this).html("");
+            $(this).html("&nbsp;");
         });
     })
     .on('santassleighride active', function (question) {
         console.log("ssr - active", question);
         $('#ssr-help').hide();
+
+        $('.ssr-answers').each(function() {
+            $(this).html("&nbsp;");
+        });
 
         $('#ssr-q .ssr-question h1').html(question.title);
         var answers = $('#ssr-q .ssr-question ul.ssr-answers');
@@ -552,9 +562,23 @@ $(function () {
             '</li>');
         }
     })
-    .on('santassleighride answers', function (answers) {
-        var correct = "✅", wrong = "❌";
+    .on('santassleighride answers', async function (answers, teamScores) {
+        await delay(5);
 
+        $('#ssr-q').hide();
+
+        console.log("ssr - answers");
+        console.log(answers);
+        console.log(teamScores);
+
+        var correct = "✅", wrong = "❌";
+        for (var a in answers) {
+            var aStr = '';
+            for (var qa = 0; qa < answers[a].length; ++qa) {
+                aStr += answers[a][qa] ? correct : wrong;
+            }
+            $('.ssr-answers', '.ssr-player[data-player='+(parseInt(a)+1)+']').html(aStr);
+        }
     })
     ;
 });

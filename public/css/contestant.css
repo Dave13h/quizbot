@@ -71,3 +71,18 @@ header h1 { font-size: 125%; }
 }
 
 .btn.is-black{color:#fff;background-color:#000;box-shadow:inset -4px -4px #888}
+
+#ssr-help { display: none; }
+#ssr-help h1 { font-size: 100%; }
+#ssr-q { display: none; }
+#santassleighride ul {
+    list-style-type: none;
+    text-align: left;
+    font-size: 150%;
+}
+#ssr-q .ssr-question ul.ssr-answers {
+    font-size: 150%;
+}
+#santassleighride .ssr-question ul.ssr-answers li {
+    margin-bottom: 30px;
+}

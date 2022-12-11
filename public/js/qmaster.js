@@ -263,6 +263,10 @@ $(function () {
             $('#questions').append(con);
         });
     })
+    .on('santassleighride nextround', function() {
+        $('#game_ssr_next').show();
+        $('#game_ssr_pause').hide();
+    })
     .on('question buzzed', function(msg) {
         $('#active_team').html(msg.team.name);
         $('#game_actions').show();
@@ -385,8 +389,7 @@ $(function () {
         canvasCtx.fillStyle = data.c;
         canvasCtx.fillRect(0, 0, canvasW, canvasH);
         canvasCtx.fillStyle = '#fff';
-    })
-    ;
+    });
 
     $('#menu button').on('click', selectView);
     $('#stopaudio').on('click', function() {
@@ -465,16 +468,17 @@ $(function () {
     $('#game_ssr_start').on('click', function() {
         socket.emit('santassleighride start');
         $('#game_ssr_start').hide();
-        $('#game_ssr_pause').show();
+        $('#game_ssr_next').hide();
     });
     $('#game_ssr_reset').on('click', function() {
         socket.emit('santassleighride reset');
-        $('#game_ssr_pause').hide();
-    });
-    $('#game_ssr_pause').on('click', function() {
-        socket.emit('santassleighride pause');
         $('#game_ssr_start').show();
-        $('#game_ssr_pause').hide();
+        $('#game_ssr_next').hide();
+    });
+    $('#game_ssr_next').on('click', function() {
+        socket.emit('santassleighride start');
+        $('#game_ssr_start').hide();
+        $('#game_ssr_next').hide();
     });
 
     $('#sounds button').on('click', function() {

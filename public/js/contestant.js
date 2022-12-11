@@ -152,26 +152,6 @@ $(function () {
         console.log('Got ID: ' + id);
         cid = id;
         window.localStorage.setItem('cid', cid);
-    })
-    .on('pictionary init', function (qs) {
-        pictionary_questions = qs;
-        $('section').hide();
-        $('#buttons').hide();
-        $('#pictionary_guide').show();
-        colour = "#000";
-        penSize = 5.0;
-        p_canvasCtx.clearRect(0, 0, p_canvasW, p_canvasH);
-        $('#menu').hide();
-    })
-    .on('pictionary active', function (qid) {
-        $('#pictionary .p_title').html("Draw - " + pictionary_questions[qid]);
-        p_canvasCtx.clearRect(0, 0, p_canvasW, p_canvasH);
-    })
-    .on('pictionary start', function () {
-        $('#pictionary_guide').hide();
-        $('#pictionary').show();
-        $('#pictionary .p_title').html("Draw - " + pictionary_questions[0]);
-        p_canvasCtx.clearRect(0, 0, p_canvasW, p_canvasH);
     });
 
     //
@@ -470,4 +450,77 @@ $(function () {
     $('#pictionary input[name=p_pen_size]').on('change', function() {
         penSize = $(this).val();
     });
+
+    socket
+    .on('pictionary init', function (qs) {
+        pictionary_questions = qs;
+        $('section').hide();
+        $('#buttons').hide();
+        $('#pictionary_guide').show();
+        colour = "#000";
+        penSize = 5.0;
+        p_canvasCtx.clearRect(0, 0, p_canvasW, p_canvasH);
+        $('#menu').hide();
+    })
+    .on('pictionary active', function (qid) {
+        $('#pictionary .p_title').html("Draw - " + pictionary_questions[qid]);
+        p_canvasCtx.clearRect(0, 0, p_canvasW, p_canvasH);
+    })
+    .on('pictionary start', function () {
+        $('#pictionary_guide').hide();
+        $('#pictionary').show();
+        $('#pictionary .p_title').html("Draw - " + pictionary_questions[0]);
+        p_canvasCtx.clearRect(0, 0, p_canvasW, p_canvasH);
+    });
+
+    //  _____             _        _       _____ _      _       _      ______ _     _
+    // /  ___|           | |      ( )     /  ___| |    (_)     | |     | ___ (_)   | |
+    // \ `--.  __ _ _ __ | |_ __ _|/ ___  \ `--.| | ___ _  __ _| |__   | |_/ /_  __| | ___
+    //  `--. \/ _` | '_ \| __/ _` | / __|  `--. \ |/ _ \ |/ _` | '_ \  |    /| |/ _` |/ _ \
+    // /\__/ / (_| | | | | || (_| | \__ \ /\__/ / |  __/ | (_| | | | | | |\ \| | (_| |  __/
+    // \____/ \__,_|_| |_|\__\__,_| |___/ \____/|_|\___|_|\__, |_| |_| \_| \_|_|\__,_|\___|
+    //                                                     __/ |
+    //                                                    |___/
+    socket
+    .on('santassleighride init', function () {
+        console.log("ssr init");
+        $('section').hide();
+        $('#santassleighride').show();
+        $('#buttons').hide();
+        $('#ssr-help').show();
+        $('#ssr-q').hide();
+        $('#menu').hide();
+    })
+    .on('santassleighride active', function (question) {
+        console.log("ssr active");
+        $('section').hide();
+        $('#santassleighride').show();
+        $('#buttons').hide();
+        $('#ssr-help').hide();
+        $('#menu').hide();
+
+        $('#ssr-q .ssr-question h1').html(question.title);
+        var answers = $('#ssr-q .ssr-question ul.ssr-answers');
+        answers.empty();
+        var qno = 1;
+        for (var q in question.answers) {
+            answers.append('<li><label><input type="checkbox" data-aid="'+(qno++)+'" value="1">' +
+                q + '</label></li>');
+        }
+        $('.ssr-answers input').each(function() {
+            $(this).removeAttr('disabled');
+        });
+        $('#ssr-q').show();
+    })
+    .on('santassleighride getanswers', function () {
+        console.log("ssr getanswers");
+        var answers = [];
+        $('.ssr-answers input').each(function () {
+            answers[$(this).data('aid')-1] = $(this).prop('checked');
+            $(this).attr('disabled', true);
+        });
+        console.log(answers);
+        socket.emit('santassleighride answers', answers);
+    })
+    ;
 });

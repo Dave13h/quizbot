@@ -213,7 +213,45 @@
                                                                |___/
         -->
         <section id="santassleighride">
+            <div id="ssr-help">
+                <h1>Santa's Sleigh Ride!</h1>
+                <p>First <strong>"NOSE"</strong> to the north pole wins!</p>
+                <p>
+                    For each Question, you will be given 3 answers.
+                    Select the ones you think are true, you will given 1 point for each correct answer.
+                    Note that it is possible that all 3 answers can be false!
+                </p>
+                <p>The current leader will only get 2 options!</p>
 
+                <h1>Which of the following are colours?</h1>
+                <p>
+                    <ul>
+                        <li style="color: #52ff52">
+                            [x] Red - True<br/>
+                            <span style="color: #fff">(1 Point - Correct Answer)</span>
+                            <br/><br/>
+                        </li>
+                        <li style="color: #52ff52">
+                            [ ] Blurple - False<br/>
+                            <span style="color: #fff">(1 Point - Correct Answer)</span>
+                            <br/><br/>
+                        </li>
+                        <li style="color: #ff5252">
+                            [ ] Orange - True<br/>
+                            <span style="color: #fff">(0 Points - Wrong Answer)</span>
+                            <br/><br/>
+                        </li>
+                    </ul>
+                </p>
+            </div>
+
+            <div id="ssr-q" class="ssr-qbox" style="display: none">
+                <div class="ssr-question">
+                    <h1></h1>
+                    <ul class="ssr-answers">
+                    </ul>
+                </div>
+            </div>
         </section>
 
         <script src="/socket.io/socket.io.js"></script>
