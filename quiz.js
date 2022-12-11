@@ -396,16 +396,7 @@ sQuizMaster.on('connection', function (socket) {
                     questions[qid].getQuestions()
                 );
 
-                var avatars = [];
-                for (var t in teams) {
-                    avatars.push(teams[t].getAvatar());
-                }
-
-                sDashboard.emit(
-                    'santassleighride init',
-                    teamNames,
-                    avatars
-                );
+                ssrInit();
 
                 for (var c in connections.contestants) {
                     connections.contestants[c].getSocket().emit('santassleighride init');
@@ -583,15 +574,19 @@ sQuizMaster.on('connection', function (socket) {
     var ssrActiveQuestion    = 0,
         ssrCountdown         = 0,
         ssrRoundTimer        = null,
-        ssrWaitingForClients = null;
+        ssrWaitingForClients = null,
+        ssrPoints            = [0,0,0,0,0],
+        ssrLeaders           = [false, false, false, false, false];
 
     socket
     .on('santassleighride start', function () {
         var ssrQuestion = questions[activeQuestion].questions[ssrActiveQuestion];
         for (var c in connections.contestants) {
-            connections.contestants[c].getSocket().emit(
+            var c = connections.contestants[c];
+            c.getSocket().emit(
                 'santassleighride active',
-                ssrQuestion
+                ssrQuestion,
+                ssrLeaders[teams[c.getTeam()].getId()]
             );
         }
 
@@ -608,20 +603,43 @@ sQuizMaster.on('connection', function (socket) {
             clearInterval(ssrRoundTimer);
             ssrRoundTimer = null;
         }
-        var avatars = [];
+        ssrInit();
+    })
+    .on('santassleighride pause', function () {
+        sDashboard.emit('santassleighride pause');
+    });
+
+    function ssrInit() {
+        var avatars = [],
+            scores = [],
+            positions = [],
+            minScore = 100000,
+            maxScore = 0;
         for (var t in teams) {
             avatars.push(teams[t].getAvatar());
+            var tScore = teams[t].getPoints();
+            scores[t] = { t: t, s: tScore};
+
+            maxScore = Math.max(maxScore, tScore);
+        }
+
+        scores.sort(function(a, b){return a.s - b.s});
+
+        ssrPoints = [0,0,0,0,0];
+        for (var s in scores) {
+            var isLeader = (scores[s].s == maxScore);
+            ssrLeaders[scores[s].t] = isLeader;
+            ssrPoints[scores[s].t] = (isLeader ? 5 : s) * 2; // Seed positions
         }
 
         sDashboard.emit(
             'santassleighride init',
             teamNames,
-            avatars
+            avatars,
+            ssrPoints,
+            ssrLeaders
         );
-    })
-    .on('santassleighride pause', function () {
-        sDashboard.emit('santassleighride pause');
-    });
+    }
 
     function ssrTick () {
         if (!ssrRoundTimer) {
@@ -647,7 +665,7 @@ sQuizMaster.on('connection', function (socket) {
     }
 
     function ssrRoundEnd () {
-        sDashboard.emit('sound play', {sound: 'buzzer_wrong'});
+        sDashboard.emit('sound play', {sound: 'bells'});
         sDashboard.emit(
             'santassleighride roundend',
             questions[activeQuestion].questions[ssrActiveQuestion],
@@ -679,7 +697,7 @@ sQuizMaster.on('connection', function (socket) {
                     ++aCount;
                     continue;
                 }
-                console.log("[SSR] waiting for ", teams[t].getName());
+                console.log("[SSR] Waiting for ", teams[t].getName());
             }
             if (aCount != teams.length) {
                 return false;
@@ -692,10 +710,10 @@ sQuizMaster.on('connection', function (socket) {
         ssrWaitingForClients = null;
 
         var results = [],
-            tScores = [],
             answers = questions[activeQuestion].questions[ssrActiveQuestion].answers,
             aVals   = [],
-            aid     = 0;
+            aid     = 0,
+            lPoints = 0;
         for (var a in answers) { // Unroll, thanks JS for not supporting index access to key'd arrays :F
             aVals[aid++] = answers[a];
         }
@@ -703,7 +721,9 @@ sQuizMaster.on('connection', function (socket) {
             results[t] = [];
 
             var tPoints = 0,
-                tLeader = false;
+                tLeader = ssrLeaders[t];
+
+            console.log(t, "is a leader");
 
             results[t][0] = false;
             if (ssrAnswers[t][0] == aVals[0]) {
@@ -717,23 +737,50 @@ sQuizMaster.on('connection', function (socket) {
                 ++tPoints;
             }
 
-            results[t][2] = false;
-            if (!tLeader && ssrAnswers[t][2] == aVals[2]) {
-                results[t][2] = true;
-                ++tPoints;
+            if (!tLeader) {
+                results[t][2] = false;
+                if (ssrAnswers[t][2] == aVals[2]) {
+                    results[t][2] = true;
+                    ++tPoints;
+                }
             }
 
             teams[t].addPoints(tPoints);
-            tScores[t] = teams[t].getPoints();
+            ssrPoints[t] += tPoints;
+
+            lPoints = Math.max(lPoints, ssrPoints[t]);
+        }
+
+        for (var t in ssrPoints) {
+            ssrLeaders[t] = (ssrPoints[t] == lPoints);
+        }
+
+        // A winner is you!
+        var winners = [];
+        if (lPoints >= 60) {
+            for (var t in ssrLeaders) {
+                if (!ssrLeaders[t]) {
+                    continue;
+                }
+                winners.push(t);
+            }
+            sQuizMaster.emit('santassleighride gameover', connectionList);
         }
 
         sDashboard.emit(
             'santassleighride answers',
             results,
-            tScores
+            ssrPoints,
+            ssrLeaders,
+            winners
         );
 
         ++ssrActiveQuestion;
+
+        // Ran out of questions.. erm start again?
+        if (ssrActiveQuestion > questions[activeQuestion].questions) {
+            ssrActiveQuestion = 0;
+        }
         sQuizMaster.emit('santassleighride nextround');
     }
 

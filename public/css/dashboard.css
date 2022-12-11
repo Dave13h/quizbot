@@ -277,6 +277,15 @@ body {
     mask-size: 90px;
     background-size: 90px;
 }
+#ssr .ssr-player .ssr-crown {
+    display: none;
+    background: url(/images/crown.png);
+    position: relative;
+    top: -175px;
+    left: 62px;
+    width: 48px;
+    height: 48px;
+}
 #ssr .ssr-qbox {
     position: absolute;
     top: 250px;
@@ -312,7 +321,7 @@ body {
 #ssr ul {
     list-style-type: none;
     text-align: left;
-    font-size: 150%;
+    font-size: 138%;
 }
 #ssr-q .ssr-question ul.ssr-answers {
     font-size: 200%;
@@ -332,4 +341,13 @@ body {
     top: 250px;
     left: 685px;
     font-size: 500%;
+    background-color: #333;
+    border-radius: 50px;
+    width: 200px;
+    height: 110px;
+}
+
+#ssr .ssr-help input[type=checkbox] {
+    width: 30px;
+    height: 30px;
 }

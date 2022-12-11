@@ -499,33 +499,44 @@ $(function () {
     // \____/ \__,_|_| |_|\__\__,_| |___/ \____/|_|\___|_|\__, |_| |_| \_| \_|_|\__,_|\___|
     //                                                     __/ |
     //                                                    |___/
+    var ssrGridSize = 60,
+        ssrGridStep = $('.ssr-container').width() / ssrGridSize;
+
     socket
-    .on('santassleighride init', function (teams, avatars) {
-        console.log("ssr - init");
+    .on('santassleighride init', function (teams, avatars, scores, leaders) {
         nukeTimer();
         resetScreen();
 
         for (var t in teams) {
-            $('.ssr-player[data-player='+(parseInt(t)+1)+'] .ssr-name')
-                .html(teams[t]);
+            var playerDiv = $('.ssr-player[data-player='+(parseInt(t)+1)+']');
+            $('.ssr-name', playerDiv).html(teams[t]);
 
             if (avatars[t]) {
-                $('.ssr-player[data-player='+(parseInt(t)+1)+'] .ssr-avatar')
-                    .css({"background-image" : "url(" + avatars[t] + ")"});
+                $('.ssr-avatar', playerDiv).css({"background-image" : "url(" + avatars[t] + ")"});
             }
+
+            if (leaders[t]) {
+                $('.ssr-crown', playerDiv).show();
+            } else {
+                $('.ssr-crown', playerDiv).hide();
+            }
+
+            $(playerDiv).animate({left: (parseInt(scores[t]) * ssrGridStep) + "px"}, 500);
         }
+
+        // @todo(dave13h): show crown on leader
 
         $('section').hide();
         $('#ssr').show();
         $('#ssr-help').show();
         $('#ssr-timer').hide();
+        $('#ssr-q').css({top: "1200px"}).show();
 
         $('.ssr-answers').each(function() {
             $(this).html("&nbsp;");
         });
     })
     .on('santassleighride active', function (question) {
-        console.log("ssr - active", question);
         $('#ssr-help').hide();
 
         $('.ssr-answers').each(function() {
@@ -539,15 +550,16 @@ $(function () {
         for (var q in question.answers) {
             answers.append('<li>' + (qno++) + ':' + q + '</li>');
         }
-        $('#ssr-q').show();
+        $('#ssr-q').animate({top: "250px"});
         $('#ssr-timer').html("10").show();
     })
     .on('santassleighride tick', function (tVal) {
-        console.log("ssr - tick");
         $('#ssr-timer').html(tVal);
+        if (tVal < 6) {
+            $('#timer_tick')[0].play();
+        }
     })
     .on('santassleighride roundend', function (question) {
-        console.log("ssr - roundend");
         $('#ssr-timer').hide().html(10);
 
         var answers = $('#ssr-q .ssr-question ul.ssr-answers');
@@ -562,23 +574,48 @@ $(function () {
             '</li>');
         }
     })
-    .on('santassleighride answers', async function (answers, teamScores) {
+    .on('santassleighride answers', async function (answers, scores, leaders, winners) {
         await delay(5);
 
-        $('#ssr-q').hide();
+        $('#ssr-q').animate({top: "1200px"});
 
-        console.log("ssr - answers");
-        console.log(answers);
-        console.log(teamScores);
-
-        var correct = "✅", wrong = "❌";
+        var correct = "✅", wrong = "❌", anyMoved = false;
         for (var a in answers) {
+            var playerDiv = $('.ssr-player[data-player='+(parseInt(a)+1)+']');
             var aStr = '';
             for (var qa = 0; qa < answers[a].length; ++qa) {
                 aStr += answers[a][qa] ? correct : wrong;
+
+                if (answers[a][qa]) {
+                    anyMoved = true;
+                }
             }
-            $('.ssr-answers', '.ssr-player[data-player='+(parseInt(a)+1)+']').html(aStr);
+            $('.ssr-answers', playerDiv).html(aStr);
         }
-    })
-    ;
+
+        await delay(2);
+
+        if (anyMoved) {
+            $('#wind')[0].play();
+        }
+
+        for (var t in scores) {
+            var playerDiv = $('.ssr-player[data-player='+(parseInt(t)+1)+']');
+            $(playerDiv).animate({left: (parseInt(scores[t]) * ssrGridStep) + "px"}, 1000);
+            if (leaders[t]) {
+                $('.ssr-crown', playerDiv).show();
+            } else {
+                $('.ssr-crown', playerDiv).hide();
+            }
+        }
+
+        if (winners.length) {
+            await delay(2);
+            ssrShowEndScreen();
+        }
+    });
+
+    function ssrShowEndScreen(winners) {
+        // todo :P
+    }
 });

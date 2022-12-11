@@ -44,26 +44,31 @@
                     <div class="ssr-name">Team</div>
                     <div class="ssr-answers"></div>
                     <div class="ssr-avatar"></div>
+                    <div class="ssr-crown"></div>
                 </div>
                 <div class="ssr-player" data-player="2">
                     <div class="ssr-name">Team</div>
                     <div class="ssr-answers"></div>
                     <div class="ssr-avatar"></div>
+                    <div class="ssr-crown"></div>
                 </div>
                 <div class="ssr-player" data-player="3">
                     <div class="ssr-name">Team</div>
                     <div class="ssr-answers"></div>
                     <div class="ssr-avatar"></div>
+                    <div class="ssr-crown"></div>
                 </div>
                 <div class="ssr-player" data-player="4">
                     <div class="ssr-name">Team</div>
                     <div class="ssr-answers"></div>
                     <div class="ssr-avatar"></div>
+                    <div class="ssr-crown"></div>
                 </div>
                 <div class="ssr-player" data-player="5">
                     <div class="ssr-name">Team</div>
                     <div class="ssr-answers"></div>
                     <div class="ssr-avatar"></div>
+                    <div class="ssr-crown"></div>
                 </div>
             </div>
 
@@ -92,24 +97,34 @@
                         Select the ones you think are true, you will given 1 point for each correct answer.
                         Note that it is possible that all 3 answers can be false!
                     </p>
-                    <p>The current leader will only get 2 options!</p>
+                    <p>The current leaders will only get 2 options!</p>
 
                     <h1>Which of the following are colours?</h1>
                     <p>
                         <ul>
-                            <li style="color: #52ff52">
-                                [x] Red - True<br/>
-                                <span style="color: #fff">(1 Point - Correct Answer)</span>
+                            <li>
+                                <label>
+                                    <input type="checkbox" checked /> Red
+
+                                </label>
+                                <br/>
+                                <span style="color: #52ff52">True - (1 Point - Correct Answer)</span>
                                 <br/><br/>
                             </li>
-                            <li style="color: #52ff52">
-                                [ ] Blurple - False<br/>
-                                <span style="color: #fff">(1 Point - Correct Answer)</span>
+                            <li>
+                                <label>
+                                    <input type="checkbox" /> Blurple
+                                </label>
+                                <br/>
+                                <span style="color: #52ff52">False - (1 Point - Correct Answer)</span>
                                 <br/><br/>
                             </li>
-                            <li style="color: #ff5252">
-                                [ ] Orange - True<br/>
-                                <span style="color: #fff">(0 Points - Wrong Answer)</span>
+                            <li>
+                                <label>
+                                    <input type="checkbox" /> Orange
+                                </label>
+                                <br/>
+                                <span style="color: #ff5252">True - (0 Points - Wrong Answer)</span>
                                 <br/><br/>
                             </li>
                         </ul>
@@ -146,6 +161,9 @@
         <audio src="sounds/laugh.wav" id="laugh" preload></audio>
         <audio src="sounds/penalty.wav" id="penalty_0" preload></audio>
         <audio src="sounds/penalty2.wav" id="penalty_1" preload></audio>
+
+        <audio src="sounds/bells.wav" id="bells" preload></audio>
+        <audio src="sounds/wind.wav" id="wind" preload></audio>
 
         <audio src="sounds/awesome.wav" id="awesome" preload></audio>
         <audio src="sounds/nextround.wav" id="nextround" preload></audio>

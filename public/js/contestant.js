@@ -25,11 +25,11 @@
 // ⠀⠀⠀⠀⠀⠀⠀⢿⣿⣦⣄⣀⣠⣴⣿⣿⠁⠀⠈⠻⣿⣿⣿⣿⡿⠏⠀⠀⠀⠀
 // ⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 $(function () {
-    var socket = io('/contestant'),
-        cid    = window.localStorage.getItem('cid'),
+    var socket     = io('/contestant'),
+        cid        = window.localStorage.getItem('cid'),
         buzzerBlob = null,
-        hasLogo = false,
-        hasAvatar = false,
+        hasLogo    = false,
+        hasAvatar  = false,
         myTeamName = 'unassigned';
 
     console.log('My id: ' + cid);
@@ -213,8 +213,8 @@ $(function () {
     var mediaRecorder, recording = false, buzzerChunks = [];
 
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-       console.log('getUserMedia supported.');
-       navigator.mediaDevices.getUserMedia({audio: true})
+        console.log('getUserMedia supported.');
+        navigator.mediaDevices.getUserMedia({audio: true})
             .then(function(stream) {
                 createMediaRecorder(stream);
             })
@@ -222,7 +222,7 @@ $(function () {
                 console.log('The following getUserMedia error occured: ' + err);
             });
     } else {
-       console.log('getUserMedia not supported on your browser!');
+        console.log('getUserMedia not supported on your browser!');
     }
 
     function createMediaRecorder(s) {
@@ -483,7 +483,6 @@ $(function () {
     //                                                    |___/
     socket
     .on('santassleighride init', function () {
-        console.log("ssr init");
         $('section').hide();
         $('#santassleighride').show();
         $('#buttons').hide();
@@ -491,8 +490,7 @@ $(function () {
         $('#ssr-q').hide();
         $('#menu').hide();
     })
-    .on('santassleighride active', function (question) {
-        console.log("ssr active");
+    .on('santassleighride active', function (question, isLeader) {
         $('section').hide();
         $('#santassleighride').show();
         $('#buttons').hide();
@@ -502,25 +500,41 @@ $(function () {
         $('#ssr-q .ssr-question h1').html(question.title);
         var answers = $('#ssr-q .ssr-question ul.ssr-answers');
         answers.empty();
+
         var qno = 1;
         for (var q in question.answers) {
-            answers.append('<li><label><input type="checkbox" data-aid="'+(qno++)+'" value="1">' +
-                q + '</label></li>');
+            answers.append('<li><label><input type="checkbox" class="nes-checkbox" data-aid="' +
+                (qno++) + '" value="1">' + q + '</label></li>');
         }
+
         $('.ssr-answers input').each(function() {
             $(this).removeAttr('disabled');
         });
+
+        var lastQ = $('#ssr-q .ssr-question ul.ssr-answers li:last');
+        if (isLeader) {
+            $('input', lastQ).attr('disabled', true);
+            $('label', lastQ)
+                .css('text-decoration', 'line-through')
+                .css('color', '#777');
+        } else {
+            $('label', lastQ)
+                .css('text-decoration', 'none')
+                .css('color', '#fff');
+        }
+
         $('#ssr-q').show();
     })
     .on('santassleighride getanswers', function () {
-        console.log("ssr getanswers");
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
+        }
+
         var answers = [];
         $('.ssr-answers input').each(function () {
             answers[$(this).data('aid')-1] = $(this).prop('checked');
             $(this).attr('disabled', true);
         });
-        console.log(answers);
         socket.emit('santassleighride answers', answers);
-    })
-    ;
+    });
 });

@@ -78,11 +78,17 @@ header h1 { font-size: 125%; }
 #santassleighride ul {
     list-style-type: none;
     text-align: left;
-    font-size: 150%;
+    padding: 0;
 }
 #ssr-q .ssr-question ul.ssr-answers {
     font-size: 150%;
 }
 #santassleighride .ssr-question ul.ssr-answers li {
     margin-bottom: 30px;
+}
+
+#santassleighride input[type=checkbox] {
+    width: 30px;
+    height: 30px;
+    margin-right: 15px;
 }
