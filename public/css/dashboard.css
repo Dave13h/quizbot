@@ -351,3 +351,42 @@ body {
     width: 30px;
     height: 30px;
 }
+
+#ssr-end {
+    height: 100%;
+    width: 100%;
+}
+#ssr-end h1 {
+    font-size: 500%;
+    color: #fff;
+    padding-top: 100px;
+}
+
+#ssr-winner-container {
+    padding-top: 100px;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.ssr-winner {
+    width: 360px;
+    height: 360px;
+    margin: auto;
+    display: none;
+}
+
+.ssr-winner-avatar {
+    width: 360px;
+    height: 360px;
+    background: url("/images/ssr_avatar_grumpy.jpg");
+    -webkit-mask-image: url('/images/ssr_avatar_mask.png');
+    mask-image: url('/images/ssr_avatar_mask.png');
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 360px;
+    mask-size: 360px;
+    background-size: 360px;
+}
+.ssr-winner-name {
+    position: relative;
+}

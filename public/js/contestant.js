@@ -536,5 +536,23 @@ $(function () {
             $(this).attr('disabled', true);
         });
         socket.emit('santassleighride answers', answers);
+    })
+    .on('santassleighride gameover', function (winner) {
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
+        }
+
+        $('section').hide();
+        $('#buttons').hide();
+        $('#ssr-help').hide();
+        $('#ssr-q').hide();
+        $('#menu').hide();
+        $('#santassleighride').show();
+
+        if (winner) {
+            $('#ssr-winner').show();
+        } else {
+            $('#ssr-loser').show();
+        }
     });
 });

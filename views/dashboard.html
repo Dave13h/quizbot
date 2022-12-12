@@ -39,7 +39,7 @@
         </section>
 
         <section id="ssr" class="fullscreen">
-            <div class="ssr-container">
+            <div id="ssr-stage" class="ssr-container">
                 <div class="ssr-player" data-player="1">
                     <div class="ssr-name">Team</div>
                     <div class="ssr-answers"></div>
@@ -83,6 +83,12 @@
                     <ul class="ssr-answers">
                     </ul>
                 </div>
+            </div>
+
+            <div id="ssr-end" class="ssr-container" style="display: none">
+                <h1>Winner!</h1>
+
+                <div id="ssr-winner-container"></div>
             </div>
 
             <div id="ssr-help" class="ssr-qbox">

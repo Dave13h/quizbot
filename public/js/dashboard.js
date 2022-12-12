@@ -500,19 +500,22 @@ $(function () {
     //                                                     __/ |
     //                                                    |___/
     var ssrGridSize = 60,
-        ssrGridStep = $('.ssr-container').width() / ssrGridSize;
+        ssrGridStep = $('.ssr-container').width() / ssrGridSize,
+        ssrAvatars  = [];
 
     socket
     .on('santassleighride init', function (teams, avatars, scores, leaders) {
         nukeTimer();
         resetScreen();
 
+        ssrAvatars = avatars;
+
         for (var t in teams) {
             var playerDiv = $('.ssr-player[data-player='+(parseInt(t)+1)+']');
             $('.ssr-name', playerDiv).html(teams[t]);
 
             if (avatars[t]) {
-                $('.ssr-avatar', playerDiv).css({"background-image" : "url(" + avatars[t] + ")"});
+                $('.ssr-avatar', playerDiv).css({"background-image" : "url(" + ssrAvatars[t] + ")"});
             }
 
             if (leaders[t]) {
@@ -521,13 +524,14 @@ $(function () {
                 $('.ssr-crown', playerDiv).hide();
             }
 
+            $(playerDiv).show();
+
             $(playerDiv).animate({left: (parseInt(scores[t]) * ssrGridStep) + "px"}, 500);
         }
 
-        // @todo(dave13h): show crown on leader
-
         $('section').hide();
         $('#ssr').show();
+        $('#ssr-stage').show();
         $('#ssr-help').show();
         $('#ssr-timer').hide();
         $('#ssr-q').css({top: "1200px"}).show();
@@ -611,11 +615,41 @@ $(function () {
 
         if (winners.length) {
             await delay(2);
-            ssrShowEndScreen();
+            ssrShowEndScreen(winners);
         }
     });
 
     function ssrShowEndScreen(winners) {
-        // todo :P
+        $('.ssr-player').each(function () { $(this).hide(); });
+        $('#ssr-timer').hide();
+        $('#ssr-q').hide();
+        $('#ssr-help').hide();
+        $('#ssr-stage').hide();
+
+        $('#ssr-end').show();
+        $('#ssr-winner-container').html('');
+
+        for (var w in winners) {
+            var t = winners[w];
+
+            var av = $('<div class="ssr-winner-avatar">'),
+                tn = $('.ssr-name', '.ssr-player[data-player='+(parseInt(t)+1)+']').html();
+
+                if (ssrAvatars[t]) {
+                    av.css({"background-image" : "url(" + ssrAvatars[t] + ")"});
+                }
+
+            var wincard = $('<div class="ssr-winner" />')
+                .append(av)
+                .append('<div class="ssr-winner-name">'+tn+'</div>');
+
+            $('#ssr-winner-container').append(wincard);
+        }
+
+        $('.ssr-winner').each(function () {
+            $(this).fadeIn(1000);
+        });
+
+        $('#cheer')[0].play();
     }
 });

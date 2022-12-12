@@ -623,13 +623,14 @@ sQuizMaster.on('connection', function (socket) {
             maxScore = Math.max(maxScore, tScore);
         }
 
-        scores.sort(function(a, b){return a.s - b.s});
+        scores.sort(function (a, b){ return parseInt(a.s) - parseInt(b.s); });
 
+        // Seed positions
         ssrPoints = [0,0,0,0,0];
         for (var s in scores) {
             var isLeader = (scores[s].s == maxScore);
             ssrLeaders[scores[s].t] = isLeader;
-            ssrPoints[scores[s].t] = (isLeader ? 5 : s) * 2; // Seed positions
+            ssrPoints[scores[s].t] = (isLeader ? 5 : s) * 2;
         }
 
         sDashboard.emit(
@@ -723,8 +724,6 @@ sQuizMaster.on('connection', function (socket) {
             var tPoints = 0,
                 tLeader = ssrLeaders[t];
 
-            console.log(t, "is a leader");
-
             results[t][0] = false;
             if (ssrAnswers[t][0] == aVals[0]) {
                 results[t][0] = true;
@@ -762,9 +761,18 @@ sQuizMaster.on('connection', function (socket) {
                 if (!ssrLeaders[t]) {
                     continue;
                 }
-                winners.push(t);
+                winners.push(parseInt(t));
             }
-            sQuizMaster.emit('santassleighride gameover', connectionList);
+
+            sQuizMaster.emit('santassleighride gameover', winners);
+
+            for (var c in connections.contestants) {
+                var con = connections.contestants[c];
+                con.getSocket().emit(
+                    'santassleighride gameover',
+                    winners.indexOf(teams[con.getTeam()].getId()) !== -1
+                );
+            }
         }
 
         sDashboard.emit(
@@ -781,7 +789,10 @@ sQuizMaster.on('connection', function (socket) {
         if (ssrActiveQuestion > questions[activeQuestion].questions) {
             ssrActiveQuestion = 0;
         }
-        sQuizMaster.emit('santassleighride nextround');
+
+        if (winners.length == 0) {
+            sQuizMaster.emit('santassleighride nextround');
+        }
     }
 
     // Sound events

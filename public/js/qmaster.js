@@ -267,6 +267,11 @@ $(function () {
         $('#game_ssr_next').show();
         $('#game_ssr_pause').hide();
     })
+    .on('santassleighride gameover', function(winners) {
+        $('#game_ssr_start').hide();
+        $('#game_ssr_next').hide();
+        $('#game_ssr_pause').hide();
+    })
     .on('question buzzed', function(msg) {
         $('#active_team').html(msg.team.name);
         $('#game_actions').show();
