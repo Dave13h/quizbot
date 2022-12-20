@@ -51,6 +51,15 @@ body {
     font-size: 300%;
 }
 
+#question .content ol {
+    text-align: left;
+    margin: 0;
+    list-style: none;
+}
+#question .content li {
+    padding: 50px;
+}
+
 #teamoverlay, #answer_correct, #answer_wrong, #answer_losers  {
     padding-top: 150px;
     display: none;
@@ -147,8 +156,8 @@ body {
 }
 
 .animated.delay-intro {
-  -webkit-animation-delay: 40s;
-  animation-delay: 40s;
+  -webkit-animation-delay: 10s;
+  animation-delay: 10s;
 }
 
 .timer {
@@ -159,19 +168,23 @@ body {
     position: relative;
 }
 
+.cp-image {
+    width: 960px;
+}
+
 .catchphrase_hide {
     content: '';
     position: absolute;
     width: 960px !important;
     height: 540px;
-    background: url("/images/catchphrase_1.png");
+    background: url("/images/catchphrase_cover.png");
     left: 430px;
-    animation: reveal 5.0s;
+    animation: reveal 5.0s forwards;
     animation-play-state: paused;
     top: 120px;
     margin-top: 0 !important;
-    scale: 0;
-    opacity: 0;
+    scale: 1;
+    opacity: 1;
 }
 
 @keyframes reveal {

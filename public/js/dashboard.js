@@ -102,13 +102,18 @@ $(function () {
     socket
     .on('title show', function (event) {
         stopAllSound();
+        stopAllVideo();
         nukeTimer();
+        $('#intro_video').hide();
         $('header').hide();
         $('section').hide();
         $('.title').hide();
         $('#title_' + event.title.title).show();
         if (event.title.audio) {
             $('#' + event.title.audio)[0].play();
+        }
+        if (event.title.video) {
+            $('#' + event.title.video)[0].play();
         }
 
         if (event.title.title == 'outro') {
@@ -127,7 +132,6 @@ $(function () {
             }
         }
     });
-
 
     //  _____
     // |_   _|
@@ -267,12 +271,12 @@ $(function () {
         }
     });
 
-    //  _____                       _
-    // /  ___|                     | |
-    // \ `--.  ___  _   _ _ __   __| |___
-    //  `--. \/ _ \| | | | '_ \ / _` / __|
-    // /\__/ / (_) | |_| | | | | (_| \__ \
-    // \____/ \___/ \__,_|_| |_|\__,_|___/
+    // ___  ___         _ _
+    // |  \/  |        | (_)
+    // | .  . | ___  __| |_  __ _
+    // | |\/| |/ _ \/ _` | |/ _` |
+    // | |  | |  __/ (_| | | (_| |
+    // \_|  |_/\___|\__,_|_|\__,_|
     //
     function stopAllSound() {
         $('audio').each(function () {
@@ -280,13 +284,22 @@ $(function () {
             $(this)[0].currentTime = 0;
         });
     }
+    function stopAllVideo() {
+        $('video').each(function () {
+            $(this)[0].pause();
+            $(this)[0].currentTime = 0;
+        });
+    }
+
     socket
     .on('sound play', function (sound) {
         stopAllSound();
+        stopAllVideo();
         $('#' + sound.sound)[0].play();
     })
     .on('sound stop', function () {
         stopAllSound();
+        stopAllVideo();
     });
 
     //  _____                 _   _
@@ -342,6 +355,7 @@ $(function () {
                         $('<div />').addClass('catchphrase').append(
                             $('<img />')
                                 .addClass('content')
+                                .addClass('cp-image')
                                 .prop('src', '/images/' + msg.question.image)
                         ).append(
                             $('<div />').addClass('catchphrase_hide')

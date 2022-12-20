@@ -179,6 +179,10 @@
         <audio src="sounds/catchphrase.wav" id="catchphrase" preload></audio>
         <audio src="sounds/weakest_link.wav" id="weakest_link" preload></audio>
         <audio src="sounds/im_in_charge.wav" id="im_in_charge" preload></audio>
+        <audio src="sounds/wrong.wav" id="wrong" preload></audio>
+        <audio src="sounds/correct.wav" id="correct" preload></audio>
+        <audio src="sounds/correct_nope_wrong.wav" id="correct_nope_wrong" preload></audio>
+        <audio src="sounds/mastermind.wav" id="mastermind" preload></audio>
 
         <audio src="music/intro.wav" id="music_intro" preload></audio>
         <audio src="music/we_are_the_champions.wav" id="music_outro" preload></audio>
@@ -202,14 +206,18 @@
         </div>
 
         <div id="title_break" class="title fullscreen">
-            <h1 class="animated zoomInDown">Hack the game and change your score to win!</h1>
+            <h1 class="animated zoomInDown">Bonus game!</h1>
             <div class="animated zoomInDown delay-1s">
                 <p class="animated pulse infinite">
-                    2022 Challenge - Security by obscurity redux!<br>
-                    No Source Code this time!<br>
-                    https://quiz.d3r.com/qm<br>
-                    Good Luck!<br><br><br>
-                    <strong>Unplugging the router will result in disqualification this time Dom! ;)</strong>
+                    2022 Challenge - Dave ran out of time edition.<br>
+                    Find the hidden passphrase using the page source and let Paul know for a some kind of reward..<br>
+                    Dunno it's late and I'm tired, we'll work something out!<br><br>
+                    Connect to https://quiz.d3r.com/ on your laptop and get digging<br>
+                    <br>
+                    Hint: "Be not afraid!"<br>
+                    <img src="/images/hint.jpg" style="width: 20%">
+                    <br>
+                    Good Luck!
                 </p>
             </div>
         </div>
@@ -219,97 +227,8 @@
             <div id="outroteams"></div>
         </div>
 
-        <div id="title_intro" class="title fullscreen">
-            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2021</h1>
-            <div class="animated zoomInDown delay-50s">
-                <table class="teamtable table is-bordered is-centered" cellspacing="2">
-                    <thead>
-                        <tr>
-                            <th>Turkeys</th>
-                            <th>Sprouts</th>
-                            <th>Spuds</th>
-                            <th>Puddings</th>
-                            <th>Pies</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                Andy Hartley<br />
-                                --<br />
-                                Mike Ponsford<br />
-                                --<br />
-                                Ronan Chilvers<br />
-                                --<br />
-                                Joe Brisley<br />
-                                --<br />
-                                Kevin Elvin
-                            </td>
-
-                            <td>
-                                Sara Zaccarelli<br />
-                                --<br />
-                                Mark Sommerschield<br />
-                                --<br />
-                                James Atkin<br />
-                                --<br />
-                                Tamas Feiszt<br />
-                                --<br />
-                                Jason Shallcross
-                            </td>
-
-                            <td>
-                                Sean Clark<br />
-                                --<br />
-                                Stuart Loxton<br />
-                                --<br />
-                                Roberto Martin<br />
-                                --<br />
-                                Joe Adcock<br />
-                                --<br />
-                                Dom Morgan
-                            </td>
-
-                            <td>
-                                Lexi Fontein<br />
-                                --<br />
-                                Adam Jarrold<br />
-                                --<br />
-                                Brett Godfrey<br />
-                                --<br />
-                                Dan Bissonnet<br />
-                            </td>
-
-                            <td>
-                                Lynton Morgan<br />
-                                --<br />
-                                Mark Wingfield<br />
-                                --<br />
-                                Jahidul Pabel Islam<br />
-                                --<br />
-                                Robert Mills
-                            </td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th>Computers for Charity</th>
-                            <th>Friends without borders</th>
-                            <th>Vauxhall City Farm</th>
-                            <th>Stone Pillow</th>
-                            <th>Crisis</th>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-
-            <div class="animated zoomInDown delay-intro" style="margin-top: 20px;">
-                <p class="animated pulse infinite">
-                    Team Leaders connect to<br>
-                    https://quiz.d3r.com<br>
-                    Using your phone on the WiFi!
-                </p>
-            </div>
+        <div id="title_intro" class="title fullscreen" style="padding: 0; overflow: hidden;">
+            <video id="video_intro" src="/video/intro.mp4" style="overflow: hidden;"></video>
         </div>
 
         <div id="title_teams" class="title fullscreen">
@@ -327,72 +246,78 @@
                 <tbody>
                     <tr>
                         <td>
-                            Andy Hartley<br />
-                            --<br />
                             Mike Ponsford<br />
-                            --<br />
-                            Ronan Chilvers<br />
-                            --<br />
-                            Joe Brisley<br />
-                            --<br />
-                            Kevin Elvin
-                        </td>
-
-                        <td>
-                            Sara Zaccarelli<br />
                             --<br />
                             Mark Sommerschield<br />
                             --<br />
-                            James Atkin<br />
+                            Stuart Hallewell<br />
                             --<br />
-                            Tamas Feiszt<br />
+                            Neil Brayfield
                             --<br />
-                            Jason Shallcross
+                            Lynton Morgan
                         </td>
 
                         <td>
-                            Sean Clark<br />
+                            Joshua Edwards<br />
                             --<br />
-                            Stuart Loxton<br />
-                            --<br />
-                            Roberto Martin<br />
-                            --<br />
-                            Joe Adcock<br />
-                            --<br />
-                            Dom Morgan
-                        </td>
-
-                        <td>
-                            Lexi Fontein<br />
-                            --<br />
-                            Adam Jarrold<br />
+                            Sara Zaccarelli<br />
                             --<br />
                             Brett Godfrey<br />
                             --<br />
-                            Dan Bissonnet<br />
+                            James Ware<br />
                         </td>
 
                         <td>
-                            Lynton Morgan<br />
+                            Kevin Elvin<br />
                             --<br />
-                            Mark Wingfield<br />
+                            Sean Clark<br />
                             --<br />
-                            Jahidul Pabel Islam<br />
+                            Adam Jarrold<br />
                             --<br />
-                            Robert Mills
+                            Jason Shallcross<br />
+                        </td>
+
+                        <td>
+                            Ronan Chilvers<br />
+                            --<br />
+                            Lexi Fontein<br />
+                            --<br />
+                            James Atkin<br />
+                            --<br />
+                            Jamie Askew<br />
+                            --<br />
+                            Jahidul Islam<br />
+                        </td>
+
+                        <td>
+                            Roberto Martin<br />
+                            --<br />
+                            Dan Bissonnet<br />
+                            --<br />
+                            Dom Morgan<br />
+                            --<br />
+                            Stuart Loxton
                         </td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <tr>
                         <th>Computers for Charity</th>
-                        <th>Friends Without Borders</th>
-                        <th>Vauxhall City Farm</th>
+                        <th>Chichester Food Bank</th>
+                        <th>Vauxhall Food Bank</th>
                         <th>Stone Pillow</th>
                         <th>Crisis</th>
                     </tr>
                 </tfoot>
             </table>
+
+            <div class="animated zoomInDown delay-intro" style="margin-top: 20px;">
+                <p class="animated pulse infinite">
+                    Team Leaders connect to<br>
+                    https://quiz.d3r.com<br>
+                    Using your phone on the WiFi!
+                </p>
+            </div>
         </div>
 
         <div id="title_rules" class="title fullscreen">

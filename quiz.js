@@ -1009,4 +1009,48 @@ sContestant
         ssrAnswers[team.getId()] = answers;
         ssrAnswered[team.getId()] = true;
     });
+
+    // Bonus round...
+    var bodQuestions = [
+        'WHAT is your name?',
+        'WHAT is your quest?',
+        'WHAT is the average air speed of an unladen swallow?'
+    ], bodAnswers = [
+        null,
+        ['seek', 'grail'],
+        ['african', 'european']
+    ], bodQidx = 0;
+    socket
+    .on('oldmanfromscene24', function (response) {
+        if (response == null) {
+            bodQidx = 0;
+            socket.emit('bod', "STOP!");
+            socket.emit('bod', "Who would cross the bridge of death must answer me these questions 3! eer the other see he see...");
+            socket.emit('bod', bodQuestions[0]);
+            return;
+        }
+
+        if (bodAnswers[bodQidx] == null) {
+            ++bodQidx;
+        } else {
+            var answords = response.toLowerCase();
+            for (var a in bodAnswers[bodQidx]) {
+                if (answords.indexOf(bodAnswers[bodQidx][a]) == -1) {
+                    bodQidx = 0;
+                    socket.emit('bod', "*death noises* ARARRRGGHHHH!");
+                    socket.emit('bod', "You have died.");
+                    return;
+                }
+            }
+            ++bodQidx;
+        }
+
+        if (bodQidx < 3) {
+            socket.emit('bod', bodQuestions[bodQidx]);
+            return;
+        }
+
+        socket.emit('bod', "Right... off you go... *Tsetse fly*");
+        bodQidx = 0;
+    });
 });

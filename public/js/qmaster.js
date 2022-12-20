@@ -42,15 +42,23 @@ $(function () {
     * @author Responsable Developer <dev@d3r.com>
     */
     function selectView () {
-    if (!$(this).data('target'))
-        return;
+        if (!$(this).data('target'))
+            return;
 
-    $('#menu button').each(function() {
-        $('#' + $(this).data('target') + '_view').hide();
-        $(this).removeClass('is-primary').addClass('is-success');
-    });
-    $('#' + $(this).data('target') + '_view').show();
-    $(this).removeClass('is-success').addClass('is-primary');
+        $('#menu button').each(function() {
+            $('#' + $(this).data('target') + '_view').hide();
+            $(this).removeClass('is-primary').addClass('is-success');
+        });
+        $('#' + $(this).data('target') + '_view').show();
+        $(this).removeClass('is-success').addClass('is-primary');
+
+        // Scroll to recently played Q
+        if ($(this).data('target') == 'questions') {
+            var lastPlayedQ = $('#questions div[data-played=true]:last');
+            if (lastPlayedQ.length) {
+                $('html, body').animate({scrollTop: lastPlayedQ.offset().top - 50 }, 'fast');
+            }
+        }
     }
 
     var pin = prompt("Enter Pin"), // this looks interesting right?
@@ -176,11 +184,14 @@ $(function () {
         $(questions).each(function(k, v) {
             let bClass = 'is-primary',
                 bIcon  = 'star';
+
+            let scrollPoint = '';
             if (v.played) {
+                scrollPoint = ' data-played="true"';
                 bClass = '';
                 bIcon = 'star is-empty';
             }
-            let con = $('<div/>');
+            let con = $('<div'+scrollPoint+'/>');
             let play = $('<button/>')
                 .addClass('btn')
                 .addClass(bClass)
@@ -491,9 +502,12 @@ $(function () {
     });
 
     $('#titles button').on('click', function() {
-        var title = {title: $(this).data('title'), audio: null};
+        var title = {title: $(this).data('title'), audio: null, video: null};
         if ($(this).data('audio')) {
             title.audio = $(this).data('audio');
+        }
+        if ($(this).data('video')) {
+            title.video = $(this).data('video');
         }
         socket.emit('title show', title);
     });

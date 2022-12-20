@@ -24,15 +24,21 @@
 // ⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⢹⣿⡆⠀⠀⠀⣸⣿⠇⠀⠀⠀
 // ⠀⠀⠀⠀⠀⠀⠀⢿⣿⣦⣄⣀⣠⣴⣿⣿⠁⠀⠈⠻⣿⣿⣿⣿⡿⠏⠀⠀⠀⠀
 // ⠀⠀⠀⠀⠀⠀⠀⠈⠛⠻⠿⠿⠿⠿⠋⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+var socket = io('/contestant');
 $(function () {
-    var socket     = io('/contestant'),
-        cid        = window.localStorage.getItem('cid'),
+    var cid        = window.localStorage.getItem('cid'),
         buzzerBlob = null,
         hasLogo    = false,
         hasAvatar  = false,
         myTeamName = 'unassigned';
 
     console.log('My id: ' + cid);
+
+    function delay(n){
+        return new Promise(function(resolve){
+            setTimeout(resolve, n * 1000);
+        });
+    }
 
     //  _   _ _                 _   _      _
     // | | | (_)               | | | |    | |
@@ -153,6 +159,10 @@ $(function () {
         cid = id;
         window.localStorage.setItem('cid', cid);
     });
+
+    // oh, is socket a global public variable for some reason?
+    // socket.emit('oldmanfromscene24', /** answer? */);
+    socket.on('bod', function(resp) {console.log(resp);});
 
     //
     // ______                      ___       _   _
@@ -537,7 +547,8 @@ $(function () {
         });
         socket.emit('santassleighride answers', answers);
     })
-    .on('santassleighride gameover', function (winner) {
+    .on('santassleighride gameover', async function (winner) {
+        await delay(20);
         if (navigator.vibrate) {
             navigator.vibrate(200);
         }
