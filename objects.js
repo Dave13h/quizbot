@@ -87,6 +87,18 @@ class oTeam {
         this.points   = 0;
         this.buzzer   = null;
         this.logo     = null;
+        this.avatar   = null;
+    }
+
+    toJson () {
+        return {
+            id: this.id,
+            name: this.name,
+            points: this.points,
+            buzzer: this.buzzer,
+            logo: this.logo,
+            avatar: this.avatar
+        };
     }
 
     getId () {
@@ -99,6 +111,15 @@ class oTeam {
 
     setBuzzer (blob) {
         this.buzzer = blob;
+        return this;
+    }
+
+    getAvatar () {
+        return this.avatar;
+    }
+
+    setAvatar (blob) {
+        this.avatar = blob;
     }
 
     getLogo () {
@@ -107,6 +128,7 @@ class oTeam {
 
     setLogo (blob) {
         this.logo = blob;
+        return this;
     }
 
     getName () {
@@ -115,6 +137,7 @@ class oTeam {
 
     setName (name) {
         this.name = name;
+        return this;
     }
 
     getAnswered () {
@@ -123,6 +146,7 @@ class oTeam {
 
     setAnswered (answered) {
         this.answered = answered;
+        return this;
     }
 
     getPoints () {
@@ -131,40 +155,63 @@ class oTeam {
 
     addPoints (incr) {
         this.points += incr;
+        return this;
     }
 
     decPoints (decr) {
         this.points -= decr;
+        return this;
     }
 
     setPoints (points) {
         this.points = parseInt(points);
+        return this;
     }
 }
 
 class oQuestion {
-    constructor (data) {
+    constructor (qid, data) {
+        this.id     = qid;
         this.played = false;
 
-        this.type   = data.type;
-        this.title  = data.title;
-        this.text   = data.text;
-        this.audio  = data.audio;
-        this.image  = data.image;
+        this.type  = data.type;
+        this.title = data.title;
+        this.text  = data.text;
 
-        this.points  = 1;
+        this.points = 1;
         if (!isNaN(data.points))
             this.points = parseInt(data.points);
 
-        this.timer  = 60;
+        this.timer = 60;
         if (!isNaN(data.timer))
             this.timer = parseInt(data.timer);
 
         this.questions = [];
-        if (this.type == 'pictionary') {
-            this.team = data.team;
-            this.questions = data.questions;
+        switch (this.type) {
+            case 'audio':
+                this.audio = data.audio;
+                break;
+
+            case 'catchphrase':
+                this.image = data.image;
+                break;
+
+            case 'pictionary':
+                this.team = data.team;
+                this.questions = data.questions;
+                break;
+
+            case 'santassleighride':
+                this.questions = data.questions;
+                break;
         }
+    }
+
+    toJson () {
+        return {
+            id: this.id,
+            played: this.played,
+        };
     }
 
     getType () {
@@ -201,6 +248,11 @@ class oQuestion {
 
     getTimer () {
         return this.timer;
+    }
+
+    setPlayed (played) {
+        this.played = played;
+        return this;
     }
 }
 

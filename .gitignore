@@ -62,3 +62,7 @@ typings/
 
 keys/*
 # public/music/*
+
+data/savestate.json
+
+public/video/*.mp4

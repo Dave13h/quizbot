@@ -9,77 +9,7 @@
         <link href="css/nes.min.css" rel="stylesheet" />
         <link href="css/animate.css" rel="stylesheet" />
         <link href="css/style.css" rel="stylesheet" />
-
-        <style>
-            body {
-                padding: 20px;
-            }
-            #teams, #killed, #err, #wait, #menu, #bMenu { display: none; }
-            header h1 { font-size: 125%; }
-
-            .bcrikko { top: 60px; }
-            .messages { padding-bottom: 10px; }
-
-            .btn-sm { padding: 6px 8px; }
-
-            #buttons {
-                display: none;
-                width: 100%;
-                height: 100%;
-                text-align: center;
-                font-size: 200%;
-            }
-
-            #menu {
-                background-color: #00b5cc;
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                padding: 20px;
-                border: 1px solid #fff;
-                box-shadow: inset 0 0 100px black;
-                text-align: center;
-            }
-
-            #bMenu {
-                position: absolute;
-                bottom: 0;
-                right: 0;
-            }
-
-            #pictionary       { display: none; }
-            #pictionary_guide { display: none; }
-            #pictionary_guide ul li { font-size: 80%; }
-
-            .recorder {
-                margin: 20px;
-            }
-
-            .team_logo_canvas {
-                background-color: #fff;
-                border: 2px solid #000;
-                height: 350px;
-                width: 350px;
-                touch-action: none;
-                margin: auto;
-            }
-
-            .p_canvas {
-                background-color: #fff;
-                border: 2px solid #000;
-                height: 350px;
-                width: 350px;
-                touch-action: none;
-                margin: auto;
-            }
-
-            .p_title {
-                text-align: center;
-            }
-
-            .btn.is-black{color:#fff;background-color:#000;box-shadow:inset -4px -4px #888}
-        </style>
+        <link href="css/contestant.css" rel="stylesheet" />
     </head>
     <body>
         <header>
@@ -88,6 +18,14 @@
 
         <section id="err"></section>
 
+        <!--
+             _   ___ _ _
+            | | / (_) | |
+            | |/ / _| | |  ___  ___ _ __ ___  ___ _ __
+            |    \| | | | / __|/ __| '__/ _ \/ _ \ '_ \
+            | |\  \ | | | \__ \ (__| | |  __/  __/ | | |
+            \_| \_/_|_|_| |___/\___|_|  \___|\___|_| |_|
+        -->
         <section id="killed" class="balloon container with-title">
             <div class="messages">
                 <div class="message -left">
@@ -99,29 +37,56 @@
             </div>
         </section>
 
+        <!--
+             _                     _ _
+            | |                   | (_)
+            | |     ___   __ _  __| |_ _ __   __ _
+            | |    / _ \ / _` |/ _` | | '_ \ / _` |
+            | |___| (_) | (_| | (_| | | | | | (_| |
+            \_____/\___/ \__,_|\__,_|_|_| |_|\__, |
+                                              __/ |
+                                             |___/
+        -->
         <section id="wait" class="loading">
             <p class="animated heartBeat">Team <span id="teamname"></span></p>
             <p class="animated pulse infinite">Please Wait</p>
         </section>
 
-        <section id="buttons">
-            <button type="button" id="buzzer" class="btn is-success">BUZZER</button>
+        <!--
+             _____                      _____      _           _   _
+            |_   _|                    /  ___|    | |         | | (_)
+              | | ___  __ _ _ __ ___   \ `--.  ___| | ___  ___| |_ _  ___  _ __
+              | |/ _ \/ _` | '_ ` _ \   `--. \/ _ \ |/ _ \/ __| __| |/ _ \| '_ \
+              | |  __/ (_| | | | | | | /\__/ /  __/ |  __/ (__| |_| | (_) | | | |
+              \_/\___|\__,_|_| |_| |_| \____/ \___|_|\___|\___|\__|_|\___/|_| |_|
+        -->
+        <section id="teams" class="container with-title">
+            <h2 class="title">Select Team</h2>
+            <div class="containers list" />
         </section>
 
-        <button type="button" id="bMenu" class="btn is-success">MENU</button>
 
+        <!--
+             _____                      _____      _   _   _
+            |_   _|                    /  ___|    | | | | (_)
+              | | ___  __ _ _ __ ___   \ `--.  ___| |_| |_ _ _ __   __ _ ___
+              | |/ _ \/ _` | '_ ` _ \   `--. \/ _ \ __| __| | '_ \ / _` / __|
+              | |  __/ (_| | | | | | | /\__/ /  __/ |_| |_| | | | | (_| \__ \
+              \_/\___|\__,_|_| |_| |_| \____/ \___|\__|\__|_|_| |_|\__, |___/
+                                                                    __/ |
+                                                                   |___/
+        -->
         <section id="menu" class="container">
             <h2 class="title">Team Settings</h2>
-            <!-- <div class="field">
-                <label for="name_field">Team name</label>
-                <input type="text" id="name_field" class="input" style="display: inline-block">
-            </div> -->
-
+            <h3>Buzzer</h3>
             <audio id="aBuzzer"></audio>
-            Buzzer <button type="button" id="bRecord" class="btn is-success">Record</button>
+            <button type="button" id="bRecord" class="btn is-success">Record</button>
             <button type="button" id="bPlay" class="btn is-success">Play</button><br><br>
 
+            <hr />
+
             <div class="team_logo">
+                <h3>Logo</h3>
                 <canvas id="team_logo" class="team_logo_canvas" width="350" height="350"></canvas><br />
                 <div id="pens" class="item">
                     <label>
@@ -146,7 +111,22 @@
                 <button type="button" data-colour="#e76e55" class="btn btn-sm is-error">&nbsp;</button><br /><br />
                 <button type="button" class="canvas_fill btn btn-sm is-warning">Fill</button>
                 <button type="button" class="canvas_clear btn btn-sm is-primary">Clear</button>
+
             </div>
+
+            <hr />
+
+            <div class="team_avatar">
+                <h3>Avatar</h3>
+                <center>
+                    <button id="avatar-start-camera" type="button" class="btn btn-sm is-primary">Update Avatar</button>
+                    <button id="avatar-capture" type="button" class="btn btn-sm is-error">Capture</button>
+                </center>
+                <video id="avatar-video" width="512" height="512" style="width: 100%;" autoplay></video>
+                <canvas id="avatar" width="512" height="512" style="width: 100%;"></canvas>
+            </div>
+
+            <hr />
 
             <br>
             <button type="button" id="bCancel" class="btn btn-sm is-warning">CANCEL</button>
@@ -155,11 +135,30 @@
             <button type="button" id="bResetToken" class="btn is-error">LEAVE GAME</button>
         </section>
 
-        <section id="teams" class="container with-title">
-            <h2 class="title">Select Team</h2>
-            <div class="containers list" />
+        <!--
+            ______                         ___  ___          _
+            | ___ \                        |  \/  |         | |
+            | |_/ /_   _ ___________ _ __  | .  . | ___   __| | ___
+            | ___ \ | | |_  /_  / _ \ '__| | |\/| |/ _ \ / _` |/ _ \
+            | |_/ / |_| |/ / / /  __/ |    | |  | | (_) | (_| |  __/
+            \____/ \__,_/___/___\___|_|    \_|  |_/\___/ \__,_|\___|
+        -->
+        <section id="buttons">
+            <button type="button" id="buzzer" class="btn is-success">BUZZER</button>
         </section>
 
+        <button type="button" id="bMenu" class="btn is-success">MENU</button>
+
+        <!--
+            ______ _      _   _
+            | ___ (_)    | | (_)
+            | |_/ /_  ___| |_ _  ___  _ __   __ _ _ __ _   _
+            |  __/| |/ __| __| |/ _ \| '_ \ / _` | '__| | | |
+            | |   | | (__| |_| | (_) | | | | (_| | |  | |_| |
+            \_|   |_|\___|\__|_|\___/|_| |_|\__,_|_|   \__, |
+                                                        __/ |
+                                                       |___/
+        -->
         <section id="pictionary_guide">
             <h1>Pictionary!</h1>
             <h4>Rules</h4>
@@ -203,390 +202,80 @@
             </div>
         </section>
 
+        <!--
+             _____             _        _       _____ _      _       _      ______ _     _
+            /  ___|           | |      ( )     /  ___| |    (_)     | |     | ___ (_)   | |
+            \ `--.  __ _ _ __ | |_ __ _|/ ___  \ `--.| | ___ _  __ _| |__   | |_/ /_  __| | ___
+             `--. \/ _` | '_ \| __/ _` | / __|  `--. \ |/ _ \ |/ _` | '_ \  |    /| |/ _` |/ _ \
+            /\__/ / (_| | | | | || (_| | \__ \ /\__/ / |  __/ | (_| | | | | | |\ \| | (_| |  __/
+            \____/ \__,_|_| |_|\__\__,_| |___/ \____/|_|\___|_|\__, |_| |_| \_| \_|_|\__,_|\___|
+                                                                __/ |
+                                                               |___/
+        -->
+        <section id="santassleighride">
+            <div id="ssr-help">
+                <h1>Santa's Sleigh Ride!</h1>
+                <p>First <strong>"NOSE"</strong> to the north pole wins!</p>
+                <p>
+                    For each Question, you will be given 3 answers.
+                    Select the ones you think are true, you will given 1 point for each correct answer.
+                    Note that it is possible that all 3 answers can be false!
+                </p>
+                <p>The current leaders will only get 2 options!</p>
+
+                <h1>Which of the following are colours?</h1>
+                <p>
+                    <ul>
+                        <li>
+                            <label>
+                                <input type="checkbox" checked /> Red
+
+                            </label>
+                            <br/>
+                            <span style="color: #52ff52">True - (1 Point - Correct Answer)</span>
+                            <br/><br/>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="checkbox" /> Blurple
+                            </label>
+                            <br/>
+                            <span style="color: #52ff52">False - (1 Point - Correct Answer)</span>
+                            <br/><br/>
+                        </li>
+                        <li>
+                            <label>
+                                <input type="checkbox" /> Orange
+                            </label>
+                            <br/>
+                            <span style="color: #ff5252">True - (0 Points - Wrong Answer)</span>
+                            <br/><br/>
+                        </li>
+                    </ul>
+                </p>
+            </div>
+
+            <div id="ssr-q" class="ssr-qbox" style="display: none">
+                <div class="ssr-question">
+                    <h1></h1>
+                    <ul class="ssr-answers">
+                    </ul>
+                </div>
+            </div>
+
+            <div id="ssr-loser" style="display: none">
+                <h1>Better luck next year!</h1>
+                <img src="images/loser.gif" style="width: 100%;" />
+            </div>
+
+            <div id="ssr-winner" style="display: none">
+                <h1>A winner is you!</h1>
+                <img src="images/winner.gif" style="width: 100%;" />
+            </div>
+        </section>
+
         <script src="/socket.io/socket.io.js"></script>
         <script src="js/jquery-1.11.1.js"></script>
-        <script>
-            $(function () {
-                var socket = io('/contestant'),
-                    cid    = window.localStorage.getItem('cid'),
-                    buzzerBlob = null,
-                    myTeamName = 'unassigned';
-
-                console.log('My id: ' + cid);
-
-                $('#bResetToken').on('click', function () {
-                    window.localStorage.removeItem('cid');
-                    cid = null;
-                    window.location.reload(false);
-                });
-
-                $('#buzzer').on('click', function () {
-                    socket.emit('buzzer send', cid);
-                    $('#buzzer').removeClass('is-success').addClass('is-error').prop("disabled", true);
-                });
-
-                $('#bMenu').on('click', function () {
-                    $('#menu').show();
-                    $('#bMenu').hide();
-                });
-                $('#bSave').on('click', function () {
-                    var settings = {
-                        name: $('#name_field').val()
-                    };
-
-                    socket.emit('team update', settings);
-                    socket.emit('team buzzer', buzzerBlob);
-                    socket.emit('team logo', tl_canvas.toDataURL());
-                    $('#menu').hide();
-                    $('#bMenu').show();
-                });
-                $('#bCancel').on('click', function () {
-                    $('#menu').hide();
-                    $('#bMenu').show();
-                });
-
-                function buttonView () {
-                    $('section').hide();
-                    $('#buttons').show();
-                    $('#buzzer').addClass('is-success').removeClass('is-error').prop("disabled", false);
-                }
-
-                socket
-                .on('teams list', function (teams) {
-                    $('#teams .list').html('');
-                    $(teams).each(function(k, v) {
-                        $('#teams .list').append(
-                            $('<button/>')
-                                .addClass('btn')
-                                .addClass('is-error')
-                                .text(v.name)
-                                .on('click', function() {
-                                    $('#err').html("").hide();
-                                    socket.emit('team join', k);
-                                    $('#teamname').html(v.name);
-                                })
-                        ).append("<br/>");
-                    });
-                    $('#teams').show();
-                })
-                .on('teams invalid', function () {
-                    $('#err').html("Invalid Team Choice").show();
-                })
-                .on('team logo', function (data) {
-                    console.log("Restoring Team Logo");
-                    var img = new Image();
-                    img.onload = function(){
-                      tl_canvasCtx.drawImage(img, 0, 0);
-                    };
-                    img.src = data;
-                })
-                .on('team buzzer', function (data) {
-                    console.log("Restoring Team Buzzer - @Todo(dave13): =(");
-                    // console.log(data);
-                    // createMediaRecorder(data);
-                })
-                .on('wait', function() {
-                    $('section').hide();
-                    $('#wait').show();
-                    $('#bMenu').show();
-                })
-                .on('question play', function(options) {
-                    buttonView();
-                    $('#menu').hide();
-                })
-                .on('question chance', function(options) {
-                    buttonView();
-                    $('#menu').hide();
-                })
-                .on('question disable', function(options) {
-                    $('#buzzer').removeClass('is-success').addClass('is-error').prop("disabled", true);
-                    $('#menu').hide();
-                })
-                .on('reconnect', function (msg) {
-                    $('section').hide();
-                    socket.emit('ident', cid);
-                })
-                .on('connect', function (msg) {
-                    socket.emit('ident', cid);
-                })
-                .on('game state', function (state) {
-                    if (state.team) {
-                        team = state.team;
-                        $('#name_field').val(team.name);
-                        $('#teamname').html(team.name);
-
-                        if (state.question && state.question.type != "pictionary") {
-                            buttonView();
-                            if (state.answered) {
-                                $('#buzzer').removeClass('is-success').addClass('is-error').prop("disabled", true);
-                            }
-                        }
-                    }
-                })
-                .on('order 66', function (msg) {
-                    window.localStorage.removeItem('cid');
-                    cid = null;
-                    $('section').hide();
-                    $('#killed').show();
-                    $('#menu').show();
-                    console.log("execute order 66");
-                })
-                .on('id', function (id) {
-                    console.log('Got ID: ' + id);
-                    cid = id;
-                    window.localStorage.setItem('cid', cid);
-                })
-                .on('pictionary init', function (qs) {
-                    pictionary_questions = qs;
-                    $('section').hide();
-                    $('#buttons').hide();
-                    $('#pictionary_guide').show();
-                    colour = "#000";
-                    penSize = 5.0;
-                    p_canvasCtx.clearRect(0, 0, p_canvasW, p_canvasH);
-                    $('#menu').hide();
-                })
-                .on('pictionary active', function (qid) {
-                    $('#pictionary .p_title').html("Draw - " + pictionary_questions[qid]);
-                    p_canvasCtx.clearRect(0, 0, p_canvasW, p_canvasH);
-                }).on('pictionary start', function () {
-                    $('#pictionary_guide').hide();
-                    $('#pictionary').show();
-                    $('#pictionary .p_title').html("Draw - " + pictionary_questions[0]);
-                    p_canvasCtx.clearRect(0, 0, p_canvasW, p_canvasH);
-                });
-
-                // Team sound recorder
-                var mediaRecorder, recording = false, buzzerChunks = [];
-                $('#bRecord').on('click', function () {
-                    if (recording) {
-                        mediaRecorder.stop();
-                        recording = false;
-                        $(this).addClass('is-success').removeClass('is-error').text("Record");
-                        return;
-                    }
-                    recording = true;
-                    mediaRecorder.start();
-                    buzzerChunks = [];
-                    $(this).removeClass('is-success').addClass('is-error').text("Stop");
-                });
-
-                $('#bPlay').on('click', function () {
-                    if (!buzzerChunks)
-                        return;
-                    $('#aBuzzer')[0].play();
-                });
-                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                   console.log('getUserMedia supported.');
-                   navigator.mediaDevices.getUserMedia({audio: true})
-                        .then(function(stream) {
-                            createMediaRecorder(stream);
-                        })
-                        .catch(function(err) {
-                            console.log('The following getUserMedia error occured: ' + err);
-                        });
-                } else {
-                   console.log('getUserMedia not supported on your browser!');
-                }
-
-                function createMediaRecorder(s) {
-                    mediaRecorder = new MediaRecorder(s);
-
-                    mediaRecorder.ondataavailable = function(e) {
-                        buzzerChunks.push(e.data);
-                    }
-
-                    mediaRecorder.onstop = function(e) {
-                        buzzerBlob = new Blob(buzzerChunks, { 'type' : 'audio/ogg; codecs=opus' });
-                        var audioURL = window.URL.createObjectURL(buzzerBlob);
-                        $('#aBuzzer')[0].src = audioURL;
-                    }
-                }
-
-                // ------------------------------------------------------------
-                // Logo Canvas
-                // ------------------------------------------------------------
-                var tl_canvasId  = 'team_logo',
-                    tl_canvas    = document.getElementById(tl_canvasId),
-                    tl_canvasCtx = tl_canvas.getContext("2d"),
-                    tl_canvasW   = tl_canvas.width,
-                    tl_canvasH   = tl_canvas.height;
-
-                var px = 0, py = 0, cx = 0, cy = 0, penDown = false, colour = "#000", penSize = 5.0;
-                // $(canvas).on('mousemove mousedown mouseup mouseout', function(e) {
-                //     px = cx;
-                //     py = cy;
-
-                //     var rect = canvas.getBoundingClientRect();
-                //     cx = e.clientX - rect.left;
-                //     cy = e.clientY - rect.top;
-
-                //     switch (e.type) {
-                //         case 'mousedown':
-                //             penDown = true;
-                //             break;
-
-                //         case 'mouseup':
-                //         case 'mouseout':
-                //             penDown = false;
-                //             break;
-
-                //         case 'mousemove':
-                //             if (penDown) {
-                //                 canvasCtx.beginPath();
-                //                     canvasCtx.moveTo(px, py);
-                //                     canvasCtx.lineTo(cx, cy);
-                //                     canvasCtx.strokeStyle = colour;
-                //                     canvasCtx.lineWidth = penSize;
-                //                     canvasCtx.stroke();
-                //                 canvasCtx.closePath();
-
-                //                 sendPen(px, py, cx, cy, colour, penSize);
-                //             }
-                //             break;
-                //     }
-                // });
-
-                $(tl_canvas).on('touchstart touchend touchmove', function(e) {
-                    px = cx;
-                    py = cy;
-
-                    switch (e.type) {
-                        case 'touchstart':
-                                var touch = e.originalEvent.touches[0],
-                                    rect  = tl_canvas.getBoundingClientRect();
-                                cx = touch.clientX - rect.left;
-                                cy = touch.clientY - rect.top;
-                            penDown = true;
-                            break;
-
-                        case 'touchend':
-                            penDown = false;
-                            break;
-
-                        case 'touchmove':
-                            if (penDown) {
-                                var touch = e.originalEvent.touches[0],
-                                    rect  = tl_canvas.getBoundingClientRect();
-                                cx = touch.clientX - rect.left;
-                                cy = touch.clientY - rect.top;
-
-                                tl_canvasCtx.beginPath();
-                                    tl_canvasCtx.moveTo(px, py);
-                                    tl_canvasCtx.lineTo(cx, cy);
-                                    tl_canvasCtx.strokeStyle = colour;
-                                    tl_canvasCtx.lineWidth = penSize;
-                                    tl_canvasCtx.stroke();
-                                tl_canvasCtx.closePath();
-                            }
-                            break;
-                    }
-                });
-
-                $('.team_logo .canvas_clear').on('click', function() {
-                    tl_canvasCtx.clearRect(0, 0, tl_canvasW, tl_canvasH);
-                });
-
-                $('.team_logo .canvas_fill').on('click', function() {
-                    tl_canvasCtx.fillStyle = colour;
-                    tl_canvasCtx.fillRect(0, 0, tl_canvasW, tl_canvasH);
-                    tl_canvasCtx.fillStyle = '#fff';
-                });
-
-                $('.team_logo button[data-colour]').on('click', function() {
-                    colour = $(this).data('colour');
-                });
-
-                $('.team_logo input[name=pen_size]').on('change', function() {
-                    penSize = $(this).val();
-                });
-
-                // ------------------------------------------------------------
-                // Pictionary
-                // ------------------------------------------------------------
-                var p_canvasId  = 'p_canvas',
-                    p_canvas    = document.getElementById(p_canvasId),
-                    p_canvasCtx = p_canvas.getContext("2d"),
-                    p_canvasW   = p_canvas.width,
-                    p_canvasH   = p_canvas.height;
-
-
-                $(p_canvas).on('touchstart touchend touchmove', function(e) {
-                    px = cx;
-                    py = cy;
-
-                    switch (e.type) {
-                        case 'touchstart':
-                                var touch = e.originalEvent.touches[0],
-                                    rect  = p_canvas.getBoundingClientRect();
-                                cx = touch.clientX - rect.left;
-                                cy = touch.clientY - rect.top;
-                            penDown = true;
-                            break;
-
-                        case 'touchend':
-                            penDown = false;
-                            break;
-
-                        case 'touchmove':
-                            if (penDown) {
-                                var touch = e.originalEvent.touches[0],
-                                    rect  = p_canvas.getBoundingClientRect();
-                                cx = touch.clientX - rect.left;
-                                cy = touch.clientY - rect.top;
-
-                                p_canvasCtx.beginPath();
-                                    p_canvasCtx.moveTo(px, py);
-                                    p_canvasCtx.lineTo(cx, cy);
-                                    p_canvasCtx.strokeStyle = colour;
-                                    p_canvasCtx.lineWidth = penSize;
-                                    p_canvasCtx.stroke();
-                                p_canvasCtx.closePath();
-
-                                sendPen(px, py, cx, cy, colour, penSize);
-                            }
-                            break;
-                    }
-                });
-
-                $('#pictionary .canvas_clear').on('click', function() {
-                    p_canvasCtx.clearRect(0, 0, p_canvasW, p_canvasH);
-                    sendClear();
-                });
-
-                $('#pictionary .canvas_fill').on('click', function() {
-                    p_canvasCtx.fillStyle = colour;
-                    p_canvasCtx.fillRect(0, 0, p_canvasW, p_canvasH);
-                    p_canvasCtx.fillStyle = '#fff';
-                    sendFill(colour);
-                });
-
-                $('#pictionary button[data-colour]').on('click', function() {
-                    colour = $(this).data('colour');
-                });
-
-                $('#pictionary input[name=p_pen_size]').on('change', function() {
-                    penSize = $(this).val();
-                });
-
-                // Realtime Canvas socket
-                function sendPen(x1, y1, x2, y2, c, s) {
-                    socket.emit('pictionary pen', {
-                        'x1': x1,
-                        'y1': y1,
-                        'x2': x2,
-                        'y2': y2,
-                        'c':  c,
-                        's':  s
-                    });
-                }
-                function sendClear() {
-                    socket.emit('pictionary clear');
-                }
-                function sendFill(c) {
-                    socket.emit('pictionary fill', {'c': c});
-                }
-            });
-        </script>
+        <script src="js/contestant.js"></script>
     </body>
 </html>
