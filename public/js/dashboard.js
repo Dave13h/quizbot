@@ -40,6 +40,7 @@
 $(function () {
     var teams = [], logos = [];
     var timerId, timerTimer, questionType;
+    const ANSWERTIME = 6;
 
     // Mmmm shimmy
     function toggleFullScreen() {
@@ -227,7 +228,7 @@ $(function () {
         if (timerId)
             $('#' + timerId).remove();
     }
-    function timerRun () {
+    function timerRun() {
         let time = parseInt($('#' + timerId + ' span').html());
         --time;
 
@@ -411,12 +412,30 @@ $(function () {
                 .addClass('zoomInDown')
                 .addClass('team_logo')
                 .html(logos[event.team.id])
-        ).show();
+        )
+
+        if (questionType == 'text') {
+            nukeTimer();
+            var timer = $('#timer').clone();
+            timerId = "timer_" + Math.floor(Math.random() * 1000);
+            $(timer).attr("id", timerId)
+                    .attr("data-time", ANSWERTIME)
+                    .css('font-size', '100%')
+                    .show();
+            $('span', timer).html(ANSWERTIME).css('font-size', '100%');
+            timerTimer = setInterval(timerRun, 1000);
+            $('#teamoverlay').append($(timer));
+        }
+
+         $('#teamoverlay').show();
     })
     .on('question wrong', function (event) {
         $('#' + event.sound)[0].play();
-        $('#teamoverlay').html('').hide();
         $('#answer_wrong').show();
+
+        if (questionType == 'text') {
+            nukeTimer();
+        }
 
         wrongTimer = window.setTimeout(
             function() {
@@ -428,6 +447,7 @@ $(function () {
             },
             3000
         );
+        $('#teamoverlay').html('').hide();
     })
     .on('question correct', function (event) {
         window.clearTimeout(wrongTimer);
