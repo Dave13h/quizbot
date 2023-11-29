@@ -483,6 +483,46 @@ $(function () {
         p_canvasCtx.clearRect(0, 0, p_canvasW, p_canvasH);
     });
 
+    socket.on('multichoice play', function (question) {
+        $('section').hide();
+        $('#multichoice').show();
+        $('#buttons').hide();
+        $('#menu').hide();
+
+        $('#mc-q .mc-question h1').html(question.question.title);
+        var answers = $('#mc-q .mc-question ul.mc-answers');
+        answers.empty();
+
+        var qno = 1;
+        for (var q in question.question.answers) {
+            answers.append('<li><label><input type="checkbox" class="nes-checkbox" data-aid="' +
+                (qno++) + '" value="1">' + q + '</label></li>');
+        }
+
+        $('.mc-answers input').each(function() {
+            $(this).removeAttr('disabled');
+        });
+
+        var lastQ = $('#mc-q .mc-question ul.mc-answers li:last');
+        $('label', lastQ)
+            .css('text-decoration', 'none')
+            .css('color', '#fff');
+
+        $('#mc-q').show();
+    })
+    .on('multichoice getanswers', function () {
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
+        }
+
+        var answers = [];
+        $('.mc-answers input').each(function () {
+            answers[$(this).data('aid')-1] = $(this).prop('checked');
+            $(this).attr('disabled', true);
+        });
+        socket.emit('multichoice answers', answers);
+    })
+
     //  _____             _        _       _____ _      _       _      ______ _     _
     // /  ___|           | |      ( )     /  ___| |    (_)     | |     | ___ (_)   | |
     // \ `--.  __ _ _ __ | |_ __ _|/ ___  \ `--.| | ___ _  __ _| |__   | |_/ /_  __| | ___

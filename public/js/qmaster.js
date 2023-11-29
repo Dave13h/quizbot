@@ -260,6 +260,10 @@ $(function () {
                 case 'santassleighride':
                     break;
 
+                case 'multichoice':
+                    lineStr += v.question.title;
+                    break;
+
                 default:
                     lineStr += v.text;
                     break;
@@ -322,7 +326,11 @@ $(function () {
         $('#active_question').html(' -- None -- ');
 
         if (state.question) {
-            $('#active_question').html(state.question.text);
+            if (state.question.type == 'multichoice') {
+                $('#active_question').html(state.question.question.title);
+            } else {
+                $('#active_question').html(state.question.text);
+            }
             $('#active_state').show();
 
             $('#game_skip').show();

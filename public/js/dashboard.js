@@ -373,6 +373,32 @@ $(function () {
                 $('span', timer).html(msg.question.timer);
                 break;
 
+            case 'multichoice':
+                var div = $('<div />')
+                    .addClass('animated')
+                    .addClass('zoomInDown')
+                    .addClass('delay-1s');
+
+                div.append('<div style="font-size: 200%; margin-bottom: 60px; margin-top: 20px;">' + msg.question.question.title + '</div>');
+                var answers = $('<ul />');
+                var aid = 0;
+                for (var q in msg.question.question.answers) {
+                    answers.append('<li id="mc-a-' + (aid++) + '" style="font-size: 130%; margin-bottom: 20px; list-style-type: none; background-color: #552; padding: 10px;">' + q + '</li>');
+                }
+                div.append(answers);
+
+                $('#question').append(div);
+
+                var timer = $('#timer').clone();
+                    timerId = "timer_" + Math.floor(Math.random() * 1000);
+                    $(timer).attr("id", timerId)
+                            .attr("data-time", msg.question.timer + 1)
+                            .show(msg.question.timer);
+                    div.append(timer);
+                    $('span', timer).html(msg.question.timer + 1);
+                    timerTimer = setInterval(timerRun, 1000);
+                break;
+
             case 'pictionary':
             case 'ssr':
                 // Done in "init"
@@ -460,6 +486,25 @@ $(function () {
         $('#' + event.sound)[0].play();
         $('#teamoverlay').html('').hide();
         $('#answer_losers').show();
+    });
+
+    // ___  ___      _ _   _ _____ _           _
+    // |  \/  |     | | | (_)  __ \ |         (_)
+    // | .  . |_   _| | |_ _| /  \/ |__   ___  _  ___ ___
+    // | |\/| | | | | | __| | |   | '_ \ / _ \| |/ __/ _ \
+    // | |  | | |_| | | |_| | \__/\ | | | (_) | | (_|  __/
+    // \_|  |_/\__,_|_|\__|_|\____/_| |_|\___/|_|\___\___|
+    //
+    socket.on('multichoice roundend', function (question) {
+        nukeTimer();
+
+        var aid = 0;
+        for (var q in question.answers) {
+            var correct = question.answers[q];
+            $('#mc-a-' + (aid++))
+                .css('background-color', (correct ? '#191' : '#911'))
+                .css('text-decoration', (correct ? 'none' : 'line-through'));
+        }
     });
 
     // ______ _      _   _
@@ -604,7 +649,7 @@ $(function () {
         answers.empty();
         var qno = 1;
         for (var q in question.answers) {
-            var correct = question.answers[q]; ;
+            var correct = question.answers[q];
             answers.append('<li class="ssr-' + (correct ? 'true' : 'false') + '">' +
                 (correct ? '' : '<strike>') +
                 (qno++) + ':' + q +

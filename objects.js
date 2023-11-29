@@ -187,6 +187,7 @@ class oQuestion {
             this.timer = parseInt(data.timer);
 
         this.questions = [];
+        this.question  = false;
         switch (this.type) {
             case 'audio':
                 this.audio = data.audio;
@@ -203,6 +204,10 @@ class oQuestion {
 
             case 'santassleighride':
                 this.questions = data.questions;
+                break;
+
+            case 'multichoice':
+                this.question = data.question;
                 break;
         }
     }
@@ -236,6 +241,10 @@ class oQuestion {
 
     getQuestions () {
         return this.questions;
+    }
+
+    getQuestion () {
+        return this.question;
     }
 
     getPoints() {

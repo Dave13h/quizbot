@@ -74,19 +74,25 @@ header h1 { font-size: 125%; }
 
 #ssr-help { display: none; }
 #ssr-help h1 { font-size: 100%; }
-#ssr-q { display: none; }
+#mc-q, #ssr-q { display: none; }
+
+#multichoice ul,
 #santassleighride ul {
     list-style-type: none;
     text-align: left;
     padding: 0;
 }
+#mc-q .mc-question ul.mc-answers,
 #ssr-q .ssr-question ul.ssr-answers {
     font-size: 150%;
 }
+
+#multichoice .mc-question ul.mc li,
 #santassleighride .ssr-question ul.ssr-answers li {
     margin-bottom: 30px;
 }
 
+#multichoice input[type=checkbox],
 #santassleighride input[type=checkbox] {
     width: 30px;
     height: 30px;

@@ -1,6 +1,20 @@
 {
     "questions": [
         {
+            "type": "multichoice",
+            "title": "Round 4 - All Play",
+            "question": {
+                "title": "Which of these Dickens facts is correct?",
+                "answers": {
+                    "He went to work in a shoe factory as a boy": true,
+                    "He wrote his first novel aged 24": false,
+                    "He wanted to become an actor": true
+                }
+            },
+            "timer": 10
+        },
+
+        {
             "type": "text",
             "title": "Round 1 - D3R & Clients",
             "text": "We have had some new sections/topics added to the newsletter this year, name 2!"
@@ -374,7 +388,6 @@
             "text": "I love Rock N Roll",
             "audio": "chorus_10"
         },
-
 
         {
             "type": "santassleighride",

@@ -308,7 +308,7 @@ sDashboard
 // \ \/' / |_| | |/ /| |  | | (_| \__ \ ||  __/ |
 //  \_/\_\\__,_|_/___\_|  |_/\__,_|___/\__\___|_|
 //
-const QMPIN = 1388;
+const QMPIN = 1995;
 sQuizMaster.on('connection', function (socket) {
     var qmid = null;
     console.log('[SOCKET] QM connected on socket: ' + socket.id);
@@ -401,6 +401,28 @@ sQuizMaster.on('connection', function (socket) {
                 for (var c in connections.contestants) {
                     connections.contestants[c].getSocket().emit('santassleighride init');
                 }
+                return;
+
+            case 'multichoice':
+                mcAnswers = [];
+                mcAnswered = [];
+                mcCountdown = 0;
+                mcRoundTimer = null;
+                mcWaitingForClients = null;
+
+                sDashboard.emit('question play', {
+                    round: "Round " + roundNo + "!",
+                    question: questions[qid]
+                });
+
+                for (var c in connections.contestants) {
+                    connections.contestants[c].getSocket().emit(
+                        'multichoice play',
+                        questions[qid]
+                    );
+                }
+
+                mcTick();
                 return;
         }
 
@@ -569,6 +591,108 @@ sQuizMaster.on('connection', function (socket) {
             connections.contestants[c].getSocket().emit('pictionary active', pictionaryActiveQuestion);
         }
     });
+
+    // Multichoice Events
+    var mcCountdown         = 0,
+        mcRoundTimer        = null,
+        mcWaitingForClients = null;
+    function mcTick () {
+        if (!mcRoundTimer) {
+            mcCountdown = questions[activeQuestion].timer;
+            mcRoundTimer = setInterval(mcTick, 1000);
+            return;
+        }
+
+        if (mcCountdown-- < 1) {
+            clearInterval(mcRoundTimer);
+            mcFetchAnswers();
+            sDashboard.emit(
+                'multichoice roundend',
+                questions[activeQuestion].question,
+                []
+            );
+            return;
+        }
+    }
+
+    var mcCheckResultsTimeout = 0;
+    function mcFetchAnswers () {
+        console.log("asking for answers");
+        mcCheckResultsTimeout = 0;
+        for (var t = 0; t < teams.length; ++t) {
+            mcAnswered[t] = false;
+            mcAnswers[t] = [false, false, false];
+        }
+        for (var c in connections.contestants) {
+            connections.contestants[c].getSocket().emit('multichoice getanswers');
+        }
+        mcWaitingForClients = setInterval(mcCheckResults, 100);
+    }
+
+    function mcCheckResults () {
+        ++mcCheckResultsTimeout;
+        if (mcCheckResultsTimeout < 20) {
+            var aCount = 0;
+            for (var t = 0; t < teams.length; ++t) {
+                if (mcAnswered[t]) {
+                    ++aCount;
+                    continue;
+                }
+                console.log("[mc] Waiting for ", teams[t].getName());
+            }
+            if (aCount != teams.length) {
+                return false;
+            }
+        } else {
+            console.log("[mc] Checking results timeout");
+        }
+
+        clearInterval(mcWaitingForClients);
+        mcWaitingForClients = null;
+
+        var results = [],
+            answers = questions[activeQuestion].question.answers,
+            aVals   = [],
+            aid     = 0,
+            lPoints = 0;
+        for (var a in answers) { // Unroll, thanks JS for not supporting index access to key'd arrays :F
+            aVals[aid++] = answers[a];
+        }
+
+        for (var t = 0; t < teams.length; ++t) {
+            results[t] = [];
+
+            var tPoints = 0,
+                tLeader = ssrLeaders[t];
+
+            results[t][0] = false;
+            if (mcAnswers[t][0] == aVals[0]) {
+                results[t][0] = true;
+                ++tPoints;
+            }
+
+            results[t][1] = false;
+            if (mcAnswers[t][1] == aVals[1]) {
+                results[t][1] = true;
+                ++tPoints;
+            }
+
+            if (!tLeader) {
+                results[t][2] = false;
+                if (mcAnswers[t][2] == aVals[2]) {
+                    results[t][2] = true;
+                    ++tPoints;
+                }
+            }
+
+            teams[t].addPoints(tPoints);
+        }
+
+        sDashboard.emit('teams scores', {teams: teams});
+        for (var c in connections.contestants) {
+            connections.contestants[c].getSocket().emit('wait');
+        }
+    }
 
     // Santa's Sleigh Ride Events
     var ssrActiveQuestion    = 0,
@@ -861,6 +985,7 @@ sQuizMaster.on('connection', function (socket) {
 //  \____/\___/|_| |_|\__\___||___/\__\__,_|_| |_|\__|___/
 //
 var ssrAnswers = [], ssrAnswered = [];
+var mcAnswers = [], mcAnswered = [];
 
 sContestant
 .on('connection', function (socket) {
@@ -997,13 +1122,24 @@ sContestant
         sDashboard.emit('pictionary fill', data);
     });
 
+    // Multichoice answers
+    socket
+    .on('multichoice answers', function (answers) {
+        var c = connections.contestants[cid],
+            team = teams[c.getTeam()];
+
+        console.log('[MC] ' + cid + ' => team: ' + team.getName(), answers);
+        mcAnswers[team.getId()] = answers;
+        mcAnswered[team.getId()] = true;
+    });
+
     // Santa's Sleigh Ride events
     socket
     .on('santassleighride answers', function (answers) {
         var c = connections.contestants[cid],
             team = teams[c.getTeam()];
 
-        console.log('[SSR] ' + cid + ' => team: ' + team.getName(), answers);
+        console.log('[MC] ' + cid + ' => team: ' + team.getName(), answers);
         ssrAnswers[team.getId()] = answers;
         ssrAnswered[team.getId()] = true;
     });
