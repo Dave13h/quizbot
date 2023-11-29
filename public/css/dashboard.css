@@ -388,6 +388,11 @@ body {
     display: none;
 }
 
+#ssr-winner-outofquestions {
+    display: none;
+    font-size: 80%;
+}
+
 .ssr-winner-avatar {
     width: 360px;
     height: 360px;

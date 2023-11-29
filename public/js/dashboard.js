@@ -592,7 +592,7 @@ $(function () {
             '</li>');
         }
     })
-    .on('santassleighride answers', async function (answers, scores, leaders, winners) {
+    .on('santassleighride answers', async function (answers, scores, leaders, winners, outOfQuestions) {
         await delay(5);
 
         $('#ssr-q').animate({top: "1200px"});
@@ -629,11 +629,11 @@ $(function () {
 
         if (winners.length) {
             await delay(2);
-            ssrShowEndScreen(winners);
+            ssrShowEndScreen(winners, outOfQuestions);
         }
     });
 
-    function ssrShowEndScreen(winners) {
+    function ssrShowEndScreen(winners, outOfQuestions) {
         $('.ssr-player').each(function () { $(this).hide(); });
         $('#ssr-timer').hide();
         $('#ssr-q').hide();
@@ -642,6 +642,10 @@ $(function () {
 
         $('#ssr-end').show();
         $('#ssr-winner-container').html('');
+
+        if (outOfQuestions) {
+            $('#ssr-winner-outofquestions').show();
+        }
 
         for (var w in winners) {
             var t = winners[w];

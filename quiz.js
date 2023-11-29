@@ -754,9 +754,13 @@ sQuizMaster.on('connection', function (socket) {
             ssrLeaders[t] = (ssrPoints[t] == lPoints);
         }
 
-        // A winner is you!
-        var winners = [];
-        if (lPoints >= 60) {
+        ++ssrActiveQuestion;
+
+        // if we reach the score limit or we run out of questions...A winner is you!
+        var winners = [],
+            outOfQuestions = ssrActiveQuestion >= questions[activeQuestion].questions.length;
+
+        if (lPoints >= 60 || outOfQuestions) {
             for (var t in ssrLeaders) {
                 if (!ssrLeaders[t]) {
                     continue;
@@ -780,15 +784,9 @@ sQuizMaster.on('connection', function (socket) {
             results,
             ssrPoints,
             ssrLeaders,
-            winners
+            winners,
+            outOfQuestions
         );
-
-        ++ssrActiveQuestion;
-
-        // Ran out of questions.. erm start again?
-        if (ssrActiveQuestion > questions[activeQuestion].questions) {
-            ssrActiveQuestion = 0;
-        }
 
         if (winners.length == 0) {
             sQuizMaster.emit('santassleighride nextround');
