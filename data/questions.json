@@ -1,6 +1,12 @@
 {
     "questions": [
         {
+            "type": "countdown",
+            "title": "Round 3 - Countdown",
+            "text": "Make the longest word from these letters!<br><br>KJDWOCFUCL",
+            "timer": 32
+        },
+        {
             "type": "multichoice",
             "title": "Round 4 - All Play",
             "question": {

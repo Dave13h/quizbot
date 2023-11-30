@@ -70,6 +70,9 @@ $(function () {
         socket.emit('ident', cid);
     })
     .on('wait', function() {
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
+        }
         $('section').hide();
         $('#wait').show();
         $('#bMenu').show();
@@ -483,7 +486,19 @@ $(function () {
         p_canvasCtx.clearRect(0, 0, p_canvasW, p_canvasH);
     });
 
-    socket.on('multichoice play', function (question) {
+    // ___  ___      _ _   _      _           _
+    // |  \/  |     | | | (_)    | |         (_)
+    // | .  . |_   _| | |_ _  ___| |__   ___  _  ___ ___
+    // | |\/| | | | | | __| |/ __| '_ \ / _ \| |/ __/ _ \
+    // | |  | | |_| | | |_| | (__| | | | (_) | | (_|  __/
+    // \_|  |_/\__,_|_|\__|_|\___|_| |_|\___/|_|\___\___|
+    //
+    socket
+    .on('multichoice play', function (question) {
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
+        }
+
         $('section').hide();
         $('#multichoice').show();
         $('#buttons').hide();
@@ -521,7 +536,37 @@ $(function () {
             $(this).attr('disabled', true);
         });
         socket.emit('multichoice answers', answers);
+    });
+
+    //  _____                   _      _
+    // /  __ \                 | |    | |
+    // | /  \/ ___  _   _ _ __ | |_ __| | _____      ___ __
+    // | |    / _ \| | | | '_ \| __/ _` |/ _ \ \ /\ / / '_ \
+    // | \__/\ (_) | |_| | | | | || (_| | (_) \ V  V /| | | |
+    //  \____/\___/ \__,_|_| |_|\__\__,_|\___/ \_/\_/ |_| |_|
+    //
+    socket
+    .on('countdown play', function (question) {
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
+        }
+
+        $('section').hide();
+        $('#countdown').show();
+        $('#buttons').hide();
+        $('#menu').hide();
+
+        $('#cd-q .cd-question h1').html(question.text);
+        $('#cd-answer').val("").removeAttr('disabled');
     })
+    .on('countdown getanswer', function () {
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
+        }
+
+        $('#cd-answer').attr('disabled', true);
+        socket.emit('countdown answer', $('#cd-answer').val());
+    });
 
     //  _____             _        _       _____ _      _       _      ______ _     _
     // /  ___|           | |      ( )     /  ___| |    (_)     | |     | ___ (_)   | |
@@ -541,6 +586,10 @@ $(function () {
         $('#menu').hide();
     })
     .on('santassleighride active', function (question, isLeader) {
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
+        }
+
         $('section').hide();
         $('#santassleighride').show();
         $('#buttons').hide();

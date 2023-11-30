@@ -328,6 +328,7 @@ $(function () {
         switch (msg.question.type) {
             case 'timer':
             case 'text':
+            case 'countdown':
                 $('#question').append(
                     $('<div />').append(
                         $('<span />')
@@ -339,7 +340,7 @@ $(function () {
                     )
                 );
 
-                if (msg.question.type == 'timer') {
+                if (msg.question.type == 'timer' || msg.question.type == 'countdown') {
                     var timer = $('#timer').clone();
                     timerId = "timer_" + Math.floor(Math.random() * 1000);
                     $(timer).attr("id", timerId)
@@ -347,6 +348,7 @@ $(function () {
                             .show(msg.question.timer);
                     $('#question div').append(timer);
                     $('span', timer).html(msg.question.timer);
+                    timerTimer = setInterval(timerRun, 1000);
                 }
                 break;
 
@@ -505,6 +507,34 @@ $(function () {
                 .css('background-color', (correct ? '#191' : '#911'))
                 .css('text-decoration', (correct ? 'none' : 'line-through'));
         }
+    });
+
+    //  _____                   _      _
+    // /  __ \                 | |    | |
+    // | /  \/ ___  _   _ _ __ | |_ __| | _____      ___ __
+    // | |    / _ \| | | | '_ \| __/ _` |/ _ \ \ /\ / / '_ \
+    // | \__/\ (_) | |_| | | | | || (_| | (_) \ V  V /| | | |
+    //  \____/\___/ \__,_|_| |_|\__\__,_|\___/ \_/\_/ |_| |_|
+    //
+    socket.on('countdown results', function (results) {
+        nukeTimer();
+
+        var div = $('<div />')
+            .addClass('animated')
+            .addClass('zoomInDown')
+            .addClass('delay-1s');
+
+        var answers = $('<ul />');
+        var aid = 0;
+        for (var t in results.teams) {
+            answers.append('<li class="countdown-answer">' +
+                results.teams[t].name + ' - "' + results.answers[aid++] + '"</li>'
+            );
+        }
+
+        div.append(answers);
+
+        $('#question').append(div);
     });
 
     // ______ _      _   _

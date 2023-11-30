@@ -49,6 +49,13 @@ var questions      = [],
     activeQuestion = -1,
     roundNo        = 1;
 
+var ssrAnswers  = [],
+    ssrAnswered = [],
+    mcAnswers   = [],
+    mcAnswered  = [],
+    cdAnswers   = [],
+    cdAnswered  = [];
+
 console.log(" _____       _    ______       _");
 console.log("|  _  |     (_)   | ___ \\     | |");
 console.log("| | | |_   _ _ ___| |_/ / ___ | |_");
@@ -313,7 +320,9 @@ sQuizMaster.on('connection', function (socket) {
     var qmid = null;
     console.log('[SOCKET] QM connected on socket: ' + socket.id);
 
+    //
     // Connection Events
+    //
     socket
     .on('ident', function(pin, id) {
         if (!pin || pin.length != 4) {
@@ -355,7 +364,9 @@ sQuizMaster.on('connection', function (socket) {
         notifyConnectionList();
     });
 
+    //
     // Question Events
+    //
     socket
     .on('question play', function (qid) {
         console.log('[SOCKET] QM [' + qmid + '] play question => ' + qid);
@@ -423,6 +434,30 @@ sQuizMaster.on('connection', function (socket) {
                 }
 
                 mcTick();
+                return;
+
+            case 'countdown':
+                cdAnswers = [];
+                cdAnswered = [];
+                cdCountdown = 0;
+                cdRoundTimer = null;
+                cdWaitingForClients = null;
+
+                sDashboard.emit('question play', {
+                    round: "Round " + roundNo + "!",
+                    question: questions[qid]
+                });
+
+                sDashboard.emit('sound play', {sound: 'countdown'});
+
+                for (var c in connections.contestants) {
+                    connections.contestants[c].getSocket().emit(
+                        'countdown play',
+                        questions[qid]
+                    );
+                }
+
+                cdTick();
                 return;
         }
 
@@ -507,11 +542,24 @@ sQuizMaster.on('connection', function (socket) {
         sDashboard.emit('teams scores', {teams: teams});
         activeQuestion = -1;
         notifyQuestions();
+
+        if (mcRoundTimer) {
+            clearInterval(mcRoundTimer);
+            mcRoundTimer = null;
+        }
+        if (cdRoundTimer) {
+            clearInterval(cdRoundTimer);
+            cdRoundTimer = null;
+        }
+
         ++roundNo;
     });
 
+    //
     // Pictionary Events
-    var pictionaryActiveQuestion = 0, pictionaryScore = 0;
+    //
+    var pictionaryActiveQuestion = 0,
+        pictionaryScore = 0;
     socket
     .on('pictionary start', function () {
         sDashboard.emit('pictionary start');
@@ -592,10 +640,13 @@ sQuizMaster.on('connection', function (socket) {
         }
     });
 
+    //
     // Multichoice Events
+    //
     var mcCountdown         = 0,
         mcRoundTimer        = null,
         mcWaitingForClients = null;
+
     function mcTick () {
         if (!mcRoundTimer) {
             mcCountdown = questions[activeQuestion].timer;
@@ -617,11 +668,11 @@ sQuizMaster.on('connection', function (socket) {
 
     var mcCheckResultsTimeout = 0;
     function mcFetchAnswers () {
-        console.log("asking for answers");
+        console.log("[mc] Asking for answers");
         mcCheckResultsTimeout = 0;
         for (var t = 0; t < teams.length; ++t) {
             mcAnswered[t] = false;
-            mcAnswers[t] = [false, false, false];
+            mcAnswers[t]  = [false, false, false];
         }
         for (var c in connections.contestants) {
             connections.contestants[c].getSocket().emit('multichoice getanswers');
@@ -653,8 +704,7 @@ sQuizMaster.on('connection', function (socket) {
         var results = [],
             answers = questions[activeQuestion].question.answers,
             aVals   = [],
-            aid     = 0,
-            lPoints = 0;
+            aid     = 0;
         for (var a in answers) { // Unroll, thanks JS for not supporting index access to key'd arrays :F
             aVals[aid++] = answers[a];
         }
@@ -662,27 +712,16 @@ sQuizMaster.on('connection', function (socket) {
         for (var t = 0; t < teams.length; ++t) {
             results[t] = [];
 
-            var tPoints = 0,
-                tLeader = ssrLeaders[t];
+            var tPoints = 0;
 
-            results[t][0] = false;
             if (mcAnswers[t][0] == aVals[0]) {
-                results[t][0] = true;
                 ++tPoints;
             }
-
-            results[t][1] = false;
             if (mcAnswers[t][1] == aVals[1]) {
-                results[t][1] = true;
                 ++tPoints;
             }
-
-            if (!tLeader) {
-                results[t][2] = false;
-                if (mcAnswers[t][2] == aVals[2]) {
-                    results[t][2] = true;
-                    ++tPoints;
-                }
+            if (mcAnswers[t][2] == aVals[2]) {
+                ++tPoints;
             }
 
             teams[t].addPoints(tPoints);
@@ -694,7 +733,74 @@ sQuizMaster.on('connection', function (socket) {
         }
     }
 
+    //
+    // Countdown Events
+    //
+    var cdCountdown         = 0,
+        cdRoundTimer        = null,
+        cdWaitingForClients = null;
+
+    function cdTick () {
+        if (!cdRoundTimer) {
+            cdCountdown = questions[activeQuestion].timer;
+            cdRoundTimer = setInterval(cdTick, 1000);
+            return;
+        }
+
+        if (cdCountdown-- < 1) {
+            clearInterval(cdRoundTimer);
+            cdFetchAnswers();
+            return;
+        }
+    }
+
+    var cdCheckResultsTimeout = 0;
+    function cdFetchAnswers () {
+        console.log("[cd] Asking for answers");
+        cdCheckResultsTimeout = 0;
+        for (var t = 0; t < teams.length; ++t) {
+            cdAnswered[t] = false;
+            cdAnswers[t]  = '';
+        }
+        for (var c in connections.contestants) {
+            connections.contestants[c].getSocket().emit('countdown getanswer');
+        }
+        cdWaitingForClients = setInterval(cdCheckResults, 100);
+    }
+
+    function cdCheckResults () {
+        ++cdCheckResultsTimeout;
+        if (cdCheckResultsTimeout < 20) {
+            var aCount = 0;
+            for (var t = 0; t < teams.length; ++t) {
+                if (cdAnswered[t]) {
+                    ++aCount;
+                    continue;
+                }
+                console.log("[cd] Waiting for ", teams[t].getName());
+            }
+            if (aCount != teams.length) {
+                return false;
+            }
+        } else {
+            console.log("[cd] Checking results timeout");
+        }
+
+        clearInterval(cdWaitingForClients);
+        cdWaitingForClients = null;
+
+        // Quizmaster dishes out the points
+
+        sQuizMaster.emit('countdown results', {teams: teams, answers: cdAnswers});
+        sDashboard.emit('countdown results', {teams: teams, answers: cdAnswers});
+        for (var c in connections.contestants) {
+            connections.contestants[c].getSocket().emit('wait');
+        }
+    }
+
+    //
     // Santa's Sleigh Ride Events
+    //
     var ssrActiveQuestion    = 0,
         ssrCountdown         = 0,
         ssrRoundTimer        = null,
@@ -953,7 +1059,12 @@ sQuizMaster.on('connection', function (socket) {
             return;
         }
 
-        teams[team.id].setPoints(team.points);
+        if (team.addpoints) {
+            teams[team.id].addPoints(parseInt(team.addpoints));
+        } else {
+            teams[team.id].setPoints(parseInt(team.points));
+        }
+
         notifyConnectionList(); // @todo(dave13h): optimise
         if (penalty)
             sDashboard.emit('penalty', teams[team.id].getName());
@@ -984,15 +1095,14 @@ sQuizMaster.on('connection', function (socket) {
 // | \__/\ (_) | | | | ||  __/\__ \ || (_| | | | | |_\__ \
 //  \____/\___/|_| |_|\__\___||___/\__\__,_|_| |_|\__|___/
 //
-var ssrAnswers = [], ssrAnswered = [];
-var mcAnswers = [], mcAnswered = [];
-
 sContestant
 .on('connection', function (socket) {
     var cid = null;
     console.log('[SOCKET] Contestant connected on socket: ' + socket.id);
 
+    //
     // Connection Events
+    //
     socket.on('ident', function (id){
         cid = ident('contestant', id, socket);
 
@@ -1011,7 +1121,9 @@ sContestant
         notifyConnectionList();
     });
 
+    //
     // Team Events
+    //
     socket
     .on('team join', function (team) {
         if (teams[team] == undefined) {
@@ -1076,7 +1188,9 @@ sContestant
         notifyAvatar(c.getTeam(), data);
     });
 
+    //
     // Buzzer Events
+    //
     socket
     .on('buzzer send', function (cid) {
         if (!connections.contestants[cid].hasTeam()) {
@@ -1105,7 +1219,9 @@ sContestant
         }
     });
 
+    //
     // Pictionary events
+    //
     socket
     .on('pictionary pen', function (data) {
         if (!data)
@@ -1122,7 +1238,9 @@ sContestant
         sDashboard.emit('pictionary fill', data);
     });
 
+    //
     // Multichoice answers
+    //
     socket
     .on('multichoice answers', function (answers) {
         var c = connections.contestants[cid],
@@ -1133,7 +1251,22 @@ sContestant
         mcAnswered[team.getId()] = true;
     });
 
+    //
+    // Countdown answer
+    //
+    socket
+    .on('countdown answer', function (answer) {
+        var c = connections.contestants[cid],
+            team = teams[c.getTeam()];
+
+        console.log('[CD] ' + cid + ' => team: ' + team.getName() + ' => Answer: ' + answer);
+        cdAnswers[team.getId()] = answer.trim();
+        cdAnswered[team.getId()] = true;
+    });
+
+    //
     // Santa's Sleigh Ride events
+    //
     socket
     .on('santassleighride answers', function (answers) {
         var c = connections.contestants[cid],
@@ -1144,7 +1277,9 @@ sContestant
         ssrAnswered[team.getId()] = true;
     });
 
+    //
     // Bonus round...
+    //
     var bodQuestions = [
         'WHAT is your name?',
         'WHAT is your quest?',

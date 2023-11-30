@@ -74,7 +74,9 @@ header h1 { font-size: 125%; }
 
 #ssr-help { display: none; }
 #ssr-help h1 { font-size: 100%; }
-#mc-q, #ssr-q { display: none; }
+#ssr-q { display: none; }
+
+#countdown, #multichoice { display: none; }
 
 #multichoice ul,
 #santassleighride ul {
@@ -87,9 +89,18 @@ header h1 { font-size: 125%; }
     font-size: 150%;
 }
 
+.cd-question {
+    text-align: center;
+}
+
 #multichoice .mc-question ul.mc li,
 #santassleighride .ssr-question ul.ssr-answers li {
     margin-bottom: 30px;
+}
+
+#countdown input[type=text] {
+    height: 30px;
+    width: 80%;
 }
 
 #multichoice input[type=checkbox],

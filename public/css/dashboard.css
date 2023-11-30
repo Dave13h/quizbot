@@ -243,6 +243,13 @@ body {
     font-size: 200%;
 }
 
+.countdown-answer {
+    font-size: 290%;
+    margin-bottom: 20px;
+    list-style-type: none;
+    padding: 10px;
+}
+
 #ssr {
     display: none;
 }
