@@ -90,7 +90,7 @@ class oTeam {
         this.avatar   = null;
         this.powerups = {
             'silence':  true,
-            'double':   true,
+            'boost':   true,
             'wildcard': false
         };
     }
@@ -108,7 +108,7 @@ class oTeam {
 
     refreshPowerups () {
         this.powerups['silence']  = true;
-        this.powerups['double']   = true;
+        this.powerups['boost']    = true;
         this.powerups['wildcard'] = true;
         return this;
     }

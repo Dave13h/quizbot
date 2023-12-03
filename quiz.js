@@ -247,12 +247,12 @@ function powerupApply() {
             powerupActive.target  = null;
             break;
 
-        case 'double':
-            console.log("[PUP] Applying Double Up!");
-            if (powerupActive.target) {
+        case 'boost':
+            console.log("[PUP] Applying Boost!");
+            if (powerupActive.target != null) {
                 console.log("[PUP] Looking for non-target: " + powerupActive.target);
                 for (var t in teams) {
-                    if (teams[t].getName() != powerupActive.target) {
+                    if (t != powerupActive.target) {
                         console.log("[PUP] Found non-target: " + powerupActive.target + ' Silencing');
                         teams[t].setAnswered(true);
                     }
@@ -304,11 +304,10 @@ function powerupPlay(cid, team, pup) {
     powerupSelected = pup;
     switch (pup) {
         case 'silence':
-            var myTeam = teams[c.getTeam()],
-                targets = [];
+            var targets = [];
 
             for (var t in teams) {
-                if (teams[t].getName() == myTeam.getName()) {
+                if (teams[t].getName() == team.getName()) {
                     continue;
                 }
                 targets.push(teams[t].getName());
@@ -316,8 +315,10 @@ function powerupPlay(cid, team, pup) {
             connections.contestants[cid].getSocket().emit('powerup selecttarget', targets);
             break;
 
-        case 'double':
+        case 'boost':
             team.powerups[pup] = false;
+            powerupActive.powerup = pup;
+            powerupActive.target = c.getTeam();
             powerupLocked = false;
             break;
 
@@ -739,7 +740,15 @@ sQuizMaster.on('connection', function (socket) {
         if (activeTeam < 0)
             return;
 
-        teams[activeTeam].points += parseInt(questions[activeQuestion].getPoints());
+        if (powerupActive.powerup && powerupActive.powerup == 'boost') {
+            var givePoints = parseInt(questions[activeQuestion].getPoints()) + 2;
+            console.log('[PUP] Add ' + givePoints + ' points for boost win');
+            teams[activeTeam].addPoints(givePoints);
+            powerupActive.powerup = null;
+            powerupActive.target  = null;
+        } else {
+            teams[activeTeam].points += parseInt(questions[activeQuestion].getPoints());
+        }
 
         activeTeam = -1;
         for (let t in teams)
@@ -752,8 +761,6 @@ sQuizMaster.on('connection', function (socket) {
         powerupsEnable();
     })
     .on('question wrong', function (qid) {
-        activeTeam = -1;
-
         var hasChance = false;
         for (let c in connections.contestants) {
             let con = connections.contestants[c],
@@ -771,6 +778,14 @@ sQuizMaster.on('connection', function (socket) {
             hasChance = true;
         }
 
+        if (powerupActive.powerup && powerupActive.powerup == 'boost') {
+            var losePoints = parseInt(questions[activeQuestion].getPoints()) + 2;
+            console.log('[PUP] Dec ' + losePoints + ' points for boost fail');
+            teams[activeTeam].decPoints(losePoints);
+            powerupActive.powerup = null;
+            powerupActive.target  = null;
+        }
+
         if (hasChance) {
             sDashboard.emit('question wrong', {sound: 'buzzer_wrong'});
         } else {
@@ -778,10 +793,24 @@ sQuizMaster.on('connection', function (socket) {
             sDashboard.emit('teams scores', {teams: teams});
             activeQuestion = -1;
             notifyQuestions();
+            powerupsEnable();
             ++roundNo;
         }
+
+        sQuizMaster.emit('teams list', teams);
+
+        activeTeam = -1;
     })
     .on('question skip', function () {
+        if (powerupActive.powerup && powerupActive.powerup == 'boost') {
+            var losePoints = parseInt(questions[activeQuestion].getPoints()) + 2;
+            console.log('[PUP] Dec ' + losePoints + ' points for boost up fail');
+            teams[powerupActive.target].decPoints(losePoints);
+            powerupActive.powerup = null;
+            powerupActive.target  = null;
+            sQuizMaster.emit('teams list', teams);
+        }
+
         sDashboard.emit('teams scores', {teams: teams});
         activeQuestion = -1;
         notifyQuestions();
@@ -789,6 +818,8 @@ sQuizMaster.on('connection', function (socket) {
         for (var c in connections.contestants) {
             connections.contestants[c].getSocket().emit('wait');
         }
+
+        powerupsEnable();
 
         if (mcRoundTimer) {
             clearInterval(mcRoundTimer);
@@ -798,8 +829,6 @@ sQuizMaster.on('connection', function (socket) {
             clearInterval(cdRoundTimer);
             cdRoundTimer = null;
         }
-
-        powerupsEnable();
 
         ++roundNo;
     })

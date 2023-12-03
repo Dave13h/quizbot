@@ -682,14 +682,14 @@ $(function () {
                     }
                     break;
 
-                case 'double':
+                case 'boost':
                     if (!myPups[p]) {
-                        $('#bPowerupDouble')
+                        $('#bPowerupBoost')
                             .attr('disabled', 'disabled')
                             .removeClass('is-success')
                             .addClass('is-error');
                     } else {
-                        $('#bPowerupDouble')
+                        $('#bPowerupBoost')
                             .removeAttr('disabled')
                             .removeClass('is-error')
                             .addClass('is-success');
@@ -736,6 +736,6 @@ $(function () {
     });
 
     $('#bPowerupSilence').on('click', function () { socket.emit('powerup', 'silence'); });
-    $('#bPowerupDouble').on('click', function () { socket.emit('powerup', 'double'); });
+    $('#bPowerupBoost').on('click', function () { socket.emit('powerup', 'boost'); });
     $('#bPowerupWildcard').on('click', function () { socket.emit('powerup', 'wildcard'); });
 });
