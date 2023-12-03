@@ -88,6 +88,11 @@ class oTeam {
         this.buzzer   = null;
         this.logo     = null;
         this.avatar   = null;
+        this.powerups = {
+            'silence':  true,
+            'double':   true,
+            'wildcard': false
+        };
     }
 
     toJson () {

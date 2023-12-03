@@ -655,4 +655,87 @@ $(function () {
             $('#ssr-loser').show();
         }
     });
+
+    // ______
+    // | ___ \
+    // | |_/ /____      _____ _ __ _   _ _ __  ___
+    // |  __/ _ \ \ /\ / / _ \ '__| | | | '_ \/ __|
+    // | | | (_) \ V  V /  __/ |  | |_| | |_) \__ \
+    // \_|  \___/ \_/\_/ \___|_|   \__,_| .__/|___/
+    //                                  | |
+    //                                  |_|
+    socket
+    .on('powerup enable', function(myPups) {
+        for (var p in myPups) {
+            switch (p) {
+                case 'silence':
+                    if (!myPups[p]) {
+                        $('#bPowerupSilence')
+                            .attr('disabled', 'disabled')
+                            .removeClass('is-success')
+                            .addClass('is-error');
+                    } else {
+                        $('#bPowerupSilence')
+                            .removeAttr('disabled')
+                            .removeClass('is-error')
+                            .addClass('is-success');
+                    }
+                    break;
+
+                case 'double':
+                    if (!myPups[p]) {
+                        $('#bPowerupDouble')
+                            .attr('disabled', 'disabled')
+                            .removeClass('is-success')
+                            .addClass('is-error');
+                    } else {
+                        $('#bPowerupDouble')
+                            .removeAttr('disabled')
+                            .removeClass('is-error')
+                            .addClass('is-success');
+                    }
+                    break;
+
+                case 'wildcard':
+                    if (!myPups[p]) {
+                        $('#bPowerupWildcard')
+                            .attr('disabled', 'disabled')
+                            .removeClass('is-success')
+                            .addClass('is-error');
+                    } else {
+                        $('#bPowerupWildcard')
+                            .removeAttr('disabled')
+                            .removeClass('is-error')
+                            .addClass('is-success');
+                    }
+                    break;
+            }
+        }
+        $('#powerups').show();
+    })
+    .on('powerup disable', function() {
+        $('#powerups').hide();
+    })
+    .on('powerup selecttarget', function(targets) {
+        var teamSelecter = $('<div />');
+        for (var t in targets) {
+            let victim = targets[t];
+            $(teamSelecter).append(
+                $('<button/>')
+                    .addClass('btn')
+                    .addClass('is-error')
+                    .text(targets[t])
+                    .on('click', function () {
+                        socket.emit('powerup target', victim);
+                        $('#powerup_target').hide();
+                    })
+            );
+        }
+        $('#powerup_target').html(teamSelecter).show();
+        $('#powerups').hide();
+    });
+
+    $('#bPowerupSilence').on('click', function () { socket.emit('powerup', 'silence'); });
+    $('#bPowerupDouble').on('click', function () { socket.emit('powerup', 'double'); });
+    $('#bPowerupWildcard').on('click', function () { socket.emit('powerup', 'wildcard'); });
 });

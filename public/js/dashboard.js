@@ -40,6 +40,7 @@
 $(function () {
     var teams = [], logos = [];
     var timerId, timerTimer, questionType;
+    var scoreTimer = null;
     const ANSWERTIME = 6;
 
     // Mmmm shimmy
@@ -175,14 +176,16 @@ $(function () {
 
         updateTeamScores();
 
-        window.setTimeout(
+        scoreTimer = window.setTimeout(
             function() {
                 $('header').hide();
                 $('section').hide();
                 $('.title').hide();
                 $('#teamscores').show();
+                clearTimeout(scoreTimer);
+                scoreTimer = null;
             },
-            3000
+            2000
         );
     })
     .on('penalty', function (teamName) {
@@ -765,4 +768,45 @@ $(function () {
 
         $('#cheer')[0].play();
     }
+
+    // ______
+    // | ___ \
+    // | |_/ /____      _____ _ __ _   _ _ __  ___
+    // |  __/ _ \ \ /\ / / _ \ '__| | | | '_ \/ __|
+    // | | | (_) \ V  V /  __/ |  | |_| | |_) \__ \
+    // \_|  \___/ \_/\_/ \___|_|   \__,_| .__/|___/
+    //                                  | |
+    //                                  |_|
+    socket
+    .on('powerup played', function(team, pup) {
+        if (scoreTimer) {
+            clearTimeout(scoreTimer);
+            scoreTimer = null;
+        }
+
+        $('#powerup').show();
+
+        $('#powerup_team').html(team.name);
+        $('#powerup_name').html(pup);
+        $('#powerup_target').hide().html('');
+
+        switch (pup.toLowerCase()) {
+            case 'silence':
+            case 'wildcard':
+                console.log('nominate');
+                $('#powerup_target').show().html('Nominate a Team!');
+                break;
+        }
+    })
+    .on('powerup selecttarget', function(target) {
+        if (scoreTimer) {
+            clearTimeout(scoreTimer);
+            scoreTimer = null;
+        }
+
+        $('#powerup_target').show().html('Unlucky ' + target);
+    })
+    .on('powerup hide', function() {
+        $('#powerup').hide();
+    });
 });

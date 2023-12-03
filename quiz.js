@@ -198,6 +198,137 @@ switch (cliArgs[1]) {
         break;
 }
 
+//
+// ______
+// | ___ \
+// | |_/ /____      _____ _ __ _   _ _ __  ___
+// |  __/ _ \ \ /\ / / _ \ '__| | | | '_ \/ __|
+// | | | (_) \ V  V /  __/ |  | |_| | |_) \__ \
+// \_|  \___/ \_/\_/ \___|_|   \__,_| .__/|___/
+//                                  | |
+//                                  |_|
+var powerupLocked   = false,
+    powerupSelected = null,
+    powerupApplied  = false;
+    powerupActive   = {
+        powerup: null,
+        target: null
+    };
+
+function powerupApply() {
+    sDashboard.emit('powerup hide');
+
+    if (!powerupActive.powerup) {
+        console.log("[PUP] No powerup in play");
+        return;
+    }
+
+    switch (powerupActive.powerup) {
+        case 'silence':
+            console.log("[PUP] Applying Silence!");
+            if (powerupActive.target) {
+                console.log("[PUP] Looking for target: " + powerupActive.target);
+                for (var t in teams) {
+                    if (teams[t].getName() == powerupActive.target) {
+                        console.log("[PUP] Found for target! Silencing!");
+                        teams[t].setAnswered(true);
+                    }
+                }
+            }
+            powerupApplied = true;
+            powerupActive.powerup = null;
+            powerupActive.target  = null;
+            break;
+
+        case 'double':
+            console.log("[PUP] Applying Double Up!");
+            if (powerupActive.target)
+                console.log("[PUP] Looking for non-target: " + powerupActive.target);{
+                for (var t in teams) {
+                    if (teams[t].getName() != powerupActive.target) {
+                        console.log("[PUP] Found non-target: " + powerupActive.target + ' Silencing');
+                        teams[t].setAnswered(true);
+                    }
+                }
+            }
+            break;
+
+        default:
+            console.log('[PUP] Unhandled powerup');
+            break;
+    }
+}
+
+function powerupsEnable() {
+    for (var c in connections.contestants) {
+        var team = connections.contestants[c].getTeam();
+        connections.contestants[c].getSocket().emit('powerup enable', teams[team].powerups);
+    }
+}
+function powerupsDisable() {
+    for (var c in connections.contestants) {
+        var team = connections.contestants[c].getTeam();
+        connections.contestants[c].getSocket().emit('powerup disable');
+    }
+}
+
+function powerupPlay(cid, team, pup) {
+    if (powerupLocked) {
+        return;
+    }
+
+    for (var c in connections.contestants) {
+        if (c == cid) {
+            connections.contestants[c].getSocket().emit('powerup used');
+            continue;
+        }
+        connections.contestants[c].getSocket().emit('wait');
+    }
+
+    powerupLocked = true;
+    var c = connections.contestants[cid],
+        team = teams[c.getTeam()];
+
+    sDashboard.emit('powerup played', team, pup.toUpperCase());
+    sDashboard.emit('sound play', {sound: 'spowerup'});
+
+    powerupSelected = pup;
+    switch (pup) {
+        case 'silence':
+        case 'wildcard':
+            var myTeam = teams[c.getTeam()],
+                targets = [];
+
+            for (var t in teams) {
+                if (teams[t].getName() == myTeam.getName()) {
+                    continue;
+                }
+                targets.push(teams[t].getName());
+            }
+            connections.contestants[cid].getSocket().emit('powerup selecttarget', targets);
+            break;
+
+        case 'double':
+            powerupLocked = false;
+            team.powerups[pup] = false;
+            break;
+    }
+}
+
+function powerupTarget(cid, team, target) {
+    var c = connections.contestants[cid],
+        team = teams[c.getTeam()];
+
+    powerupActive = {
+        powerup: powerupSelected,
+        target: target
+    };
+
+    sDashboard.emit('powerup selecttarget', target);
+    powerupSelected = null;
+    powerupLocked = false;
+}
+
 //  _____                             _   _               _   _                 _ _ _
 // /  __ \                           | | (_)             | | | |               | | (_)
 // | /  \/ ___  _ __  _ __   ___  ___| |_ _  ___  _ __   | |_| | __ _ _ __   __| | |_ _ __   __ _
@@ -371,6 +502,15 @@ sQuizMaster.on('connection', function (socket) {
     .on('question play', function (qid) {
         console.log('[SOCKET] QM [' + qmid + '] play question => ' + qid);
 
+        if (powerupLocked) {
+            console.log('Powerup locked');
+            return;
+        }
+
+        for (var c in connections.contestants) {
+            connections.contestants[c].getSocket().emit('powerup disable');
+        }
+
         activeQuestion = qid;
         questions[qid].setPlayed(true);
 
@@ -465,6 +605,9 @@ sQuizMaster.on('connection', function (socket) {
         for (let t in teams) {
             teams[t].answered = false;
         }
+
+        powerupApply();
+
         sQuizMaster.emit('teams list', teams);
 
         sDashboard.emit('question play', {
@@ -472,7 +615,14 @@ sQuizMaster.on('connection', function (socket) {
             question: questions[qid]
         });
 
-        sContestant.emit('question play');
+        for (var c in connections.contestants) {
+            var team = connections.contestants[c].getTeam();
+            if (teams[team].getAnswered()) {
+                connections.contestants[c].getSocket().emit('wait');
+            } else {
+                connections.contestants[c].getSocket().emit('question play');
+            }
+        }
     })
     .on('question audio play', function () {
         if (activeQuestion == -1)
@@ -507,6 +657,7 @@ sQuizMaster.on('connection', function (socket) {
         sDashboard.emit('teams scores', {teams: teams});
         activeQuestion = -1;
         notifyQuestions();
+        powerupsEnable();
     })
     .on('question wrong', function (qid) {
         activeTeam = -1;
@@ -543,6 +694,10 @@ sQuizMaster.on('connection', function (socket) {
         activeQuestion = -1;
         notifyQuestions();
 
+        for (var c in connections.contestants) {
+            connections.contestants[c].getSocket().emit('wait');
+        }
+
         if (mcRoundTimer) {
             clearInterval(mcRoundTimer);
             mcRoundTimer = null;
@@ -552,7 +707,13 @@ sQuizMaster.on('connection', function (socket) {
             cdRoundTimer = null;
         }
 
+        powerupsEnable();
+
         ++roundNo;
+    })
+    .on('powerup_release', function () {
+        powerupLocked = false;
+        console.log('Poweruplock released');
     });
 
     //
@@ -1275,6 +1436,43 @@ sContestant
         console.log('[MC] ' + cid + ' => team: ' + team.getName(), answers);
         ssrAnswers[team.getId()] = answers;
         ssrAnswered[team.getId()] = true;
+    });
+
+    //
+    // Powerup events
+    //
+    socket
+    .on('powerup', function (pup) {
+        if (powerupLocked) {
+            return;
+        }
+
+        var c = connections.contestants[cid],
+            team = teams[c.getTeam()];
+
+        console.log('[PUP] ' + cid + ' => wants to play powerup: ' + pup);
+        if (!team.powerups.hasOwnProperty(pup)) {
+            console.log('[PUP] ' + cid + ' => powerup doesnt exist: ' + pup);
+            return;
+        }
+        if (team.powerups[pup]) {
+            powerupPlay(cid, team, pup);
+        }
+    })
+    .on('powerup target', function (target) {
+        var c = connections.contestants[cid],
+            team = teams[c.getTeam()];
+
+        console.log('[PUP] ' + cid + ' => wants to play powerup: ' + powerupSelected + ' against: ' + target);
+        if (!team.powerups.hasOwnProperty(powerupSelected)) {
+            console.log('[PUP] ' + cid + ' => powerup doesnt exist: ' + powerupSelected);
+            return;
+        }
+
+        if (team.powerups[powerupSelected]) {
+            team.powerups[powerupSelected] = false;
+            powerupTarget(cid, team, target);
+        }
     });
 
     //

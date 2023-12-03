@@ -483,6 +483,9 @@ $(function () {
     $('#fetch_debug_teams').on('click', function() {
         socket.emit('debug teams');
     });
+    $('#release_puplock').on('click', function() {
+        socket.emit('powerup_release');
+    });
 
     // Are you sure you want to be all the way down here? Don't think there is anything useful here
     $('#game_correct').on('click', function() {
