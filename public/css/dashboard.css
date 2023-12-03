@@ -259,6 +259,15 @@ body {
     margin-top: 200px;
     font-size: 200%;
 }
+.powerups_list {
+    width: 90%;
+    margin: 50px;
+    font-size: 150%;
+}
+.powerups_list li {
+    margin-bottom: 40px;
+    list-style-type: none;
+}
 
 .countdown-answer {
     font-size: 290%;

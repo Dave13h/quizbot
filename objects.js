@@ -106,6 +106,13 @@ class oTeam {
         };
     }
 
+    refreshPowerups () {
+        this.powerups['silence']  = true;
+        this.powerups['double']   = true;
+        this.powerups['wildcard'] = true;
+        return this;
+    }
+
     getId () {
         return this.id;
     }

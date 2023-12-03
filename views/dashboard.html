@@ -32,6 +32,9 @@
             <div class="animated zoomInDown delay-1s">
                 <p><span id="powerup_team"></span> played a powerup!</p>
                 <p id="powerup_name" class="animated pulse infinite"></p>
+                <p id="powerup_wildcard">
+                    <img id="icon_music" class="animated zoomInDown delay-1s" src="images/wildcard.gif" />
+                </p>
                 <p id="powerup_target"></p>
             </div>
         </section>
@@ -180,6 +183,7 @@
         <audio src="sounds/bells.wav" id="bells" preload></audio>
         <audio src="sounds/wind.wav" id="wind" preload></audio>
         <audio src="sounds/powerup.wav" id="spowerup" preload></audio>
+        <audio src="sounds/wildcard.wav" id="wildcard" preload></audio>
 
         <audio src="sounds/awesome.wav" id="awesome" preload></audio>
         <audio src="sounds/nextround.wav" id="nextround" preload></audio>
@@ -345,6 +349,21 @@
                 <li>NO INTERNET SEARCHES</li>
                 <li>NO INTERNET SEARCHES</li>
             </ol>
+        </div>
+
+        <div id="title_powerups" class="title fullscreen">
+            <h2>POWERUPS!</h2>
+
+            <ol class="powerups_list">
+                <li><span style="color: #922; font-size: 110%;">Silence</span><br>Prevent a team from answered the next question!</li>
+                <li><span style="color: #922; font-size: 110%;">Double</span><br>You are forced to answer the next question. Correct answer gets you double the points but a wrong answer will lose you two points!</li>
+                <li><span style="color: #922; font-size: 110%;">Wildcard</span><br>Enabled after the first round, what does it do? Who knows? Could be good.. could be bad, wanna roll the dice? :P</li>
+            </ol>
+
+            <h3>You can only only use each powerup once during the entire game, save them for when it counts!<br>
+                <small>(They <em>might</em> get refreshed at some point though ;) )</small>
+            </h3>
+            <h3>Only one powerup can be played by any team per question!</h3>
         </div>
 
         <div id="title_rounds" class="title fullscreen">

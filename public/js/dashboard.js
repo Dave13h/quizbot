@@ -784,6 +784,7 @@ $(function () {
             scoreTimer = null;
         }
 
+        $('#powerup_wildcard').hide();
         $('#powerup').show();
 
         $('#powerup_team').html(team.name);
@@ -792,19 +793,38 @@ $(function () {
 
         switch (pup.toLowerCase()) {
             case 'silence':
-            case 'wildcard':
-                console.log('nominate');
                 $('#powerup_target').show().html('Nominate a Team!');
+                break;
+            case 'wildcard':
+                $('#powerup_wildcard').show();
                 break;
         }
     })
-    .on('powerup selecttarget', function(target) {
+    .on('powerup wildcard', function(wildcard) {
         if (scoreTimer) {
             clearTimeout(scoreTimer);
             scoreTimer = null;
         }
 
-        $('#powerup_target').show().html('Unlucky ' + target);
+        switch (wildcard) {
+            case 'swap':
+                $('#powerup_target').show().html('Nominate a Team to swap places with!');
+                break;
+            case 'punish':
+                $('#powerup_target').show().html('Nominate a Team to punish (-5 points)!');
+                break;
+            case 'points':
+                $('#powerup_target').show().html('You\'ve been given 5 points!');
+                break;
+        }
+    })
+    .on('powerup selecttarget', function(target, msg) {
+        if (scoreTimer) {
+            clearTimeout(scoreTimer);
+            scoreTimer = null;
+        }
+
+        $('#powerup_target').show().html('Unlucky ' + target + msg);
     })
     .on('powerup hide', function() {
         $('#powerup').hide();

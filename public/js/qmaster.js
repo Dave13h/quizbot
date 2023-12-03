@@ -486,6 +486,15 @@ $(function () {
     $('#release_puplock').on('click', function() {
         socket.emit('powerup_release');
     });
+    $('#enable_powerups').on('click', function() {
+        socket.emit('powerup_enable');
+    });
+    $('#disable_powerups').on('click', function() {
+        socket.emit('powerup_disable');
+    });
+    $('#refresh_powerups').on('click', function() {
+        socket.emit('powerup_refresh');
+    });
 
     // Are you sure you want to be all the way down here? Don't think there is anything useful here
     $('#game_correct').on('click', function() {

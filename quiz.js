@@ -44,10 +44,11 @@ var teams      = [],
 for (var t = 0; t < teamNames.length; ++t)
     teams.push(new objects.team(t, teamNames[t]));
 
-var questions      = [],
-    activeTeam     = -1,
-    activeQuestion = -1,
-    roundNo        = 1;
+var questions       = [],
+    questionsPlayed = 0,
+    activeTeam      = -1,
+    activeQuestion  = -1,
+    roundNo         = 1;
 
 var ssrAnswers  = [],
     ssrAnswered = [],
@@ -207,13 +208,19 @@ switch (cliArgs[1]) {
 // \_|  \___/ \_/\_/ \___|_|   \__,_| .__/|___/
 //                                  | |
 //                                  |_|
-var powerupLocked   = false,
-    powerupSelected = null,
-    powerupApplied  = false;
-    powerupActive   = {
+var powerupLocked         = false,
+    powerupSelected       = null,
+    powerupApplied        = false,
+    powerupActive         = {
         powerup: null,
         target: null
-    };
+    },
+    powerupActiveWildcard = null,
+    powerupWildcards      = [
+        'points',
+        'punish',
+        'swap'
+    ];
 
 function powerupApply() {
     sDashboard.emit('powerup hide');
@@ -242,8 +249,8 @@ function powerupApply() {
 
         case 'double':
             console.log("[PUP] Applying Double Up!");
-            if (powerupActive.target)
-                console.log("[PUP] Looking for non-target: " + powerupActive.target);{
+            if (powerupActive.target) {
+                console.log("[PUP] Looking for non-target: " + powerupActive.target);
                 for (var t in teams) {
                     if (teams[t].getName() != powerupActive.target) {
                         console.log("[PUP] Found non-target: " + powerupActive.target + ' Silencing');
@@ -277,6 +284,8 @@ function powerupPlay(cid, team, pup) {
         return;
     }
 
+    powerupsDisable();
+
     for (var c in connections.contestants) {
         if (c == cid) {
             connections.contestants[c].getSocket().emit('powerup used');
@@ -295,7 +304,6 @@ function powerupPlay(cid, team, pup) {
     powerupSelected = pup;
     switch (pup) {
         case 'silence':
-        case 'wildcard':
             var myTeam = teams[c.getTeam()],
                 targets = [];
 
@@ -309,8 +317,43 @@ function powerupPlay(cid, team, pup) {
             break;
 
         case 'double':
-            powerupLocked = false;
             team.powerups[pup] = false;
+            powerupLocked = false;
+            break;
+
+        case 'wildcard':
+            sDashboard.emit('sound play', {sound: 'wildcard'});
+            powerupWildcards.sort(() => Math.random() - 0.5);
+            console.log("[PUP] Shuffled wildcards", powerupWildcards);
+            var wildcard = powerupWildcards[0];
+            sDashboard.emit('powerup wildcard', wildcard);
+
+            console.log("[PUP] Randomed wildcard: " + wildcard);
+
+            switch (wildcard) {
+                case 'points':
+                    team.powerups[pup] = false;
+                    team.addPoints(5);
+                    powerupLocked = false;
+                    sQuizMaster.emit('teams list', teams);
+                    break;
+
+                case 'punish':
+                case 'swap':
+                    var myTeam = teams[c.getTeam()],
+                        targets = [];
+
+                    for (var t in teams) {
+                        if (teams[t].getName() == myTeam.getName()) {
+                            continue;
+                        }
+                        targets.push(teams[t].getName());
+                    }
+
+                    powerupActiveWildcard = wildcard;
+                    connections.contestants[cid].getSocket().emit('powerup selecttarget', targets, wildcard);
+                    break;
+            }
             break;
     }
 }
@@ -319,12 +362,52 @@ function powerupTarget(cid, team, target) {
     var c = connections.contestants[cid],
         team = teams[c.getTeam()];
 
-    powerupActive = {
-        powerup: powerupSelected,
-        target: target
-    };
+    var msg = '';
 
-    sDashboard.emit('powerup selecttarget', target);
+    if (powerupActiveWildcard) {
+        switch (powerupActiveWildcard) {
+            case 'punish':
+                msg = ', you\'ve lost 5 points!';
+                team.powerups['wildcard'] = false;
+                powerupLocked = false;
+                var targetTeam;
+                for (var tt in teams) {
+                    if (teams[tt].getName() == target) {
+                        teams[tt].decPoints(5);
+                        break;
+                    }
+                }
+                sQuizMaster.emit('teams list', teams);
+                break;
+
+            case 'swap':
+                msg = ', you\'ve swapped places in the scoreboard!';
+                team.powerups['wildcard'] = false;
+                powerupLocked = false;
+
+                for (var tt in teams) {
+                    if (teams[tt].getName() == target) {
+                        var myPoints = team.getPoints();
+                        team.setPoints(teams[tt].getPoints());
+                        teams[tt].setPoints(myPoints);
+                    }
+                }
+                sQuizMaster.emit('teams list', teams);
+                break;
+
+            default:
+                console.log("[PUP] unknown wildcard: " + powerupActiveWildcard);
+                break;
+        }
+    } else {
+        msg = ', you miss the next question!';
+        powerupActive = {
+            powerup: powerupSelected,
+            target: target
+        };
+    }
+
+    sDashboard.emit('powerup selecttarget', target, msg);
     powerupSelected = null;
     powerupLocked = false;
 }
@@ -513,6 +596,15 @@ sQuizMaster.on('connection', function (socket) {
 
         activeQuestion = qid;
         questions[qid].setPlayed(true);
+
+        ++questionsPlayed;
+        if (questionsPlayed == 10) {
+            console.log('[PUP] Wildcard enabled next question!!');
+            // Enable the wildcards!!
+            for (var t in teams) {
+                teams[t].powerups.wildcard = true;
+            }
+        }
 
         switch (questions[qid].getType()) {
             case 'pictionary':
@@ -714,6 +806,24 @@ sQuizMaster.on('connection', function (socket) {
     .on('powerup_release', function () {
         powerupLocked = false;
         console.log('Poweruplock released');
+    })
+    .on('powerup_disable', function () {
+        powerupActive.powerup = null;
+        powerupActive.target  = null;
+        powerupLocked = false;
+        powerupsDisable();
+        console.log('[PUP] Powerups disabled');
+    })
+    .on('powerup_enable', function () {
+        powerupsEnable();
+        console.log('[PUP] Powerups enabled');
+    })
+    .on('powerup_refresh', function () {
+        for (var t in teams) {
+            teams[t].refreshPowerups();
+        }
+        powerupsEnable();
+        console.log('[PUP] Powerups refreshed');
     });
 
     //
