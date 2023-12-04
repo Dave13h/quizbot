@@ -2,6 +2,8 @@ body {
     background: url("/images/background.png");
     background-size: 100%;
     text-shadow: 4px 4px 2px black;
+    overflow: hidden;
+    font-size: 150%;
 }
 .fullscreen {
     text-align: center;
@@ -14,6 +16,7 @@ body {
     padding: 50px;
     background: url("/images/background.png");
     background-size: 100%;
+    font-size: 150%;
 }
 
 #presskey {
@@ -26,6 +29,7 @@ body {
     text-align: center;
     padding-top: 10px;
     background-image: none;
+    font-size: 150%;
 }
 
 #answer_correct, #answer_wrong, #answer_losers { display: none; }
@@ -37,6 +41,7 @@ body {
     text-align: center;
     color: #fff;
     font-size: 200%;
+    margin-bottom: 100px;
 }
 
 #question div {
@@ -44,6 +49,7 @@ body {
     text-align: center;
     /*height: 100%;*/
     width: 100%;
+    font-size: 150%;
 }
 
 #question .content {
@@ -52,7 +58,7 @@ body {
 }
 
 #question .content ol {
-    text-align: left;
+text-align: left;
     margin: 0;
     list-style: none;
 }
@@ -64,7 +70,7 @@ body {
     display: none;
     padding-top: 150px;
     display: none;
-    font-size: 200%;
+    font-size: 300%;
     box-shadow: inset 0 0 100px #009;
     background-color: rgba(100, 100, 150, 1.0);
     color: #44f;
@@ -104,6 +110,7 @@ body {
 #teamoverlay {
     text-align: center;
     display: none;
+    font-size: 1000%;
 }
 #teamoverlay .team_logo {
     text-align: center;
@@ -186,7 +193,7 @@ body {
 }
 
 .cp-image {
-    width: 960px;
+    width: 50%;
 }
 
 .catchphrase_hide {
@@ -195,12 +202,12 @@ body {
     width: 960px !important;
     height: 540px;
     background: url("/images/catchphrase_cover.png");
-    left: 430px;
+    left: 1600px;
     animation: reveal 5.0s forwards;
     animation-play-state: paused;
-    top: 120px;
+    top: 430px;
     margin-top: 0 !important;
-    scale: 1;
+    scale: 1.75;
     opacity: 1;
 }
 
@@ -230,8 +237,8 @@ body {
 }
 
 #pictionary .canvas {
-    height: 700px;
-    width: 700px;
+    height: 1400px;
+    width: 1400px;
     border: 2px solid #fff;
     background-color: #fff;
 }
@@ -254,10 +261,11 @@ body {
     font-size: 450%;
 }
 .rules_list {
-    width: 685px;
     margin: 50px;
     margin-top: 200px;
-    font-size: 200%;
+    font-size: 195%;
+    line-height: 185px;
+    list-style-type: none;
 }
 .powerups_list {
     width: 90%;
@@ -270,7 +278,7 @@ body {
 }
 
 .countdown-answer {
-    font-size: 290%;
+    font-size: 200%;
     margin-bottom: 20px;
     list-style-type: none;
     padding: 10px;

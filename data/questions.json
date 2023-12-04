@@ -104,7 +104,7 @@
         {
             "type": "countdown",
             "title": "Round 2 - Countdown",
-            "text": "Make the longest word from these letters!<br><br>KJDWOCFUCL",
+            "text": "Make the longest word from these letters!<br>KJDWOCFUCL",
             "timer": 32
         },
 
@@ -317,8 +317,6 @@
             ],
             "timer": 120
         },
-
-
 
         {
             "type": "multichoice",

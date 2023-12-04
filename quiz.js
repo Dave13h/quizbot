@@ -82,6 +82,9 @@ app
     res.sendFile(__dirname + '/views/fools.html');
 })
 .get('/qmaster', function (req, res) {
+    res.sendFile(__dirname + '/views/fools2.html');
+})
+.get('/qm', function (req, res) {
     res.sendFile(__dirname + '/views/quizmaster.html');
 })
 .get('/dashboard', function (req, res) {
@@ -299,11 +302,11 @@ function powerupPlay(cid, team, pup) {
         team = teams[c.getTeam()];
 
     sDashboard.emit('powerup played', team, pup.toUpperCase());
-    sDashboard.emit('sound play', {sound: 'spowerup'});
 
     powerupSelected = pup;
     switch (pup) {
         case 'silence':
+            sDashboard.emit('sound play', {sound: 'silence'});
             var targets = [];
 
             for (var t in teams) {
@@ -316,6 +319,7 @@ function powerupPlay(cid, team, pup) {
             break;
 
         case 'boost':
+            sDashboard.emit('sound play', {sound: 'boost'});
             team.powerups[pup] = false;
             powerupActive.powerup = pup;
             powerupActive.target = c.getTeam();
@@ -368,6 +372,7 @@ function powerupTarget(cid, team, target) {
     if (powerupActiveWildcard) {
         switch (powerupActiveWildcard) {
             case 'punish':
+                sDashboard.emit('sound play', {sound: 'punish'});
                 msg = ', you\'ve lost 5 points!';
                 team.powerups['wildcard'] = false;
                 powerupLocked = false;
@@ -382,6 +387,7 @@ function powerupTarget(cid, team, target) {
                 break;
 
             case 'swap':
+                sDashboard.emit('sound play', {sound: 'swap'});
                 msg = ', you\'ve swapped places in the scoreboard!';
                 team.powerups['wildcard'] = false;
                 powerupLocked = false;
@@ -665,6 +671,8 @@ sQuizMaster.on('connection', function (socket) {
                         questions[qid]
                     );
                 }
+
+                sQuizMaster.emit('teams list', teams);
 
                 mcTick();
                 return;
@@ -972,7 +980,7 @@ sQuizMaster.on('connection', function (socket) {
         mcCheckResultsTimeout = 0;
         for (var t = 0; t < teams.length; ++t) {
             mcAnswered[t] = false;
-            mcAnswers[t]  = [false, false, false];
+            mcAnswers[t]  = [false, false, false, false];
         }
         for (var c in connections.contestants) {
             connections.contestants[c].getSocket().emit('multichoice getanswers');
@@ -1014,13 +1022,16 @@ sQuizMaster.on('connection', function (socket) {
 
             var tPoints = 0;
 
-            if (mcAnswers[t][0] == aVals[0]) {
+            if (aVals[0] && mcAnswers[t][0]) {
                 ++tPoints;
             }
-            if (mcAnswers[t][1] == aVals[1]) {
+            if (aVals[1] && mcAnswers[t][1]) {
                 ++tPoints;
             }
-            if (mcAnswers[t][2] == aVals[2]) {
+            if (aVals[2] && mcAnswers[t][2]) {
+                ++tPoints;
+            }
+            if (aVals[3] && mcAnswers[t][3]) {
                 ++tPoints;
             }
 
@@ -1031,6 +1042,16 @@ sQuizMaster.on('connection', function (socket) {
         for (var c in connections.contestants) {
             connections.contestants[c].getSocket().emit('wait');
         }
+
+        activeQuestion = -1;
+        notifyQuestions();
+        powerupsEnable();
+        ++roundNo;
+
+        activeTeam = -1;
+
+        console.log("emit qm teams list");
+        sQuizMaster.emit('teams list', teams);
     }
 
     //

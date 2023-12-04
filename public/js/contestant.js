@@ -510,8 +510,8 @@ $(function () {
 
         var qno = 1;
         for (var q in question.question.answers) {
-            answers.append('<li><label><input type="checkbox" class="nes-checkbox" data-aid="' +
-                (qno++) + '" value="1">' + q + '</label></li>');
+            answers.append('<li><label><input type="radio" name="muiltichoice-answer" class="nes-radio" data-aid="' +
+                (qno++) + '" value="1" style="margin-right: 20px;"><span>' + q + '</span></label></li>');
         }
 
         $('.mc-answers input').each(function() {
