@@ -205,9 +205,9 @@ text-align: left;
     left: 1600px;
     animation: reveal 5.0s forwards;
     animation-play-state: paused;
-    top: 430px;
+    top: 350px;
     margin-top: 0 !important;
-    scale: 1.75;
+    scale: 1.65;
     opacity: 1;
 }
 
@@ -289,8 +289,10 @@ text-align: left;
 }
 #ssr .ssr-container {
     background: url("/images/ssr_background.jpg");
-    width: 1920px;
-    height: 1080px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
     position: absolute;
@@ -301,8 +303,8 @@ text-align: left;
     position: relative;
     background: url("/images/ssr_player.png");
     /** original: 393x165 */
-    height: 130px;
-    width: 300px;
+    height: 325px;
+    width: 750px;
     background-size: contain;
     margin-top: 70px;
 }
@@ -317,56 +319,56 @@ text-align: left;
 }
 #ssr .ssr-player .ssr-avatar {
     position: relative;
-    top: -60px;
-    left: 40px;
-    width: 90px;
-    height: 90px;
-
+    top: -85px;
+    left: 75px;
+    width: 180px;
+    height: 180px;
     background: url("/images/ssr_avatar_grumpy.jpg");
     -webkit-mask-image: url('/images/ssr_avatar_mask.png');
     mask-image: url('/images/ssr_avatar_mask.png');
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
-    -webkit-mask-size: 90px;
-    mask-size: 90px;
-    background-size: 90px;
+    -webkit-mask-size: 180px;
+    mask-size: 180px;
+    background-size: 180px;
 }
 #ssr .ssr-player .ssr-crown {
     display: none;
     background: url(/images/crown.png);
     position: relative;
-    top: -175px;
-    left: 62px;
-    width: 48px;
-    height: 48px;
+    top: -355px;
+    left: 100px;
+    width: 128px;
+    height: 128px;
+    background-size: contain;
 }
 #ssr .ssr-qbox {
     position: absolute;
     top: 250px;
     left: 900px;
-    width: 800px;
-    height: 700px;
+    width: 1700px;
+    height: 1500px;
 }
 #ssr .ssr-qbox-inner {
-    width: 800px;
-    height: 700px;
+    width: 1700px;
+    height: 1500px;
     transform: skew(20deg, -11deg);
     background: #666;
 }
 #ssr .ssr-qbox-outer {
-    width: 800px;
-    height: 700px;
+    width: 1700px;
+    height: 1500px;
     transform: skew(-15deg, 10deg);
     background: #333;
 }
 #ssr .ssr-question {
-    width: 800px;
-    height: 700px;
+    width: 1700px;
+    height: 1500px;
     position: absolute;
     top: 0;
 }
 #ssr-q .ssr-question h1 {
-    font-size: 250%;
+    font-size: 200%;
     margin-bottom: 70px;
 }
 #ssr-q .sr-question {
@@ -393,12 +395,13 @@ text-align: left;
 #ssr #ssr-timer {
     position: absolute;
     top: 250px;
-    left: 685px;
+    left: 555px;
     font-size: 500%;
     background-color: #333;
     border-radius: 50px;
-    width: 200px;
-    height: 110px;
+    width: 280px;
+    height: 280px;
+    z-index: 100;
 }
 
 #ssr .ssr-help input[type=checkbox] {

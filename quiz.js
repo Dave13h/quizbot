@@ -1298,8 +1298,11 @@ sQuizMaster.on('connection', function (socket) {
             teams[t].addPoints(tPoints);
             ssrPoints[t] += tPoints;
 
+            console.log(t, " has ", tPoints);
+
             lPoints = Math.max(lPoints, ssrPoints[t]);
         }
+        console.log("leader has ", lPoints);
 
         for (var t in ssrPoints) {
             ssrLeaders[t] = (ssrPoints[t] == lPoints);
@@ -1311,7 +1314,7 @@ sQuizMaster.on('connection', function (socket) {
         var winners = [],
             outOfQuestions = ssrActiveQuestion >= questions[activeQuestion].questions.length;
 
-        if (lPoints >= 60 || outOfQuestions) {
+        if (lPoints >= 30 || outOfQuestions) {
             for (var t in ssrLeaders) {
                 if (!ssrLeaders[t]) {
                     continue;

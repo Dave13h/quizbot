@@ -611,7 +611,7 @@ $(function () {
     // \____/ \__,_|_| |_|\__\__,_| |___/ \____/|_|\___|_|\__, |_| |_| \_| \_|_|\__,_|\___|
     //                                                     __/ |
     //                                                    |___/
-    var ssrGridSize = 60,
+    var ssrGridSize = 30,
         ssrGridStep = $('.ssr-container').width() / ssrGridSize,
         ssrAvatars  = [];
 
@@ -646,7 +646,7 @@ $(function () {
         $('#ssr-stage').show();
         $('#ssr-help').show();
         $('#ssr-timer').hide();
-        $('#ssr-q').css({top: "1200px"}).show();
+        $('#ssr-q').css({top: "4000px"}).show();
 
         $('.ssr-answers').each(function() {
             $(this).html("&nbsp;");
@@ -693,7 +693,7 @@ $(function () {
     .on('santassleighride answers', async function (answers, scores, leaders, winners, outOfQuestions) {
         await delay(5);
 
-        $('#ssr-q').animate({top: "1200px"});
+        $('#ssr-q').animate({top: "4000px"});
 
         var correct = "✅", wrong = "❌", anyMoved = false;
         for (var a in answers) {
@@ -717,7 +717,7 @@ $(function () {
 
         for (var t in scores) {
             var playerDiv = $('.ssr-player[data-player='+(parseInt(t)+1)+']');
-            $(playerDiv).animate({left: (parseInt(scores[t]) * ssrGridStep) + "px"}, 1000);
+            $(playerDiv).animate({left: ((parseInt(scores[t]) * ssrGridStep) * 4.0) + "px"}, 1000);
             if (leaders[t]) {
                 $('.ssr-crown', playerDiv).show();
             } else {
