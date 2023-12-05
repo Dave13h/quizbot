@@ -1126,7 +1126,8 @@ sQuizMaster.on('connection', function (socket) {
         ssrCountdown         = 0,
         ssrRoundTimer        = null,
         ssrWaitingForClients = null,
-        ssrPoints            = [0,0,0,0,0],
+        ssrMaxPoints         = 20,
+        ssrPoints            = [0, 0, 0, 0, 0],
         ssrLeaders           = [false, false, false, false, false];
 
     socket
@@ -1174,6 +1175,10 @@ sQuizMaster.on('connection', function (socket) {
             maxScore = Math.max(maxScore, tScore);
         }
 
+        // Add some points on to the max score,
+        // so at least we get a bit of a game
+        ssrMaxPoints = 50 + maxScore;
+
         scores.sort(function (a, b){ return parseInt(a.s) - parseInt(b.s); });
 
         // Seed positions
@@ -1184,12 +1189,16 @@ sQuizMaster.on('connection', function (socket) {
             ssrPoints[scores[s].t] = (isLeader ? 5 : s) * 2;
         }
 
+        console.log('[SSR] Max Points', ssrMaxPoints);
+        console.log('[SSR] Seed Positions', ssrPoints);
+
         sDashboard.emit(
             'santassleighride init',
             teamNames,
             avatars,
             ssrPoints,
-            ssrLeaders
+            ssrLeaders,
+            ssrMaxPoints
         );
     }
 
@@ -1298,11 +1307,12 @@ sQuizMaster.on('connection', function (socket) {
             teams[t].addPoints(tPoints);
             ssrPoints[t] += tPoints;
 
-            console.log(t, " has ", tPoints);
+            console.log('[SSR] ' + teams[t].getName() + ' has ' + parseInt(teams[t].getPoints()));
 
             lPoints = Math.max(lPoints, ssrPoints[t]);
         }
-        console.log("leader has ", lPoints);
+
+        console.log("[SSR] Leader has ", lPoints);
 
         for (var t in ssrPoints) {
             ssrLeaders[t] = (ssrPoints[t] == lPoints);
@@ -1314,7 +1324,7 @@ sQuizMaster.on('connection', function (socket) {
         var winners = [],
             outOfQuestions = ssrActiveQuestion >= questions[activeQuestion].questions.length;
 
-        if (lPoints >= 30 || outOfQuestions) {
+        if (lPoints >= ssrMaxPoints || outOfQuestions) {
             for (var t in ssrLeaders) {
                 if (!ssrLeaders[t]) {
                     continue;

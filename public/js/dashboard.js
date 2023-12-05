@@ -611,14 +611,23 @@ $(function () {
     // \____/ \__,_|_| |_|\__\__,_| |___/ \____/|_|\___|_|\__, |_| |_| \_| \_|_|\__,_|\___|
     //                                                     __/ |
     //                                                    |___/
-    var ssrGridSize = 30,
+    var ssrGridSize = 60,
         ssrGridStep = $('.ssr-container').width() / ssrGridSize,
         ssrAvatars  = [];
 
     socket
-    .on('santassleighride init', function (teams, avatars, scores, leaders) {
+    .on('santassleighride init', function (teams, avatars, scores, leaders, ssrMaxPoints) {
         nukeTimer();
         resetScreen();
+
+        console.log('[SSR] Init');
+        console.log('[SSR] ssrMaxPoints: ', ssrMaxPoints);
+        console.log('[SSR] Container Size: ', $(window).width());
+
+        ssrGridSize = parseInt(ssrMaxPoints);
+        ssrGridStep = $(window).width() / ssrGridSize;
+
+        console.log('[SSR] Grid Step: ', ssrGridStep);
 
         ssrAvatars = avatars;
 
@@ -717,7 +726,7 @@ $(function () {
 
         for (var t in scores) {
             var playerDiv = $('.ssr-player[data-player='+(parseInt(t)+1)+']');
-            $(playerDiv).animate({left: ((parseInt(scores[t]) * ssrGridStep) * 4.0) + "px"}, 1000);
+            $(playerDiv).animate({left: (parseInt(scores[t]) * ssrGridStep) + "px"}, 1000);
             if (leaders[t]) {
                 $('.ssr-crown', playerDiv).show();
             } else {
