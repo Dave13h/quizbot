@@ -309,13 +309,14 @@ text-align: left;
     margin-top: 70px;
 }
 #ssr .ssr-player .ssr-name {
+    text-align: left;
     position: relative;
-    left: 50px;
+    left: 300px;
 }
 #ssr .ssr-answers {
     position: relative;
-    left: 163px;
-    top: -25px;
+    left: 0px;
+    top: -15px;
 }
 #ssr .ssr-player .ssr-avatar {
     position: relative;
@@ -426,8 +427,8 @@ text-align: left;
 }
 
 .ssr-winner {
-    width: 360px;
-    height: 360px;
+    width: 920px;
+    height: 920px;
     margin: auto;
     display: none;
 }
@@ -438,17 +439,18 @@ text-align: left;
 }
 
 .ssr-winner-avatar {
-    width: 360px;
-    height: 360px;
+    width: 920px;
+    height: 920px;
     background: url("/images/ssr_avatar_grumpy.jpg");
     -webkit-mask-image: url('/images/ssr_avatar_mask.png');
     mask-image: url('/images/ssr_avatar_mask.png');
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
-    -webkit-mask-size: 360px;
-    mask-size: 360px;
-    background-size: 360px;
+    -webkit-mask-size: 920px;
+    mask-size: 920px;
+    background-size: 920px;
 }
 .ssr-winner-name {
+    font-size: 250%;
     position: relative;
 }

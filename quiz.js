@@ -1050,7 +1050,6 @@ sQuizMaster.on('connection', function (socket) {
 
         activeTeam = -1;
 
-        console.log("emit qm teams list");
         sQuizMaster.emit('teams list', teams);
     }
 

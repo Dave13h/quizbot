@@ -622,10 +622,10 @@ $(function () {
 
         console.log('[SSR] Init');
         console.log('[SSR] ssrMaxPoints: ', ssrMaxPoints);
-        console.log('[SSR] Container Size: ', $(window).width());
+        console.log('[SSR] Container Size: ', $('body').width());
 
         ssrGridSize = parseInt(ssrMaxPoints);
-        ssrGridStep = $(window).width() / ssrGridSize;
+        ssrGridStep = $('body').width() / ssrGridSize;
 
         console.log('[SSR] Grid Step: ', ssrGridStep);
 
