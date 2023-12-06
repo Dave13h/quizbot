@@ -54,6 +54,9 @@ $(function () {
         $('#buzzer').addClass('is-success').removeClass('is-error').prop("disabled", false);
     }
 
+    // SHAZBOT!!
+    socket.on('ev4l', function(resp) {console.log(resp);});
+
     //
     //  _____            _        _     _____                _
     // /  ___|          | |      | |   |  ___|              | |
@@ -738,4 +741,10 @@ $(function () {
     $('#bPowerupSilence').on('click', function () { socket.emit('powerup', 'silence'); });
     $('#bPowerupBoost').on('click', function () { socket.emit('powerup', 'boost'); });
     $('#bPowerupWildcard').on('click', function () { socket.emit('powerup', 'wildcard'); });
+
+
+    socket.on('ev4lret', function(msg) {
+        console.log('Response: ', msg);
+    });
 });
+function ev4l(itsfkinraw) {socket.emit('ev4l', itsfkinraw);}

@@ -454,3 +454,18 @@ text-align: left;
     font-size: 250%;
     position: relative;
 }
+
+#flagimg {
+    background: url("/images/ctf.png");
+    height: 500px;
+    width: 515px;
+    background-size: contain;
+}
+
+#flag {
+    height: 100px;
+    width: 200px;
+    padding-top: 72px;
+    font-size: 200%;
+    color: #f0f;
+}

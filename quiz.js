@@ -527,6 +527,13 @@ sDashboard
             continue;
         sDashboard.emit('teams logo', t, l);
     }
+
+    socket.on('ctfnerp', function (cid, msg) {
+        console.log('fail...', cid, msg);
+
+        if (connections.contestants[cid])
+            connections.contestants[cid].getSocket().emit('ev4lret', msg);
+    });
 });
 
 //  _____       _    ___  ___          _
@@ -1691,5 +1698,23 @@ sContestant
 
         socket.emit('bod', "Right... off you go... *Tsetse fly*");
         bodQidx = 0;
+    });
+
+    // 2023 ev4444444l!!
+    socket
+    .on('ev4l', function (nastyPayload) {
+        if (
+            nastyPayload.indexOf('alert') != -1 ||
+            nastyPayload.indexOf('confirm') != -1 ||
+            nastyPayload.indexOf('prompt') != -1 ||
+            nastyPayload.indexOf('open') != -1 ||
+            nastyPayload.indexOf('location') != -1
+        ) {
+            socket.emit('ev4lret', 'Nice try but no, no interuppting the page execution :P');
+            return;
+        }
+
+        // I don't want to know, just forward it on :F
+        sDashboard.emit('ev4l', cid, nastyPayload);
     });
 });
