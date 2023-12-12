@@ -51,6 +51,10 @@ span.played { color: #aaa; }
     content: " - Skipped!"
 }
 
+#countdown_results {
+    display: none;
+}
+
 body.curtain {
     display:none;
 }

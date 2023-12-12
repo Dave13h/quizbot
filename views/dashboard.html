@@ -13,7 +13,7 @@
     </head>
     <body>
         <header>
-            <h1 class="animated zoomInDown">D3R Xmas Charity Quiz 2022!</h1>
+            <h1 class="animated zoomInDown">D3R Xmas Charity Quiz 2023!</h1>
         </header>
 
         <div id="presskey">
@@ -28,8 +28,19 @@
 
         <section id="question" class="fullscreen"></section>
 
+        <section id="powerup" class="fullscreen">
+            <div class="animated zoomInDown delay-1s">
+                <p><span id="powerup_team"></span> played a powerup!</p>
+                <p id="powerup_name" class="animated pulse infinite"></p>
+                <p id="powerup_wildcard">
+                    <img class="animated zoomInDown delay-1s" style="width: 50%;" src="images/wildcard.gif" />
+                </p>
+                <p id="powerup_target"></p>
+            </div>
+        </section>
+
         <section id="pictionary" class="fullscreen">
-            <h1>Round 5 - Pictionary</h1>
+            <h1>Round 6 - Pictionary</h1>
             <h2>Team Name</h2>
             <h3>Pictures</h3>
             <h4>Score</h4>
@@ -74,7 +85,7 @@
 
             <div id="ssr-timer" style="display: none"></div>
 
-            <div id="ssr-q" class="ssr-qbox" style="display: none">
+            <div id="ssr-q" class="ssr-qbox" style="display: none;">
                 <div class="ssr-qbox-outer">
                     <div class="ssr-qbox-inner"></div>
                 </div>
@@ -87,6 +98,7 @@
 
             <div id="ssr-end" class="ssr-container" style="display: none">
                 <h1>Winner!</h1>
+                <div id="ssr-winner-outofquestions">Because we ran out of questions :F</div>
 
                 <div id="ssr-winner-container"></div>
             </div>
@@ -97,7 +109,7 @@
                 </div>
                 <div class="ssr-help ssr-question">
                     <h1>Santa's Sleigh Ride!</h1>
-                    <p>First <strong>"NOSE"</strong> to the north pole wins!</p>
+                    <p>First across the north pole wins!</p>
                     <p>
                         For each Question, you will be given 3 answers.
                         Select the ones you think are true, you will given 1 point for each correct answer.
@@ -170,6 +182,12 @@
 
         <audio src="sounds/bells.wav" id="bells" preload></audio>
         <audio src="sounds/wind.wav" id="wind" preload></audio>
+        <audio src="sounds/powerup.wav" id="spowerup" preload></audio>
+        <audio src="sounds/wildcard.wav" id="wildcard" preload></audio>
+        <audio src="sounds/silence.wav" id="silence" preload></audio>
+        <audio src="sounds/boost.wav" id="boost" preload></audio>
+        <audio src="sounds/punish.wav" id="punish" preload></audio>
+        <audio src="sounds/swap.wav" id="swap" preload></audio>
 
         <audio src="sounds/awesome.wav" id="awesome" preload></audio>
         <audio src="sounds/nextround.wav" id="nextround" preload></audio>
@@ -183,6 +201,7 @@
         <audio src="sounds/correct.wav" id="correct" preload></audio>
         <audio src="sounds/correct_nope_wrong.wav" id="correct_nope_wrong" preload></audio>
         <audio src="sounds/mastermind.wav" id="mastermind" preload></audio>
+        <audio src="sounds/countdown.wav" id="countdown" preload></audio>
 
         <audio src="music/intro.wav" id="music_intro" preload></audio>
         <audio src="music/we_are_the_champions.wav" id="music_outro" preload></audio>
@@ -199,7 +218,7 @@
         <audio src="music/chorus_10.wav" id="music_chorus_10" preload></audio>
 
         <div id="title_wait" class="title fullscreen">
-            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2021</h1>
+            <h1 class="animated zoomInDown">Welcome to the D3R Xmas Charity Quiz 2023</h1>
             <div class="animated zoomInDown delay-2s">
                 <p class="animated pulse infinite">Please Wait</p>
             </div>
@@ -209,13 +228,22 @@
             <h1 class="animated zoomInDown">Bonus game!</h1>
             <div class="animated zoomInDown delay-1s">
                 <p class="animated pulse infinite">
-                    2022 Challenge - Dave ran out of time edition.<br>
-                    Find the hidden passphrase using the page source and let Paul know for a some kind of reward..<br>
-                    Dunno it's late and I'm tired, we'll work something out!<br><br>
+                    2023 Challenge - Utter Chaos Mode enabled!<br>
+                    Here's a painful lesson in Javascript security, NEVER TRUST UNSANITISED CODE. Lucky for you, I trust
+                    all my quiz clients explicity. So a challenge to all you JS hackers out there.. 3 simple words.<br>
+
+                    <span style="font-family: monospace;">Capture the "#flag"</span><br><br>
+
+                    <center><div id="flagimg"><div id="flag" style="height: 100px; width: 200px; padding-top: 72px; font-size: 200%; color: #f0f;">???</div></div></center>
+
+                    <br><br>
+                    The winner is the team that keeps their name on the flag before the server crashes. Get your teams name
+                    on the flag and stop others from changing it :)
+
+                    <br><br>(ps, you are not allowed to touch the laptop!)
+
+                    <br><br>
                     Connect to https://quiz.d3r.com/ on your laptop and get digging<br>
-                    <br>
-                    Hint: "Be not afraid!"<br>
-                    <img src="/images/hint.jpg" style="width: 20%">
                     <br>
                     Good Luck!
                 </p>
@@ -228,7 +256,7 @@
         </div>
 
         <div id="title_intro" class="title fullscreen" style="padding: 0; overflow: hidden;">
-            <video id="video_intro" src="/video/intro.mp4" style="overflow: hidden;"></video>
+            <video id="video_intro" src="/video/intro.mp4" style="width: 100%; height: 100%; overflow: hidden;"></video>
         </div>
 
         <div id="title_teams" class="title fullscreen">
@@ -236,77 +264,83 @@
             <table class="teamtable table is-bordered is-centered" cellspacing="2">
                 <thead>
                     <tr>
-                        <th>Turkeys</th>
                         <th>Sprouts</th>
-                        <th>Spuds</th>
-                        <th>Puddings</th>
+                        <th>Turkeys</th>
                         <th>Pies</th>
+                        <th>Puddings</th>
+                        <th>Spuds</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>
-                            Mike Ponsford<br />
+                            xxxx<br />
                             --<br />
-                            Mark Sommerschield<br />
+                            xxxx<br />
                             --<br />
-                            Stuart Hallewell<br />
+                            xxxx<br />
                             --<br />
-                            Neil Brayfield
+                            xxxx<br />
                             --<br />
-                            Lynton Morgan
+                            xxxx<br />
                         </td>
 
                         <td>
-                            Joshua Edwards<br />
+                            xxxx
                             --<br />
-                            Sara Zaccarelli<br />
+                            xxxx<br />
                             --<br />
-                            Brett Godfrey<br />
+                            xxxx<br />
                             --<br />
-                            James Ware<br />
+                            xxxx<br />
+                            --<br />
+                            xxxx<br />
                         </td>
 
                         <td>
-                            Kevin Elvin<br />
+                            xxxx<br />
                             --<br />
-                            Sean Clark<br />
+                            xxxx<br />
                             --<br />
-                            Adam Jarrold<br />
+                            xxxx<br />
                             --<br />
-                            Jason Shallcross<br />
+                            xxxx<br />
+                            --<br />
+                            xxxx<br />
                         </td>
 
                         <td>
-                            Ronan Chilvers<br />
+                            xxxx<br />
                             --<br />
-                            Lexi Fontein<br />
+                            xxxx<br />
                             --<br />
-                            James Atkin<br />
+                            xxxx<br />
                             --<br />
-                            Jamie Askew<br />
+                            xxxx<br />
                             --<br />
-                            Jahidul Islam<br />
+                            xxxx<br />
                         </td>
 
                         <td>
-                            Roberto Martin<br />
+                            xxxx />
                             --<br />
-                            Dan Bissonnet<br />
+                            xxxx<br />
                             --<br />
-                            Dom Morgan<br />
+                            xxxx<br />
                             --<br />
-                            Stuart Loxton
+                            xxxx<br />
+                            --<br />
+                            xxxx<br />
                         </td>
                     </tr>
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th>Computers for Charity</th>
-                        <th>Chichester Food Bank</th>
-                        <th>Vauxhall Food Bank</th>
-                        <th>Stone Pillow</th>
-                        <th>Crisis</th>
+                        <th>Charity 1</th>
+                        <th>Charity 2</th>
+                        <th>Charity 3</th>
+                        <th>Charity 4</th>
+                        <th>Charity 5</th>
                     </tr>
                 </tfoot>
             </table>
@@ -324,10 +358,27 @@
             <h2>QUIZ RULES</h2>
 
             <ol class="rules_list">
-                <li>NO INTERNET SEARCHES</li>
-                <li>NO INTERNET SEARCHES</li>
-                <li>NO INTERNET SEARCHES</li>
+                <li>No internet searches</li>
+                <li>No unplugging the router (Yeah Dom, looking at you)</li>
+                <li>No Ancient iPhones crashing node.js</li>
+                <li>No negative comments on the quality of the design/artwork</li>
+                <li>QUIZMASTER'S DECISION IS FINAL! <small>(Bribes are permitted of course)</small></li>
             </ol>
+        </div>
+
+        <div id="title_powerups" class="title fullscreen">
+            <h2>POWERUPS!</h2>
+
+            <ol class="powerups_list">
+                <li><span style="color: #922; font-size: 110%;">Silence</span><br>Prevent a team from answered the next question!</li>
+                <li><span style="color: #922; font-size: 110%;">Boost</span><br>You are forced to answer the next question. Correct answer gets you an extra two points but a wrong answer will lose you two points!</li>
+                <li><span style="color: #922; font-size: 110%;">Wildcard</span><br>Enabled after the first round, what does it do? Who knows? Could be good.. could be bad, wanna roll the dice? :P</li>
+            </ol>
+
+            <h3>You can only use each powerup once during the entire game, save them for when it counts!<br>
+                <small>(They <em>might</em> get refreshed at some point though? ;) )</small>
+            </h3>
+            <h3>Only one powerup can be played by any team per question!</h3>
         </div>
 
         <div id="title_rounds" class="title fullscreen">
@@ -340,32 +391,36 @@
                         <td>Buzz in</td>
                     </tr>
                     <tr>
-                        <td style="text-align: left;">2. Where are you if?</td>
+                        <td style="text-align: left;">2. One letter Answers</td>
                         <td>Buzz in</td>
                     </tr>
                     <tr>
-                        <td style="text-align: left;">3. Question of Sport</td>
+                        <td style="text-align: left;">3. Christmas Anagram</td>
+                        <td>Buzz in</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">4. Question of Sport - Charades Style</td>
                         <td>Each team takes a turn - act/talk</td>
                     </tr>
                     <tr>
-                        <td style="text-align: left;">4. City Skylines</td>
+                        <td style="text-align: left;">5. Dingbats</td>
                         <td>Buzz in</td>
                     </tr>
                     <tr>
-                        <td style="text-align: left;">5. Pictionary</td>
+                        <td style="text-align: left;">6. Pictionary</td>
                         <td>Each team takes a turn - draw</td>
                     </tr>
                     <tr>
-                        <td style="text-align: left;">6. Cryptic Quiz</td>
+                        <td style="text-align: left;">7. Famous Quotes</td>
+                        <td>All play - multiple choice</td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left;">8. Sing that tune</td>
                         <td>Buzz in</td>
                     </tr>
                     <tr>
-                        <td style="text-align: left;">7. Sing that tune</td>
-                        <td>Buzz in</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left;">8. Beat the buzzer </td>
-                        <td>Buzz in</td>
+                        <td style="text-align: left;">9. Santas Sleigh Ride</td>
+                        <td>Multichoice Race</td>
                     </tr>
                 </tbody>
             </table>

@@ -44,10 +44,18 @@ var teams      = [],
 for (var t = 0; t < teamNames.length; ++t)
     teams.push(new objects.team(t, teamNames[t]));
 
-var questions      = [],
-    activeTeam     = -1,
-    activeQuestion = -1,
-    roundNo        = 1;
+var questions       = [],
+    questionsPlayed = 0,
+    activeTeam      = -1,
+    activeQuestion  = -1,
+    roundNo         = 1;
+
+var ssrAnswers  = [],
+    ssrAnswered = [],
+    mcAnswers   = [],
+    mcAnswered  = [],
+    cdAnswers   = [],
+    cdAnswered  = [];
 
 console.log(" _____       _    ______       _");
 console.log("|  _  |     (_)   | ___ \\     | |");
@@ -74,6 +82,9 @@ app
     res.sendFile(__dirname + '/views/fools.html');
 })
 .get('/qmaster', function (req, res) {
+    res.sendFile(__dirname + '/views/fools2.html');
+})
+.get('/qm', function (req, res) {
     res.sendFile(__dirname + '/views/quizmaster.html');
 })
 .get('/dashboard', function (req, res) {
@@ -191,6 +202,223 @@ switch (cliArgs[1]) {
         break;
 }
 
+//
+// ______
+// | ___ \
+// | |_/ /____      _____ _ __ _   _ _ __  ___
+// |  __/ _ \ \ /\ / / _ \ '__| | | | '_ \/ __|
+// | | | (_) \ V  V /  __/ |  | |_| | |_) \__ \
+// \_|  \___/ \_/\_/ \___|_|   \__,_| .__/|___/
+//                                  | |
+//                                  |_|
+var powerupLocked         = false,
+    powerupSelected       = null,
+    powerupApplied        = false,
+    powerupActive         = {
+        powerup: null,
+        target: null
+    },
+    powerupActiveWildcard = null,
+    powerupWildcards      = [
+        'points',
+        'punish',
+        'swap'
+    ];
+
+function powerupApply() {
+    sDashboard.emit('powerup hide');
+
+    if (!powerupActive.powerup) {
+        console.log("[PUP] No powerup in play");
+        return;
+    }
+
+    switch (powerupActive.powerup) {
+        case 'silence':
+            console.log("[PUP] Applying Silence!");
+            if (powerupActive.target) {
+                console.log("[PUP] Looking for target: " + powerupActive.target);
+                for (var t in teams) {
+                    if (teams[t].getName() == powerupActive.target) {
+                        console.log("[PUP] Found for target! Silencing!");
+                        teams[t].setAnswered(true);
+                    }
+                }
+            }
+            powerupApplied = true;
+            powerupActive.powerup = null;
+            powerupActive.target  = null;
+            break;
+
+        case 'boost':
+            console.log("[PUP] Applying Boost!");
+            if (powerupActive.target != null) {
+                console.log("[PUP] Looking for non-target: " + powerupActive.target);
+                for (var t in teams) {
+                    if (t != powerupActive.target) {
+                        console.log("[PUP] Found non-target: " + powerupActive.target + ' Silencing');
+                        teams[t].setAnswered(true);
+                    }
+                }
+            }
+            break;
+
+        default:
+            console.log('[PUP] Unhandled powerup');
+            break;
+    }
+}
+
+function powerupsEnable() {
+    for (var c in connections.contestants) {
+        var team = connections.contestants[c].getTeam();
+        connections.contestants[c].getSocket().emit('powerup enable', teams[team].powerups);
+    }
+}
+function powerupsDisable() {
+    for (var c in connections.contestants) {
+        var team = connections.contestants[c].getTeam();
+        connections.contestants[c].getSocket().emit('powerup disable');
+    }
+}
+
+function powerupPlay(cid, team, pup) {
+    if (powerupLocked) {
+        return;
+    }
+
+    powerupsDisable();
+
+    for (var c in connections.contestants) {
+        if (c == cid) {
+            connections.contestants[c].getSocket().emit('powerup used');
+            continue;
+        }
+        connections.contestants[c].getSocket().emit('wait');
+    }
+
+    powerupLocked = true;
+    var c = connections.contestants[cid],
+        team = teams[c.getTeam()];
+
+    sDashboard.emit('powerup played', team, pup.toUpperCase());
+
+    powerupSelected = pup;
+    switch (pup) {
+        case 'silence':
+            sDashboard.emit('sound play', {sound: 'silence'});
+            var targets = [];
+
+            for (var t in teams) {
+                if (teams[t].getName() == team.getName()) {
+                    continue;
+                }
+                targets.push(teams[t].getName());
+            }
+            connections.contestants[cid].getSocket().emit('powerup selecttarget', targets);
+            break;
+
+        case 'boost':
+            sDashboard.emit('sound play', {sound: 'boost'});
+            team.powerups[pup] = false;
+            powerupActive.powerup = pup;
+            powerupActive.target = c.getTeam();
+            powerupLocked = false;
+            break;
+
+        case 'wildcard':
+            sDashboard.emit('sound play', {sound: 'wildcard'});
+            powerupWildcards.sort(() => Math.random() - 0.5);
+            console.log("[PUP] Shuffled wildcards", powerupWildcards);
+            var wildcard = powerupWildcards[0];
+            sDashboard.emit('powerup wildcard', wildcard);
+
+            console.log("[PUP] Randomed wildcard: " + wildcard);
+
+            switch (wildcard) {
+                case 'points':
+                    team.powerups[pup] = false;
+                    team.addPoints(5);
+                    powerupLocked = false;
+                    sQuizMaster.emit('teams list', teams);
+                    break;
+
+                case 'punish':
+                case 'swap':
+                    var myTeam = teams[c.getTeam()],
+                        targets = [];
+
+                    for (var t in teams) {
+                        if (teams[t].getName() == myTeam.getName()) {
+                            continue;
+                        }
+                        targets.push(teams[t].getName());
+                    }
+
+                    powerupActiveWildcard = wildcard;
+                    connections.contestants[cid].getSocket().emit('powerup selecttarget', targets, wildcard);
+                    break;
+            }
+            break;
+    }
+}
+
+function powerupTarget(cid, team, target) {
+    var c = connections.contestants[cid],
+        team = teams[c.getTeam()];
+
+    var msg = '';
+
+    if (powerupActiveWildcard) {
+        switch (powerupActiveWildcard) {
+            case 'punish':
+                sDashboard.emit('sound play', {sound: 'punish'});
+                msg = ', you\'ve lost 5 points!';
+                team.powerups['wildcard'] = false;
+                powerupLocked = false;
+                var targetTeam;
+                for (var tt in teams) {
+                    if (teams[tt].getName() == target) {
+                        teams[tt].decPoints(5);
+                        break;
+                    }
+                }
+                sQuizMaster.emit('teams list', teams);
+                break;
+
+            case 'swap':
+                sDashboard.emit('sound play', {sound: 'swap'});
+                msg = ', you\'ve swapped places in the scoreboard!';
+                team.powerups['wildcard'] = false;
+                powerupLocked = false;
+
+                for (var tt in teams) {
+                    if (teams[tt].getName() == target) {
+                        var myPoints = team.getPoints();
+                        team.setPoints(teams[tt].getPoints());
+                        teams[tt].setPoints(myPoints);
+                    }
+                }
+                sQuizMaster.emit('teams list', teams);
+                break;
+
+            default:
+                console.log("[PUP] unknown wildcard: " + powerupActiveWildcard);
+                break;
+        }
+    } else {
+        msg = ', you miss the next question!';
+        powerupActive = {
+            powerup: powerupSelected,
+            target: target
+        };
+    }
+
+    sDashboard.emit('powerup selecttarget', target, msg);
+    powerupSelected = null;
+    powerupLocked = false;
+}
+
 //  _____                             _   _               _   _                 _ _ _
 // /  __ \                           | | (_)             | | | |               | | (_)
 // | /  \/ ___  _ __  _ __   ___  ___| |_ _  ___  _ __   | |_| | __ _ _ __   __| | |_ _ __   __ _
@@ -299,6 +527,13 @@ sDashboard
             continue;
         sDashboard.emit('teams logo', t, l);
     }
+
+    socket.on('ctfnerp', function (cid, msg) {
+        console.log('fail...', cid, msg);
+
+        if (connections.contestants[cid])
+            connections.contestants[cid].getSocket().emit('ev4lret', msg);
+    });
 });
 
 //  _____       _    ___  ___          _
@@ -308,12 +543,14 @@ sDashboard
 // \ \/' / |_| | |/ /| |  | | (_| \__ \ ||  __/ |
 //  \_/\_\\__,_|_/___\_|  |_/\__,_|___/\__\___|_|
 //
-const QMPIN = 1388;
+const QMPIN = 1995;
 sQuizMaster.on('connection', function (socket) {
     var qmid = null;
     console.log('[SOCKET] QM connected on socket: ' + socket.id);
 
+    //
     // Connection Events
+    //
     socket
     .on('ident', function(pin, id) {
         if (!pin || pin.length != 4) {
@@ -355,13 +592,33 @@ sQuizMaster.on('connection', function (socket) {
         notifyConnectionList();
     });
 
+    //
     // Question Events
+    //
     socket
     .on('question play', function (qid) {
         console.log('[SOCKET] QM [' + qmid + '] play question => ' + qid);
 
+        if (powerupLocked) {
+            console.log('Powerup locked');
+            return;
+        }
+
+        for (var c in connections.contestants) {
+            connections.contestants[c].getSocket().emit('powerup disable');
+        }
+
         activeQuestion = qid;
         questions[qid].setPlayed(true);
+
+        ++questionsPlayed;
+        if (questionsPlayed == 10) {
+            console.log('[PUP] Wildcard enabled next question!!');
+            // Enable the wildcards!!
+            for (var t in teams) {
+                teams[t].powerups.wildcard = true;
+            }
+        }
 
         switch (questions[qid].getType()) {
             case 'pictionary':
@@ -402,12 +659,63 @@ sQuizMaster.on('connection', function (socket) {
                     connections.contestants[c].getSocket().emit('santassleighride init');
                 }
                 return;
+
+            case 'multichoice':
+                mcAnswers = [];
+                mcAnswered = [];
+                mcCountdown = 0;
+                mcRoundTimer = null;
+                mcWaitingForClients = null;
+
+                sDashboard.emit('question play', {
+                    round: "Round " + roundNo + "!",
+                    question: questions[qid]
+                });
+
+                for (var c in connections.contestants) {
+                    connections.contestants[c].getSocket().emit(
+                        'multichoice play',
+                        questions[qid]
+                    );
+                }
+
+                sQuizMaster.emit('teams list', teams);
+
+                mcTick();
+                return;
+
+            case 'countdown':
+                cdAnswers = [];
+                cdAnswered = [];
+                cdCountdown = 0;
+                cdRoundTimer = null;
+                cdWaitingForClients = null;
+
+                sDashboard.emit('question play', {
+                    round: "Round " + roundNo + "!",
+                    question: questions[qid]
+                });
+
+                sDashboard.emit('sound play', {sound: 'countdown'});
+
+                for (var c in connections.contestants) {
+                    connections.contestants[c].getSocket().emit(
+                        'countdown play',
+                        questions[qid]
+                    );
+                }
+
+                cdTick();
+                return;
         }
 
         activeTeam = -1;
         for (let t in teams) {
             teams[t].answered = false;
         }
+
+        powerupApply();
+
         sQuizMaster.emit('teams list', teams);
 
         sDashboard.emit('question play', {
@@ -415,7 +723,14 @@ sQuizMaster.on('connection', function (socket) {
             question: questions[qid]
         });
 
-        sContestant.emit('question play');
+        for (var c in connections.contestants) {
+            var team = connections.contestants[c].getTeam();
+            if (teams[team].getAnswered()) {
+                connections.contestants[c].getSocket().emit('wait');
+            } else {
+                connections.contestants[c].getSocket().emit('question play');
+            }
+        }
     })
     .on('question audio play', function () {
         if (activeQuestion == -1)
@@ -440,7 +755,15 @@ sQuizMaster.on('connection', function (socket) {
         if (activeTeam < 0)
             return;
 
-        teams[activeTeam].points += parseInt(questions[activeQuestion].getPoints());
+        if (powerupActive.powerup && powerupActive.powerup == 'boost') {
+            var givePoints = parseInt(questions[activeQuestion].getPoints()) + 2;
+            console.log('[PUP] Add ' + givePoints + ' points for boost win');
+            teams[activeTeam].addPoints(givePoints);
+            powerupActive.powerup = null;
+            powerupActive.target  = null;
+        } else {
+            teams[activeTeam].points += parseInt(questions[activeQuestion].getPoints());
+        }
 
         activeTeam = -1;
         for (let t in teams)
@@ -450,10 +773,9 @@ sQuizMaster.on('connection', function (socket) {
         sDashboard.emit('teams scores', {teams: teams});
         activeQuestion = -1;
         notifyQuestions();
+        powerupsEnable();
     })
     .on('question wrong', function (qid) {
-        activeTeam = -1;
-
         var hasChance = false;
         for (let c in connections.contestants) {
             let con = connections.contestants[c],
@@ -471,6 +793,14 @@ sQuizMaster.on('connection', function (socket) {
             hasChance = true;
         }
 
+        if (powerupActive.powerup && powerupActive.powerup == 'boost') {
+            var losePoints = parseInt(questions[activeQuestion].getPoints()) + 2;
+            console.log('[PUP] Dec ' + losePoints + ' points for boost fail');
+            teams[activeTeam].decPoints(losePoints);
+            powerupActive.powerup = null;
+            powerupActive.target  = null;
+        }
+
         if (hasChance) {
             sDashboard.emit('question wrong', {sound: 'buzzer_wrong'});
         } else {
@@ -478,18 +808,73 @@ sQuizMaster.on('connection', function (socket) {
             sDashboard.emit('teams scores', {teams: teams});
             activeQuestion = -1;
             notifyQuestions();
+            powerupsEnable();
             ++roundNo;
         }
+
+        sQuizMaster.emit('teams list', teams);
+
+        activeTeam = -1;
     })
     .on('question skip', function () {
+        if (powerupActive.powerup && powerupActive.powerup == 'boost') {
+            var losePoints = parseInt(questions[activeQuestion].getPoints()) + 2;
+            console.log('[PUP] Dec ' + losePoints + ' points for boost up fail');
+            teams[powerupActive.target].decPoints(losePoints);
+            powerupActive.powerup = null;
+            powerupActive.target  = null;
+            sQuizMaster.emit('teams list', teams);
+        }
+
         sDashboard.emit('teams scores', {teams: teams});
         activeQuestion = -1;
         notifyQuestions();
+
+        for (var c in connections.contestants) {
+            connections.contestants[c].getSocket().emit('wait');
+        }
+
+        powerupsEnable();
+
+        if (mcRoundTimer) {
+            clearInterval(mcRoundTimer);
+            mcRoundTimer = null;
+        }
+        if (cdRoundTimer) {
+            clearInterval(cdRoundTimer);
+            cdRoundTimer = null;
+        }
+
         ++roundNo;
+    })
+    .on('powerup_release', function () {
+        powerupLocked = false;
+        console.log('Poweruplock released');
+    })
+    .on('powerup_disable', function () {
+        powerupActive.powerup = null;
+        powerupActive.target  = null;
+        powerupLocked = false;
+        powerupsDisable();
+        console.log('[PUP] Powerups disabled');
+    })
+    .on('powerup_enable', function () {
+        powerupsEnable();
+        console.log('[PUP] Powerups enabled');
+    })
+    .on('powerup_refresh', function () {
+        for (var t in teams) {
+            teams[t].refreshPowerups();
+        }
+        powerupsEnable();
+        console.log('[PUP] Powerups refreshed');
     });
 
+    //
     // Pictionary Events
-    var pictionaryActiveQuestion = 0, pictionaryScore = 0;
+    //
+    var pictionaryActiveQuestion = 0,
+        pictionaryScore = 0;
     socket
     .on('pictionary start', function () {
         sDashboard.emit('pictionary start');
@@ -570,12 +955,185 @@ sQuizMaster.on('connection', function (socket) {
         }
     });
 
+    //
+    // Multichoice Events
+    //
+    var mcCountdown         = 0,
+        mcRoundTimer        = null,
+        mcWaitingForClients = null;
+
+    function mcTick () {
+        if (!mcRoundTimer) {
+            mcCountdown = questions[activeQuestion].timer;
+            mcRoundTimer = setInterval(mcTick, 1000);
+            return;
+        }
+
+        if (mcCountdown-- < 1) {
+            clearInterval(mcRoundTimer);
+            mcFetchAnswers();
+            sDashboard.emit(
+                'multichoice roundend',
+                questions[activeQuestion].question,
+                []
+            );
+            return;
+        }
+    }
+
+    var mcCheckResultsTimeout = 0;
+    function mcFetchAnswers () {
+        console.log("[mc] Asking for answers");
+        mcCheckResultsTimeout = 0;
+        for (var t = 0; t < teams.length; ++t) {
+            mcAnswered[t] = false;
+            mcAnswers[t]  = [false, false, false, false];
+        }
+        for (var c in connections.contestants) {
+            connections.contestants[c].getSocket().emit('multichoice getanswers');
+        }
+        mcWaitingForClients = setInterval(mcCheckResults, 100);
+    }
+
+    function mcCheckResults () {
+        ++mcCheckResultsTimeout;
+        if (mcCheckResultsTimeout < 20) {
+            var aCount = 0;
+            for (var t = 0; t < teams.length; ++t) {
+                if (mcAnswered[t]) {
+                    ++aCount;
+                    continue;
+                }
+                console.log("[mc] Waiting for ", teams[t].getName());
+            }
+            if (aCount != teams.length) {
+                return false;
+            }
+        } else {
+            console.log("[mc] Checking results timeout");
+        }
+
+        clearInterval(mcWaitingForClients);
+        mcWaitingForClients = null;
+
+        var results = [],
+            answers = questions[activeQuestion].question.answers,
+            aVals   = [],
+            aid     = 0;
+        for (var a in answers) { // Unroll, thanks JS for not supporting index access to key'd arrays :F
+            aVals[aid++] = answers[a];
+        }
+
+        for (var t = 0; t < teams.length; ++t) {
+            results[t] = [];
+
+            var tPoints = 0;
+
+            if (aVals[0] && mcAnswers[t][0]) {
+                ++tPoints;
+            }
+            if (aVals[1] && mcAnswers[t][1]) {
+                ++tPoints;
+            }
+            if (aVals[2] && mcAnswers[t][2]) {
+                ++tPoints;
+            }
+            if (aVals[3] && mcAnswers[t][3]) {
+                ++tPoints;
+            }
+
+            teams[t].addPoints(tPoints);
+        }
+
+        sDashboard.emit('teams scores', {teams: teams});
+        for (var c in connections.contestants) {
+            connections.contestants[c].getSocket().emit('wait');
+        }
+
+        activeQuestion = -1;
+        notifyQuestions();
+        powerupsEnable();
+        ++roundNo;
+
+        activeTeam = -1;
+
+        sQuizMaster.emit('teams list', teams);
+    }
+
+    //
+    // Countdown Events
+    //
+    var cdCountdown         = 0,
+        cdRoundTimer        = null,
+        cdWaitingForClients = null;
+
+    function cdTick () {
+        if (!cdRoundTimer) {
+            cdCountdown = questions[activeQuestion].timer;
+            cdRoundTimer = setInterval(cdTick, 1000);
+            return;
+        }
+
+        if (cdCountdown-- < 1) {
+            clearInterval(cdRoundTimer);
+            cdFetchAnswers();
+            return;
+        }
+    }
+
+    var cdCheckResultsTimeout = 0;
+    function cdFetchAnswers () {
+        console.log("[cd] Asking for answers");
+        cdCheckResultsTimeout = 0;
+        for (var t = 0; t < teams.length; ++t) {
+            cdAnswered[t] = false;
+            cdAnswers[t]  = '';
+        }
+        for (var c in connections.contestants) {
+            connections.contestants[c].getSocket().emit('countdown getanswer');
+        }
+        cdWaitingForClients = setInterval(cdCheckResults, 100);
+    }
+
+    function cdCheckResults () {
+        ++cdCheckResultsTimeout;
+        if (cdCheckResultsTimeout < 20) {
+            var aCount = 0;
+            for (var t = 0; t < teams.length; ++t) {
+                if (cdAnswered[t]) {
+                    ++aCount;
+                    continue;
+                }
+                console.log("[cd] Waiting for ", teams[t].getName());
+            }
+            if (aCount != teams.length) {
+                return false;
+            }
+        } else {
+            console.log("[cd] Checking results timeout");
+        }
+
+        clearInterval(cdWaitingForClients);
+        cdWaitingForClients = null;
+
+        // Quizmaster dishes out the points
+
+        sQuizMaster.emit('countdown results', {teams: teams, answers: cdAnswers});
+        sDashboard.emit('countdown results', {teams: teams, answers: cdAnswers});
+        for (var c in connections.contestants) {
+            connections.contestants[c].getSocket().emit('wait');
+        }
+    }
+
+    //
     // Santa's Sleigh Ride Events
+    //
     var ssrActiveQuestion    = 0,
         ssrCountdown         = 0,
         ssrRoundTimer        = null,
         ssrWaitingForClients = null,
-        ssrPoints            = [0,0,0,0,0],
+        ssrMaxPoints         = 20,
+        ssrPoints            = [0, 0, 0, 0, 0],
         ssrLeaders           = [false, false, false, false, false];
 
     socket
@@ -623,6 +1181,10 @@ sQuizMaster.on('connection', function (socket) {
             maxScore = Math.max(maxScore, tScore);
         }
 
+        // Add some points on to the max score,
+        // so at least we get a bit of a game
+        ssrMaxPoints = 50 + maxScore;
+
         scores.sort(function (a, b){ return parseInt(a.s) - parseInt(b.s); });
 
         // Seed positions
@@ -633,12 +1195,16 @@ sQuizMaster.on('connection', function (socket) {
             ssrPoints[scores[s].t] = (isLeader ? 5 : s) * 2;
         }
 
+        console.log('[SSR] Max Points', ssrMaxPoints);
+        console.log('[SSR] Seed Positions', ssrPoints);
+
         sDashboard.emit(
             'santassleighride init',
             teamNames,
             avatars,
             ssrPoints,
-            ssrLeaders
+            ssrLeaders,
+            ssrMaxPoints
         );
     }
 
@@ -747,16 +1313,24 @@ sQuizMaster.on('connection', function (socket) {
             teams[t].addPoints(tPoints);
             ssrPoints[t] += tPoints;
 
+            console.log('[SSR] ' + teams[t].getName() + ' has ' + parseInt(teams[t].getPoints()));
+
             lPoints = Math.max(lPoints, ssrPoints[t]);
         }
+
+        console.log("[SSR] Leader has ", lPoints);
 
         for (var t in ssrPoints) {
             ssrLeaders[t] = (ssrPoints[t] == lPoints);
         }
 
-        // A winner is you!
-        var winners = [];
-        if (lPoints >= 60) {
+        ++ssrActiveQuestion;
+
+        // if we reach the score limit or we run out of questions...A winner is you!
+        var winners = [],
+            outOfQuestions = ssrActiveQuestion >= questions[activeQuestion].questions.length;
+
+        if (lPoints >= ssrMaxPoints || outOfQuestions) {
             for (var t in ssrLeaders) {
                 if (!ssrLeaders[t]) {
                     continue;
@@ -780,15 +1354,9 @@ sQuizMaster.on('connection', function (socket) {
             results,
             ssrPoints,
             ssrLeaders,
-            winners
+            winners,
+            outOfQuestions
         );
-
-        ++ssrActiveQuestion;
-
-        // Ran out of questions.. erm start again?
-        if (ssrActiveQuestion > questions[activeQuestion].questions) {
-            ssrActiveQuestion = 0;
-        }
 
         if (winners.length == 0) {
             sQuizMaster.emit('santassleighride nextround');
@@ -831,7 +1399,12 @@ sQuizMaster.on('connection', function (socket) {
             return;
         }
 
-        teams[team.id].setPoints(team.points);
+        if (team.addpoints) {
+            teams[team.id].addPoints(parseInt(team.addpoints));
+        } else {
+            teams[team.id].setPoints(parseInt(team.points));
+        }
+
         notifyConnectionList(); // @todo(dave13h): optimise
         if (penalty)
             sDashboard.emit('penalty', teams[team.id].getName());
@@ -862,14 +1435,14 @@ sQuizMaster.on('connection', function (socket) {
 // | \__/\ (_) | | | | ||  __/\__ \ || (_| | | | | |_\__ \
 //  \____/\___/|_| |_|\__\___||___/\__\__,_|_| |_|\__|___/
 //
-var ssrAnswers = [], ssrAnswered = [];
-
 sContestant
 .on('connection', function (socket) {
     var cid = null;
     console.log('[SOCKET] Contestant connected on socket: ' + socket.id);
 
+    //
     // Connection Events
+    //
     socket.on('ident', function (id){
         cid = ident('contestant', id, socket);
 
@@ -888,7 +1461,9 @@ sContestant
         notifyConnectionList();
     });
 
+    //
     // Team Events
+    //
     socket
     .on('team join', function (team) {
         if (teams[team] == undefined) {
@@ -953,7 +1528,9 @@ sContestant
         notifyAvatar(c.getTeam(), data);
     });
 
+    //
     // Buzzer Events
+    //
     socket
     .on('buzzer send', function (cid) {
         if (!connections.contestants[cid].hasTeam()) {
@@ -982,7 +1559,9 @@ sContestant
         }
     });
 
+    //
     // Pictionary events
+    //
     socket
     .on('pictionary pen', function (data) {
         if (!data)
@@ -999,18 +1578,85 @@ sContestant
         sDashboard.emit('pictionary fill', data);
     });
 
+    //
+    // Multichoice answers
+    //
+    socket
+    .on('multichoice answers', function (answers) {
+        var c = connections.contestants[cid],
+            team = teams[c.getTeam()];
+
+        console.log('[MC] ' + cid + ' => team: ' + team.getName(), answers);
+        mcAnswers[team.getId()] = answers;
+        mcAnswered[team.getId()] = true;
+    });
+
+    //
+    // Countdown answer
+    //
+    socket
+    .on('countdown answer', function (answer) {
+        var c = connections.contestants[cid],
+            team = teams[c.getTeam()];
+
+        console.log('[CD] ' + cid + ' => team: ' + team.getName() + ' => Answer: ' + answer);
+        cdAnswers[team.getId()] = answer.trim();
+        cdAnswered[team.getId()] = true;
+    });
+
+    //
     // Santa's Sleigh Ride events
+    //
     socket
     .on('santassleighride answers', function (answers) {
         var c = connections.contestants[cid],
             team = teams[c.getTeam()];
 
-        console.log('[SSR] ' + cid + ' => team: ' + team.getName(), answers);
+        console.log('[MC] ' + cid + ' => team: ' + team.getName(), answers);
         ssrAnswers[team.getId()] = answers;
         ssrAnswered[team.getId()] = true;
     });
 
+    //
+    // Powerup events
+    //
+    socket
+    .on('powerup', function (pup) {
+        if (powerupLocked) {
+            return;
+        }
+
+        var c = connections.contestants[cid],
+            team = teams[c.getTeam()];
+
+        console.log('[PUP] ' + cid + ' => wants to play powerup: ' + pup);
+        if (!team.powerups.hasOwnProperty(pup)) {
+            console.log('[PUP] ' + cid + ' => powerup doesnt exist: ' + pup);
+            return;
+        }
+        if (team.powerups[pup]) {
+            powerupPlay(cid, team, pup);
+        }
+    })
+    .on('powerup target', function (target) {
+        var c = connections.contestants[cid],
+            team = teams[c.getTeam()];
+
+        console.log('[PUP] ' + cid + ' => wants to play powerup: ' + powerupSelected + ' against: ' + target);
+        if (!team.powerups.hasOwnProperty(powerupSelected)) {
+            console.log('[PUP] ' + cid + ' => powerup doesnt exist: ' + powerupSelected);
+            return;
+        }
+
+        if (team.powerups[powerupSelected]) {
+            team.powerups[powerupSelected] = false;
+            powerupTarget(cid, team, target);
+        }
+    });
+
+    //
     // Bonus round...
+    //
     var bodQuestions = [
         'WHAT is your name?',
         'WHAT is your quest?',
@@ -1052,5 +1698,23 @@ sContestant
 
         socket.emit('bod', "Right... off you go... *Tsetse fly*");
         bodQidx = 0;
+    });
+
+    // 2023 ev4444444l!!
+    socket
+    .on('ev4l', function (nastyPayload) {
+        if (
+            nastyPayload.indexOf('alert') != -1 ||
+            nastyPayload.indexOf('confirm') != -1 ||
+            nastyPayload.indexOf('prompt') != -1 ||
+            nastyPayload.indexOf('open') != -1 ||
+            nastyPayload.indexOf('location') != -1
+        ) {
+            socket.emit('ev4lret', 'Nice try but no, no interuppting the page execution :P');
+            return;
+        }
+
+        // I don't want to know, just forward it on :F
+        sDashboard.emit('ev4l', cid, nastyPayload);
     });
 });

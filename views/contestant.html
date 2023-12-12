@@ -150,6 +150,28 @@
         <button type="button" id="bMenu" class="btn is-success">MENU</button>
 
         <!--
+            ______
+            | ___ \
+            | |_/ /____      _____ _ __ _   _ _ __  ___
+            |  __/ _ \ \ /\ / / _ \ '__| | | | '_ \/ __|
+            | | | (_) \ V  V /  __/ |  | |_| | |_) \__ \
+            \_|  \___/ \_/\_/ \___|_|   \__,_| .__/|___/
+                                             | |
+                                             |_|
+        -->
+        <section id="powerups" class="with-title">
+            <h2 class="title">Powerups</h2>
+            <button type="button" id="bPowerupSilence" class="btn btn-sm is-success">Silence</button>
+            <button type="button" id="bPowerupBoost" class="btn btn-sm is-success">Boost</button>
+            <button type="button" id="bPowerupWildcard" class="btn btn-sm is-error" disabled="disabled">Wildcard</button>
+        </section>
+        <section id="powerup_target">
+            <h2 class="title"></h2>
+            <h3>Select Team to target</h3>
+            <div class="containers list targetteams" />
+        </section>
+
+        <!--
             ______ _      _   _
             | ___ (_)    | | (_)
             | |_/ /_  ___| |_ _  ___  _ __   __ _ _ __ _   _
@@ -199,6 +221,26 @@
 
                 <button type="button" class="canvas_fill btn btn-sm is-warning">Fill</button>
                 <button type="button" class="canvas_clear btn btn-sm is-primary">Clear</button>
+            </div>
+        </section>
+
+        <section id="multichoice">
+            <div id="mc-q" class="mc-qbox">
+                <div class="mc-question">
+                    <h1></h1>
+                    <ul class="mc-answers">
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="countdown">
+            <div id="cd-q" class="cd-qbox">
+                <div class="cd-question">
+                    <h1></h1>
+                    <br><br>
+                    <input type="text" id="cd-answer" class="cd-answer" />
+                </div>
             </div>
         </section>
 

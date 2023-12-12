@@ -3,163 +3,168 @@
         {
             "type": "text",
             "title": "Round 1 - D3R & Clients",
-            "text": "We have had some new sections/topics added to the newsletter this year, name 2!"
+            "text": "Name 2 clients who have had or are going through a refresh this year?"
         },
         {
             "type": "text",
             "title": "Round 1 - D3R & Clients",
-            "text": "What was the hero image in the last newsletter?"
+            "text": "Amcari, a new client this year are a wealth management company based where?"
         },
         {
             "type": "text",
             "title": "Round 1 - D3R & Clients",
-            "text": "Name the locations in order of launch for Soho POS"
+            "text": "My address is River Way, Harlow, which client am I?"
         },
         {
             "type": "text",
             "title": "Round 1 - D3R & Clients",
-            "text": "In what month did Farmison soft launch their new Traceability functionality?"
+            "text": "Who on their website has a section called 'The Vaults'?"
         },
         {
             "type": "text",
             "title": "Round 1 - D3R & Clients",
-            "text": "What was the initial discount amount we received from Soho Skin?"
+            "text": "How many staff does D3R now have?"
         },
         {
             "type": "text",
             "title": "Round 1 - D3R & Clients",
-            "text": "Name two items Loaf launched this year which weren't furniture related"
+            "text": "Put these clients in order of distance from the D3R Chichester Offices (closest to furthest) if travelling by car xxx / xxx / xxx / xxx"
         },
         {
             "type": "text",
             "title": "Round 1 - D3R & Clients",
-            "text": "Name 3 new clients this year"
+            "text": "Which client has a 'owners club' which among other benefits give you 20% off full-price products on orders over £5,000?"
         },
         {
             "type": "text",
             "title": "Round 1 - D3R & Clients",
-            "text": "My address is 8 Balderton St, Brown Hart Gardens, London W1K 6TF, which client am I?"
+            "text": "Name 2 clients on the Shopify platform"
         },
         {
             "type": "text",
             "title": "Round 1 - D3R & Clients",
-            "text": "In what year did D3R commence business?"
+            "text": "Name 3 current clients who have been with us longer than 5 years"
         },
         {
             "type": "text",
             "title": "Round 1 - D3R & Clients",
-            "text": "Name 3 clients who have a configurator"
+            "text": "How many hotels are in the HSH group and can you name them?"
         },
+
+        {
+            "type": "text",
+            "title": "Round 2 - One Letter Answers",
+            "text": "Which tile has a value of 5 points in the game of Scrabble?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - One Letter Answers",
+            "text": "In The Simpsons, Homer Simpson has a middle initial - what is it?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - One Letter Answers",
+            "text": "Which vitamin is necessary for preventing rickets?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - One Letter Answers",
+            "text": "What is the chemical symbol of tungsten?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - One Letter Answers",
+            "text": "In Morse code what letter is represented by three dashes?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - One Letter Answers",
+            "text": "The head of MI6, the Secret Intelligence Service, is known by what one-letter code name?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - One Letter Answers",
+            "text": "In electronics, which symbol represents the SI unit of electrical capacitance?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - One Letter Answers",
+            "text": "What letter comes before 'Bahn' in the name of the Berlin underground railway system?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - One Letter Answers",
+            "text": "Which general-purpose computer programming language was originally developed at Bell Labs by Dennis Ritchie between 1972 and 1973?"
+        },
+        {
+            "type": "text",
+            "title": "Round 2 - One Letter Answers",
+            "text": "Which letter was the British pound sign derived from?"
+        },
+        {
+            "type": "countdown",
+            "title": "Round 2 - Countdown",
+            "text": "Make the longest word from these letters!<br>KJDWOCFUCL",
+            "timer": 32
+        },
+
+        {
+            "type": "text",
+            "title": "Round 3 Christmas Anagram",
+            "text": "ENLIST"
+        },
+        {
+            "type": "text",
+            "title": "Round 3 Christmas Anagram",
+            "text": "DISPATCH DRUMS GIN"
+        },
+        {
+            "type": "text",
+            "title": "Round 3 Christmas Anagram",
+            "text": "DRY BAN"
+        },
+        {
+            "type": "text",
+            "title": "Round 3 Christmas Anagram",
+            "text": "MANS WON"
+        },
+        {
+            "type": "text",
+            "title": "Round 3 Christmas Anagram",
+            "text": "CAN CAN DYE"
+        },
+        {
+            "type": "text",
+            "title": "Round 3 Christmas Anagram",
+            "text": "BADGE RINGER"
+        },
+        {
+            "type": "text",
+            "title": "Round 3 Christmas Anagram",
+            "text": "MICE PINE"
+        },
+        {
+            "type": "text",
+            "title": "Round 3 Christmas Anagram",
+            "text": "BLESSING KIT PAN"
+        },
+        {
+            "type": "text",
+            "title": "Round 3 Christmas Anagram",
+            "text": "IVY TITAN"
+        },
+        {
+            "type": "text",
+            "title": "Round 3 Christmas Anagram",
+            "text": "KING SCOT"
+        },
+
 
         {
             "type": "timer",
-            "title": "Round 2 - Question of Sport",
+            "title": "Round 4 - Question of Sport",
             "text": "Charades but with speaking!"
         },
-
-        {
-            "type": "text",
-            "title": "Round 3 - Which headline is Fake News?",
-            "text": "<ol><li>WORLDS FIRST HOTDOG VENDING MACHINE OPENS IN MALAYSIA</li><li>SLOVAK PENSIONER OPENS STUFFED ANIMAL ZOO</li><li>JAPANESE FANS SAY GODZILLA IS TOO FAT</li></ol>"
-        },
-        {
-            "type": "text",
-            "title": "Round 3 - Which headline is Fake News?",
-            "text": "<ol><li>SCIENTISTS CREATE A PLANT THAT CANNOT DIE</li><li>SCIENTISTS TO CREATE STEM CELL BURGER</li><li>SCIENTISTS CREATE WATER ACTIVATED SELF FOLDING STRAWS</li></ol>"
-        },
-        {
-            "type": "text",
-            "title": "Round 3 - Which headline is Fake News?",
-            "text": "<ol><li>TRUMP CLAIMED CLIMATE CHANGE WAS A HOAX MADE BY CHINA</li><li>TRUMP CAMPAIGN OFFERED ACTORS $50 TO CHEER FOR PRESIDENTIAL ANNOUNCEMENT</li><li>TRUMP TWITTER FIGHT WITH FORMER WRESTLER HULK HOGAN</li></ol>"
-        },
-        {
-            "type": "text",
-            "title": "Round 3 - Which headline is Fake News?",
-            "text": "<ol><li>FLOOD OF CARAMEL UNLEASHED BY BRAZILIAN SUGAR FIRE</li><li>SEA MONSTER WASHES ASHORE IN NZ</li><li>WEATHERMAN TRAPPED BY AVALANCHE MID REPORT</li></ol>"
-        },
-        {
-            "type": "text",
-            "title": "Round 3 - Which headline is Fake News?",
-            "text": "<ol><li>NORTH KOREAN CATS ROUNDED UP AND SENT SOUTH</li><li>KIM-JONG UN THROWS DANCE PARTY TO CELEBRATE NORTH KOREAN MISSILE LAUNCH</li><li>AUSTRALIAN IMPOSTERS PLAY OFFICIAL GOLF TOURNAMENT IN NORTH KOREA</li></ol>"
-        },
-        {
-            "type": "text",
-            "title": "Round 3 - Which headline is Fake News?",
-            "text": "<ol><li>CROCODILE BREAKS LOOSE ON QANTAS FLIGHT</li><li>WOMBAT GROUNDS FLIGHT IN SYDNEY</li><li>SKIPPY CAUSES PLANE CRASH</li></ol>"
-        },
-        {
-            "type": "text",
-            "title": "Round 3 - Which headline is Fake News?",
-            "text": "<ol><li>NASA IS INSTALLING INTERNET ON THE MOON</li><li>A UNIVERSITY BANNED THE USE OF CAPITAL LETTERS TO AVOID SCARING STUDENTS</li><li>EIGHT-YEAR-OLD GIRL PULLS MEDIEVAL SWORD FROM LAKE</li></ol>"
-        },
-        {
-            "type": "text",
-            "title": "Round 3 - Which headline is Fake News?",
-            "text": "<ol><li>AUSTRALIA IS MOVING FURTHER NORTH WHICH MEANS PEOPLE USIG SAT NAVS MIGHT STRUGGLE TO FIND SIGNIFICANT LANDMARKS</li><li>WORLDS FIRST UNDERWATER GOLF COURSE OPENS</li><li>HUMBOLDT PENGUIN BREAKS INTO FAMILY HOME</li></ol>"
-        },
-        {
-            "type": "text",
-            "title": "Round 3 - Which headline is Fake News?",
-            "text": "<ol><li>POLAR BEARS SCREAM WHEN THEY POO</li><li>ORANGUTANS USE SLANG, JUST LIKE HUMANS</li><li>ARTIST SELLS 'INVISIBLE' SCULPTURE FOR MORE THAN &pound;12,000</li></ol>"
-        },
-        {
-            "type": "text",
-            "title": "Round 3 - Which headline is Fake News?",
-            "text": "<ol><li>CHEEKY PARROT KEEPS USING AMAZON'S ALEXA TO ORDER SNACKS.</li><li>PETITION FOR APPLE TO CREATE A SERIES OF HARRY POTTER EMOJIS REACHES 100,000 SIGNATURES.</li><li>ZOO IN THE NETHERLANDS INTRODUCES ONLINE DATING PROFILES FOR THEIR ORANG-UTAN.</li></ol>"
-        },
-
-
-        {
-            "type": "text",
-            "title": "Round 4 - Cryptic Quiz",
-            "text": "WHAT MOVIE AM I? - 24carat piece of anatomy"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Cryptic Quiz",
-            "text": "WHAT MOVIE AM I? - Australia's top magician"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Cryptic Quiz",
-            "text": "WHAT DRINK AM I? - Put at ease in Alabama"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Cryptic Quiz",
-            "text": "WHAT DRINK AM I? - He guards the crown jewels."
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Cryptic Quiz",
-            "text": "WHAT BAND AM I? - They gather no moss"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Cryptic Quiz",
-            "text": "WHAT BAND AM I? - Mexican food would be bland without them"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Cryptic Quiz",
-            "text": "WHAT UNDERGROUDN STATION AM I? - BAD NEWS FOR NAPOLEON"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Cryptic Quiz",
-            "text": "WHAT UNDERGROUND AM I? - Alpine Dwelling"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Cryptic Quiz",
-            "text": "WHAT CITY AM I? - Shipsmen"
-        },
-        {
-            "type": "text",
-            "title": "Round 4 - Cryptic Quiz",
-            "text": "WHAT CITY AM I? - A male part of the torso, with no hesitation"
-        },
-
 
         {
             "type": "catchphrase",
@@ -222,22 +227,21 @@
             "timer": 10
         },
 
-
         {
             "type": "pictionary",
             "title": "Team Turkeys",
             "team": 0,
             "questions": [
-                "Scooter",
-                "Cow",
-                "Elf",
-                "Flower",
-                "Paintbrush",
-                "Hand",
-                "Ladybird",
-                "Socks",
-                "Ghost",
-                "Dentist"
+                "TOY STORY",
+                "SEAHORSE",
+                "SUNFLOWER",
+                "POSTBOX",
+                "STAR FISH",
+                "HONEYMOON",
+                "DANCING QUEEN",
+                "JUNGLE BOOK",
+                "UNICORN",
+                "ALARM"
             ],
             "timer": 120
         },
@@ -246,16 +250,16 @@
             "title": "Team Sprouts",
             "team": 1,
             "questions": [
-                "Landslide",
-                "Game of Thrones",
-                "Santa",
-                "Eyelashes",
-                "Unicorn",
-                "Computer",
-                "Car",
-                "Toothbrush",
-                "Birthday Cake",
-                "Spiderweb"
+                "BELOW ZERO",
+                "FRUIT CAKE",
+                "PINNOCCIO",
+                "TREE HOUSE",
+                "SUNGLASSES",
+                "POLICE",
+                "FRUIT BOWL",
+                "PADDINGTON BEAR",
+                "CHEESE",
+                "BEEHIVE"
             ],
             "timer": 120
         },
@@ -264,16 +268,16 @@
             "title": "Team Spuds",
             "team": 2,
             "questions": [
-                "Flying saucer",
-                "Bible",
-                "Bikini",
-                "Book",
-                "Recycle",
-                "Giraffe",
-                "Glasses",
-                "High heel",
-                "Sand castle",
-                "Snowflake"
+                "CHICKEN RUN",
+                "MOONLIGHT",
+                "HANDBAG",
+                "HORSESHOE",
+                "FISHBOWL",
+                "CAMPING",
+                "MOTORSPORT",
+                "TITANIC",
+                "TREASURE",
+                "GHOST"
             ],
             "timer": 120
         },
@@ -282,16 +286,16 @@
             "title": "Team Puddings",
             "team": 3,
             "questions": [
-                "Bicycle",
-                "Bird",
-                "Chickenpox",
-                "Teddy Bear",
-                "Cowboy",
-                "Toast",
-                "Queen",
-                "Hot Dog",
-                "Dominoes",
-                "Dice"
+                "LION KING",
+                "RAINBOW",
+                "SWORDFISH",
+                "LIGHTHOUSE",
+                "SNOWMAN",
+                "ICECREAM VAN",
+                "BRIDE",
+                "CHRISTMAS CAROL",
+                "HAIRDRESSER",
+                "FULL MOON"
             ],
             "timer": 120
         },
@@ -300,81 +304,221 @@
             "title": "Team Pies",
             "team": 4,
             "questions": [
-                "Tire",
-                "Church",
-                "Crayon",
-                "Dolphin",
-                "Egg",
-                "Toothpaste",
-                "Truck",
-                "Olympics",
-                "Night",
-                "Nose"
+                "APPLE",
+                "DOORBELL",
+                "EARING",
+                "GRAPES",
+                "CHURCH",
+                "HOSPITAL",
+                "LIBRARY",
+                "FINDING NEMO",
+                "HAIRDRYER",
+                "NORTH POLE"
             ],
             "timer": 120
         },
 
         {
+            "type": "multichoice",
+            "title": "Round 7 - Famous Quotes",
+            "question": {
+                "title": "I came, I saw, I conquered",
+                "answers": {
+                    "NAPOLEON": false,
+                    "JULIAS CEASER": true,
+                    "MAO TSE TUNG": false,
+                    "RICHARD OF YORK": false
+                }
+            },
+            "timer": 10
+        },
+        {
+            "type": "multichoice",
+            "title": "Round 7 - Famous Quotes",
+            "question": {
+                "title": "A person who never made a mistake never tried anything new",
+                "answers": {
+                    "BILL GATES": false,
+                    "ISAAC NEWTON": false,
+                    "ALBERT EINSTEIN": true,
+                    "VOLTAIRE": false
+                }
+            },
+            "timer": 10
+        },
+        {
+            "type": "multichoice",
+            "title": "Round 7 - Famous Quotes",
+            "question": {
+                "title": "The only thing we have to fear is fear itself",
+                "answers": {
+                    "FRANKLIN D ROOSEVELT": true,
+                    "WINSTON CHURCHILL": false,
+                    "DONALD TRUMP": false,
+                    "MARGARET THATCHER": false
+                }
+            },
+            "timer": 10
+        },
+        {
+            "type": "multichoice",
+            "title": "Round 7 - Famous Quotes",
+            "question": {
+                "title": "That's one small step for man, one giant leap for mankind",
+                "answers": {
+                    "MARTIN LUTHER KING": false,
+                    "BUZZ ALDRIN": false,
+                    "GHANDI": false,
+                    "NEIL ARMSTRONG": true
+                }
+            },
+            "timer": 10
+        },
+        {
+            "type": "multichoice",
+            "title": "Round 7 - Famous Quotes",
+            "question": {
+                "title": "Ask not what your country can do for you, ask what you can do for your country.",
+                "answers": {
+                    "THEODORE ROOSELVELT": false,
+                    "JOHN F KENNEDY": true,
+                    "WILLIAM THE CONQUEROR": false,
+                    "SIMON BOLIVAR": false
+                }
+            },
+            "timer": 10
+        },
+        {
+            "type": "multichoice",
+            "title": "Round 7 - Famous Quotes",
+            "question": {
+                "title": "Marriage is like putting your hand into a bag of snakes in hopes of pulling out an eel",
+                "answers": {
+                    "RICHARD BURTON": false,
+                    "MARILYN MONROE": false,
+                    "JOHNNY DEPP": false,
+                    "LEONARDO DA VINCI": true
+                }
+            },
+            "timer": 10
+        },
+        {
+            "type": "multichoice",
+            "title": "Round 7 - Famous Quotes",
+            "question": {
+                "title": "A career is wonderful, but you can't curl up with it on a cold night",
+                "answers": {
+                    "LILLY TOMLIN": false,
+                    "SANDRA BULLOCK": false,
+                    "MARILYN MONROE": true,
+                    "GOLDIE HAWN": false
+                }
+            },
+            "timer": 10
+        },
+        {
+            "type": "multichoice",
+            "title": "Round 7 - Famous Quotes",
+            "question": {
+                "title": "The mind is everything. What you think, you become.",
+                "answers": {
+                    "JOHN LENNON": false,
+                    "NONE OF THESE": false,
+                    "GUATAMA BUDDHA": true,
+                    "SIGMUND FREUD": false
+                }
+            },
+            "timer": 10
+        },
+        {
+            "type": "multichoice",
+            "title": "Round 7 - Famous Quotes",
+            "question": {
+                "title": "All our dreams can come true, if we have the courage to pursue them.",
+                "answers": {
+                    "NELON MANDELA": false,
+                    "WALT DISNEY": true,
+                    "ALBERT EINSTEIN": false,
+                    "ABRAHAM LINCOLN": false
+                }
+            },
+            "timer": 10
+        },
+        {
+            "type": "multichoice",
+            "title": "Round 7 - Famous Quotes",
+            "question": {
+                "title": "Eighty percent of success is showing up.",
+                "answers": {
+                    "WOODY ALLEN": true,
+                    "JOHN LENNON": false,
+                    "FRIEDRICH NIETZSCHE": false,
+                    "WINSTON CHURCHILL": false
+                }
+            },
+            "timer": 10
+        },
+
+        {
             "type": "audio",
             "title": "Round 7 - Sing That Chorus",
-            "text": "Final Countdown",
+            "text": "YMCA",
             "audio": "chorus_1"
         },
         {
             "type": "audio",
             "title": "Round 7 - Sing That Chorus",
-            "text": "Living on a prayer",
+            "text": "COMMON PEOPLE - PULP",
             "audio": "chorus_2"
         },
         {
             "type": "audio",
             "title": "Round 7 - Sing That Chorus",
-            "text": "Bohemian Rhapsody",
+            "text": "AINT NOBODY - CHAKA KHAN",
             "audio": "chorus_3"
         },
         {
             "type": "audio",
             "title": "Round 7 - Sing That Chorus",
-            "text": "Wonderwall",
+            "text": "REHAB - AMY WHINEHOUSE",
             "audio": "chorus_4"
         },
         {
             "type": "audio",
             "title": "Round 7 - Sing That Chorus",
-            "text": "Born to be Wild",
+            "text": "HAPPY - PHARELL",
             "audio": "chorus_5"
         },
         {
             "type": "audio",
             "title": "Round 7 - Sing That Chorus",
-            "text": "Bat out of Hell",
+            "text": "WANNABE - SPICE GIRLS",
             "audio": "chorus_6"
         },
         {
             "type": "audio",
             "title": "Round 7 - Sing That Chorus",
-            "text": "Highway to Hell",
+            "text": "WHAT'S LOVE GOT TO DO WITH IT - TINA TURNER",
             "audio": "chorus_7"
         },
         {
             "type": "audio",
             "title": "Round 7 - Sing That Chorus",
-            "text": "Boys are back in Town",
+            "text": "KNOCKIN ON HEAVENS DOOR - GUNS N ROSES",
             "audio": "chorus_8"
         },
         {
             "type": "audio",
             "title": "Round 7 - Sing That Chorus",
-            "text": "I believe in a thing called love",
+            "text": "WE WILL ROCK YOU - QUEEN",
             "audio": "chorus_9"
         },
         {
             "type": "audio",
             "title": "Round 7 - Sing That Chorus",
-            "text": "I love Rock N Roll",
+            "text": "FAIRYTALE OF NEW YORK - POGUES",
             "audio": "chorus_10"
         },
-
 
         {
             "type": "santassleighride",
@@ -382,155 +526,251 @@
             "text": "First nose to the post wins!",
             "questions": [
                 {
-                    "title": "Which of these Dickens facts is correct?",
+                    "title": "What type of computer was the first laptop computer?",
                     "answers": {
-                        "He went to work in a shoe factory as a boy": true,
-                        "He wrote his first novel aged 24": true,
-                        "He wanted to become an actor": true
+                        "Apple Macintosh": false,
+                        "IBM PC": false,
+                        "Osborne 1": true
                     }
                 },
                 {
-                    "title": "How high is Mount Everest?",
+                    "title": "The flag of Romania contains which of these colours?",
                     "answers": {
-                        "6,849m": false,
-                        "7,849m": false,
-                        "9,849m": false
+                        "Red": true,
+                        "Yellow": true,
+                        "Blue": true
                     }
                 },
                 {
-                    "title": "Anemophobia is the fear of what?",
+                    "title": "The number of strings on a ukulele?",
                     "answers": {
-                        "The Dark": false,
-                        "Fire": false,
-                        "Wind": true
+                        "3": false,
+                        "6": false,
+                        "8": false
                     }
                 },
                 {
-                    "title": "Which of these facts about France are correct?",
+                    "title": "In Ancient Rome, how many days of the week were there?",
                     "answers": {
-                        "The French invented camouflage": true,
-                        "It's the most visited country in the world": true,
-                        "France is bigger than Texas": false
+                        "Five": false,
+                        "Six": false,
+                        "Eight": true
                     }
                 },
                 {
-                    "title": "Pierce Brosnan featured in which of these films?",
+                    "title": "What is the modern name for the island formerly known as Van Diemen's Land?",
                     "answers": {
-                        "Mrs Doubtfire": true,
-                        "Mamma Mia": true,
-                        "No Time to die": false
+                        "The Isle of Wight": false,
+                        "Tasmania": true,
+                        "Hawaii": false
                     }
                 },
                 {
-                    "title": "Which of these countries has a coastline?",
+                    "title": "Who painted The Last Supper?",
                     "answers": {
-                        "Estonia": true,
-                        "Lithuania": true,
-                        "Latvia": true
+                        "Leonardo Da Vinci": true,
+                        "Rembrandt": false,
+                        "Michelangelo": false
                     }
                 },
                 {
-                    "title": "Which if these geographical facts about Ireland are true?",
+                    "title": "Name the oldest member of the Jackson 5",
                     "answers": {
-                        "Carrauntoohill is the highest mountain in Ireland": true,
-                        "The river Shannon is the longest river in Ireland and Britain ": true,
-                        "Lough Neagh is the largest lake in Britain and Ireland": true
+                        "Jermaine Jackson": false,
+                        "Janet Jackson": false,
+                        "Randy Jackson": false
                     }
                 },
                 {
-                    "title": "Which of these facts are false?",
+                    "title": "Which country has the most number of vegetarian citizens?",
                     "answers": {
-                        "Captain Morgan (Morgan spiced rum) was a real person": true,
-                        "Cleopatra Was Not Egyptian": true,
-                        "Former U.S. President Bill Clinton Lost the Nuclear Launch Codes": true
+                        "United Kingdom": false,
+                        "Brazil": false,
+                        "India": true
                     }
                 },
                 {
-                    "title": "Which constellation is on the Australian flag?",
+                    "title": "Countries which were/are part of the British Empire?",
                     "answers": {
-                        "Ursa Minor": false,
-                        "Orion": false,
-                        "The southern cross": true
+                        "Montserrat": true,
+                        "The Gambia": true,
+                        "Egypt": false
                     }
                 },
                 {
-                    "title": "Which of these are true?",
+                    "title": "Farrokh Bulsara was the real name of which singing legend?",
                     "answers": {
-                        "The amazon is home to around 30 million people": true,
-                        "You can find more types of ant on one tree in the Amazon than you can in some countries": true,
-                        "The  Amazon spans across 9 countries ": true
+                        "Jimi Hendrix": false,
+                        "Marc Bolan": false,
+                        "Freddie Mercury": true
                     }
                 },
                 {
-                    "title": "How many stars in the American flag",
+                    "title": "How many Spice Girls were there in the original lineup?",
                     "answers": {
-                        "35": false,
-                        "45": false,
-                        "55": false
+                        "4": false,
+                        "5": true,
+                        "6": false
                     }
                 },
                 {
-                    "title": "Which of these facts is correct about Captain James Cook?",
+                    "title": "Which of these is not a fruit?",
                     "answers": {
-                        "He made three voyages": true,
-                        "He was born in Yorkshire": true,
-                        "He sailed 5 ships for his voyages between 1768-1780": false
+                        "Cucumber": false,
+                        "Butternut squash": false,
+                        "Courgette": false
                     }
                 },
                 {
-                    "title": "Who purchased Myspace in 2011?",
+                    "title": "Which instrument is associated with jazz legend Louis Armstrong?",
                     "answers": {
-                        "AJ McLean": false,
-                        "Justin Timberlake": true,
-                        "Nick Lachey": false
+                        "Trumpet": true,
+                        "Saxophone": false,
+                        "Piano": false
                     }
                 },
                 {
-                    "title": "Which of these web facts are correct?",
+                    "title": "Which of these is not a capital city?",
                     "answers": {
-                        "First website went live in 1991": true,
-                        "the internet came before the world wide web": true,
-                        "Google launched in 1997": false
+                        "Toronto": true,
+                        "Istanbul": true,
+                        "Bern": false
                     }
                 },
                 {
-                    "title": "Which woman holds the record for most Wimbledon Ladies singles titles?",
+                    "title": "Which of these facts is true?",
                     "answers": {
-                        "Venus Williams": false,
-                        "Steffi Graff": false,
-                        "Serena Williams": false
+                        "The river Trent passes through 6 counties": true,
+                        "The river Trent is Britains only north flowing river": true,
+                        "The river Trent is the UK's 4th longest river": false
                     }
                 },
                 {
-                    "title": "Which countries have hosted both the summer and winter Olympics?",
+                    "title": "Which of these countries borders Switzerland?",
                     "answers": {
-                        "France": true,
                         "Germany": true,
-                        "Italy": true
+                        "France": true,
+                        "Austria": true
                     }
                 },
                 {
-                    "title": "Which of these facts are correct?",
+                    "title": "Where was the first example of paper money used?",
                     "answers": {
-                        "In the Philippines there’s a Lake Within an Island on a Lake Within an Island": true,
-                        "Russia and China Touch 14 Countries Each": true,
-                        "There are only three Countries which are landlocked by one country": true
+                        "Japan": false,
+                        "Turkey": false,
+                        "Greece": false
                     }
                 },
                 {
-                    "title": "Which of these space facts is correct?",
+                    "title": "What spirit is used in making a Tom Collins?",
                     "answers": {
-                        "The sunset on Mars appears blue": true,
-                        "There are more grains of sand on earth than there are stars in the universe": false,
-                        "It is estimated  there are more trees on earth than stars in the milky way": true
+                        "Vodka": false,
+                        "Rum": false,
+                        "Malibu": false
                     }
                 },
                 {
-                    "title": "Which of these are correct?",
+                    "title": "Which of these facts about Japan are true?",
                     "answers": {
-                        "Italy has a free, public wine fountain": true,
-                        "The biggest pyramid in the world is in Egypt": false,
-                        "Sudan has the most pyramids in the world & Sudan has the most pyramids in the world": true
+                        "The first geisha in Japan were men": true,
+                        "In Japan there is one vending machine for around every 24 people": true,
+                        "The oldest company in the work is in Japan - kongo gumi co., ltd founded in 578 ad": true
+                    }
+                },
+                {
+                    "title": "What is the body's heaviest organ?",
+                    "answers": {
+                        "Brain": false,
+                        "Heart": false,
+                        "Kidney": false
+                    }
+                },
+                {
+                    "title": "Which of these geographical facts is true?",
+                    "answers": {
+                        "Mt Everest can fit inside the Marianas trench (the deepest part of the ocean)": true,
+                        "Russia spans 11 time zones": true,
+                        "Australia is wider than the moon": true
+                    }
+                },
+                {
+                    "title": "Which pop singers hits include Roar and Teenage Dream?",
+                    "answers": {
+                        "Kylie Minogue": false,
+                        "Madonna": false,
+                        "Britney Spears": false
+                    }
+                },
+                {
+                    "title": "Which animal(s) is not in the Chinese zodiac?",
+                    "answers": {
+                        "Hummingbird": true,
+                        "Cat": true,
+                        "Snake": false
+                    }
+                },
+                {
+                    "title": "The Da Vinci code opens with murder in which museum?",
+                    "answers": {
+                        "The Van Gough Museum": false,
+                        "The Guggenheim": false,
+                        "The Louvre": true
+                    }
+                },
+                {
+                    "title": "In Greek mythology who is the Queen of the underworld?",
+                    "answers": {
+                        "Pandora": false,
+                        "Medusa": false,
+                        "Helen": false
+                    }
+                },
+                {
+                    "title": "Which of these words is spelt correctly?",
+                    "answers": {
+                        "Narcissistic": true,
+                        "Miniscule": false,
+                        "Onomatopoeia": true
+                    }
+                },
+                {
+                    "title": "Which of these words is spelt correctly?",
+                    "answers": {
+                        "Fuschia": false,
+                        "Sacrelegious": false,
+                        "Mischevious": false
+                    }
+                },
+                {
+                    "title": "Which of the following volcanoes are still active?",
+                    "answers": {
+                        "Mount Etna": true,
+                        "Popocatépetl": true,
+                        "Stromboli": true
+                    }
+                },
+                {
+                    "title": "Which of these facts about Edinburgh is true?",
+                    "answers": {
+                        "Edinburgh castle is built on an exinct volcanoe": true,
+                        "Edinburgh is the first city in the world to to have it's own fire service": true,
+                        "Edinburgh has 112 parks and more trees per head of population than any other city in the uk": true
+                    }
+                },
+                {
+                    "title": "The Dolomites straddle which countries/country",
+                    "answers": {
+                        "Italy": true,
+                        "Switzerland": false,
+                        "Austria": true
+                    }
+                },
+                {
+                    "title": "Is the Quiz App going to crash after this last question?",
+                    "answers": {
+                        "Yes": false,
+                        "No": true,
+                        "Maybe": false
                     }
                 }
             ]

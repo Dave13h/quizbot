@@ -88,6 +88,11 @@ class oTeam {
         this.buzzer   = null;
         this.logo     = null;
         this.avatar   = null;
+        this.powerups = {
+            'silence':  true,
+            'boost':   true,
+            'wildcard': false
+        };
     }
 
     toJson () {
@@ -99,6 +104,13 @@ class oTeam {
             logo: this.logo,
             avatar: this.avatar
         };
+    }
+
+    refreshPowerups () {
+        this.powerups['silence']  = true;
+        this.powerups['boost']    = true;
+        this.powerups['wildcard'] = true;
+        return this;
     }
 
     getId () {
@@ -187,6 +199,7 @@ class oQuestion {
             this.timer = parseInt(data.timer);
 
         this.questions = [];
+        this.question  = false;
         switch (this.type) {
             case 'audio':
                 this.audio = data.audio;
@@ -203,6 +216,10 @@ class oQuestion {
 
             case 'santassleighride':
                 this.questions = data.questions;
+                break;
+
+            case 'multichoice':
+                this.question = data.question;
                 break;
         }
     }
@@ -236,6 +253,10 @@ class oQuestion {
 
     getQuestions () {
         return this.questions;
+    }
+
+    getQuestion () {
+        return this.question;
     }
 
     getPoints() {

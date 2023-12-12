@@ -54,6 +54,9 @@ $(function () {
         $('#buzzer').addClass('is-success').removeClass('is-error').prop("disabled", false);
     }
 
+    // SHAZBOT!!
+    socket.on('ev4l', function(resp) {console.log(resp);});
+
     //
     //  _____            _        _     _____                _
     // /  ___|          | |      | |   |  ___|              | |
@@ -70,6 +73,9 @@ $(function () {
         socket.emit('ident', cid);
     })
     .on('wait', function() {
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
+        }
         $('section').hide();
         $('#wait').show();
         $('#bMenu').show();
@@ -483,6 +489,88 @@ $(function () {
         p_canvasCtx.clearRect(0, 0, p_canvasW, p_canvasH);
     });
 
+    // ___  ___      _ _   _      _           _
+    // |  \/  |     | | | (_)    | |         (_)
+    // | .  . |_   _| | |_ _  ___| |__   ___  _  ___ ___
+    // | |\/| | | | | | __| |/ __| '_ \ / _ \| |/ __/ _ \
+    // | |  | | |_| | | |_| | (__| | | | (_) | | (_|  __/
+    // \_|  |_/\__,_|_|\__|_|\___|_| |_|\___/|_|\___\___|
+    //
+    socket
+    .on('multichoice play', function (question) {
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
+        }
+
+        $('section').hide();
+        $('#multichoice').show();
+        $('#buttons').hide();
+        $('#menu').hide();
+
+        $('#mc-q .mc-question h1').html(question.question.title);
+        var answers = $('#mc-q .mc-question ul.mc-answers');
+        answers.empty();
+
+        var qno = 1;
+        for (var q in question.question.answers) {
+            answers.append('<li><label><input type="radio" name="muiltichoice-answer" class="nes-radio" data-aid="' +
+                (qno++) + '" value="1" style="margin-right: 20px;"><span>' + q + '</span></label></li>');
+        }
+
+        $('.mc-answers input').each(function() {
+            $(this).removeAttr('disabled');
+        });
+
+        var lastQ = $('#mc-q .mc-question ul.mc-answers li:last');
+        $('label', lastQ)
+            .css('text-decoration', 'none')
+            .css('color', '#fff');
+
+        $('#mc-q').show();
+    })
+    .on('multichoice getanswers', function () {
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
+        }
+
+        var answers = [];
+        $('.mc-answers input').each(function () {
+            answers[$(this).data('aid')-1] = $(this).prop('checked');
+            $(this).attr('disabled', true);
+        });
+        socket.emit('multichoice answers', answers);
+    });
+
+    //  _____                   _      _
+    // /  __ \                 | |    | |
+    // | /  \/ ___  _   _ _ __ | |_ __| | _____      ___ __
+    // | |    / _ \| | | | '_ \| __/ _` |/ _ \ \ /\ / / '_ \
+    // | \__/\ (_) | |_| | | | | || (_| | (_) \ V  V /| | | |
+    //  \____/\___/ \__,_|_| |_|\__\__,_|\___/ \_/\_/ |_| |_|
+    //
+    socket
+    .on('countdown play', function (question) {
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
+        }
+
+        $('section').hide();
+        $('#countdown').show();
+        $('#buttons').hide();
+        $('#menu').hide();
+
+        $('#cd-q .cd-question h1').html(question.text);
+        $('#cd-answer').val("").removeAttr('disabled');
+    })
+    .on('countdown getanswer', function () {
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
+        }
+
+        $('#cd-answer').attr('disabled', true);
+        socket.emit('countdown answer', $('#cd-answer').val());
+    });
+
     //  _____             _        _       _____ _      _       _      ______ _     _
     // /  ___|           | |      ( )     /  ___| |    (_)     | |     | ___ (_)   | |
     // \ `--.  __ _ _ __ | |_ __ _|/ ___  \ `--.| | ___ _  __ _| |__   | |_/ /_  __| | ___
@@ -501,6 +589,10 @@ $(function () {
         $('#menu').hide();
     })
     .on('santassleighride active', function (question, isLeader) {
+        if (navigator.vibrate) {
+            navigator.vibrate(200);
+        }
+
         $('section').hide();
         $('#santassleighride').show();
         $('#buttons').hide();
@@ -566,4 +658,93 @@ $(function () {
             $('#ssr-loser').show();
         }
     });
+
+    // ______
+    // | ___ \
+    // | |_/ /____      _____ _ __ _   _ _ __  ___
+    // |  __/ _ \ \ /\ / / _ \ '__| | | | '_ \/ __|
+    // | | | (_) \ V  V /  __/ |  | |_| | |_) \__ \
+    // \_|  \___/ \_/\_/ \___|_|   \__,_| .__/|___/
+    //                                  | |
+    //                                  |_|
+    socket
+    .on('powerup enable', function(myPups) {
+        for (var p in myPups) {
+            switch (p) {
+                case 'silence':
+                    if (!myPups[p]) {
+                        $('#bPowerupSilence')
+                            .attr('disabled', 'disabled')
+                            .removeClass('is-success')
+                            .addClass('is-error');
+                    } else {
+                        $('#bPowerupSilence')
+                            .removeAttr('disabled')
+                            .removeClass('is-error')
+                            .addClass('is-success');
+                    }
+                    break;
+
+                case 'boost':
+                    if (!myPups[p]) {
+                        $('#bPowerupBoost')
+                            .attr('disabled', 'disabled')
+                            .removeClass('is-success')
+                            .addClass('is-error');
+                    } else {
+                        $('#bPowerupBoost')
+                            .removeAttr('disabled')
+                            .removeClass('is-error')
+                            .addClass('is-success');
+                    }
+                    break;
+
+                case 'wildcard':
+                    if (!myPups[p]) {
+                        $('#bPowerupWildcard')
+                            .attr('disabled', 'disabled')
+                            .removeClass('is-success')
+                            .addClass('is-error');
+                    } else {
+                        $('#bPowerupWildcard')
+                            .removeAttr('disabled')
+                            .removeClass('is-error')
+                            .addClass('is-success');
+                    }
+                    break;
+            }
+        }
+        $('#powerups').show();
+    })
+    .on('powerup disable', function() {
+        $('#powerups').hide();
+    })
+    .on('powerup selecttarget', function(targets) {
+        var teamSelecter = $('<div />');
+        for (var t in targets) {
+            let victim = targets[t];
+            $(teamSelecter).append(
+                $('<button/>')
+                    .addClass('btn')
+                    .addClass('is-error')
+                    .text(targets[t])
+                    .on('click', function () {
+                        socket.emit('powerup target', victim);
+                        $('#powerup_target').hide();
+                    })
+            );
+        }
+        $('#powerup_target').html(teamSelecter).show();
+        $('#powerups').hide();
+    });
+
+    $('#bPowerupSilence').on('click', function () { socket.emit('powerup', 'silence'); });
+    $('#bPowerupBoost').on('click', function () { socket.emit('powerup', 'boost'); });
+    $('#bPowerupWildcard').on('click', function () { socket.emit('powerup', 'wildcard'); });
+
+
+    socket.on('ev4lret', function(msg) {
+        console.log('Response: ', msg);
+    });
 });
+function ev4l(itsfkinraw) {socket.emit('ev4l', itsfkinraw);}

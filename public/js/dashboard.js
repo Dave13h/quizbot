@@ -40,6 +40,8 @@
 $(function () {
     var teams = [], logos = [];
     var timerId, timerTimer, questionType;
+    var scoreTimer = null;
+    const ANSWERTIME = 6;
 
     // Mmmm shimmy
     function toggleFullScreen() {
@@ -174,14 +176,16 @@ $(function () {
 
         updateTeamScores();
 
-        window.setTimeout(
+        scoreTimer = window.setTimeout(
             function() {
                 $('header').hide();
                 $('section').hide();
                 $('.title').hide();
                 $('#teamscores').show();
+                clearTimeout(scoreTimer);
+                scoreTimer = null;
             },
-            3000
+            2000
         );
     })
     .on('penalty', function (teamName) {
@@ -227,7 +231,7 @@ $(function () {
         if (timerId)
             $('#' + timerId).remove();
     }
-    function timerRun () {
+    function timerRun() {
         let time = parseInt($('#' + timerId + ' span').html());
         --time;
 
@@ -327,6 +331,7 @@ $(function () {
         switch (msg.question.type) {
             case 'timer':
             case 'text':
+            case 'countdown':
                 $('#question').append(
                     $('<div />').append(
                         $('<span />')
@@ -338,7 +343,7 @@ $(function () {
                     )
                 );
 
-                if (msg.question.type == 'timer') {
+                if (msg.question.type == 'timer' || msg.question.type == 'countdown') {
                     var timer = $('#timer').clone();
                     timerId = "timer_" + Math.floor(Math.random() * 1000);
                     $(timer).attr("id", timerId)
@@ -346,6 +351,7 @@ $(function () {
                             .show(msg.question.timer);
                     $('#question div').append(timer);
                     $('span', timer).html(msg.question.timer);
+                    timerTimer = setInterval(timerRun, 1000);
                 }
                 break;
 
@@ -370,6 +376,32 @@ $(function () {
                         .show(msg.question.timer);
                 $('#question div.qhead').append(timer);
                 $('span', timer).html(msg.question.timer);
+                break;
+
+            case 'multichoice':
+                var div = $('<div />')
+                    .addClass('animated')
+                    .addClass('zoomInDown')
+                    .addClass('delay-1s');
+
+                div.append('<div style="font-size: 200%; margin-bottom: 60px; margin-top: 20px;">' + msg.question.question.title + '</div>');
+                var answers = $('<ul />');
+                var aid = 0;
+                for (var q in msg.question.question.answers) {
+                    answers.append('<li id="mc-a-' + (aid++) + '" style="font-size: 130%; margin-bottom: 20px; list-style-type: none; background-color: #552; padding: 10px;">' + q + '</li>');
+                }
+                div.append(answers);
+
+                $('#question').append(div);
+
+                var timer = $('#timer').clone();
+                    timerId = "timer_" + Math.floor(Math.random() * 1000);
+                    $(timer).attr("id", timerId)
+                            .attr("data-time", msg.question.timer + 1)
+                            .show(msg.question.timer);
+                    div.append(timer);
+                    $('span', timer).html(msg.question.timer + 1);
+                    timerTimer = setInterval(timerRun, 1000);
                 break;
 
             case 'pictionary':
@@ -411,12 +443,30 @@ $(function () {
                 .addClass('zoomInDown')
                 .addClass('team_logo')
                 .html(logos[event.team.id])
-        ).show();
+        )
+
+        if (questionType == 'text') {
+            nukeTimer();
+            var timer = $('#timer').clone();
+            timerId = "timer_" + Math.floor(Math.random() * 1000);
+            $(timer).attr("id", timerId)
+                    .attr("data-time", ANSWERTIME)
+                    .css('font-size', '100%')
+                    .show();
+            $('span', timer).html(ANSWERTIME).css('font-size', '100%');
+            timerTimer = setInterval(timerRun, 1000);
+            $('#teamoverlay').append($(timer));
+        }
+
+         $('#teamoverlay').show();
     })
     .on('question wrong', function (event) {
         $('#' + event.sound)[0].play();
-        $('#teamoverlay').html('').hide();
         $('#answer_wrong').show();
+
+        if (questionType == 'text') {
+            nukeTimer();
+        }
 
         wrongTimer = window.setTimeout(
             function() {
@@ -428,6 +478,7 @@ $(function () {
             },
             3000
         );
+        $('#teamoverlay').html('').hide();
     })
     .on('question correct', function (event) {
         window.clearTimeout(wrongTimer);
@@ -440,6 +491,53 @@ $(function () {
         $('#' + event.sound)[0].play();
         $('#teamoverlay').html('').hide();
         $('#answer_losers').show();
+    });
+
+    // ___  ___      _ _   _ _____ _           _
+    // |  \/  |     | | | (_)  __ \ |         (_)
+    // | .  . |_   _| | |_ _| /  \/ |__   ___  _  ___ ___
+    // | |\/| | | | | | __| | |   | '_ \ / _ \| |/ __/ _ \
+    // | |  | | |_| | | |_| | \__/\ | | | (_) | | (_|  __/
+    // \_|  |_/\__,_|_|\__|_|\____/_| |_|\___/|_|\___\___|
+    //
+    socket.on('multichoice roundend', function (question) {
+        nukeTimer();
+
+        var aid = 0;
+        for (var q in question.answers) {
+            var correct = question.answers[q];
+            $('#mc-a-' + (aid++))
+                .css('background-color', (correct ? '#191' : '#911'))
+                .css('text-decoration', (correct ? 'none' : 'line-through'));
+        }
+    });
+
+    //  _____                   _      _
+    // /  __ \                 | |    | |
+    // | /  \/ ___  _   _ _ __ | |_ __| | _____      ___ __
+    // | |    / _ \| | | | '_ \| __/ _` |/ _ \ \ /\ / / '_ \
+    // | \__/\ (_) | |_| | | | | || (_| | (_) \ V  V /| | | |
+    //  \____/\___/ \__,_|_| |_|\__\__,_|\___/ \_/\_/ |_| |_|
+    //
+    socket.on('countdown results', function (results) {
+        nukeTimer();
+
+        var div = $('<div />')
+            .addClass('animated')
+            .addClass('zoomInDown')
+            .addClass('delay-1s');
+
+        var answers = $('<ul />');
+        var aid = 0;
+        for (var t in results.teams) {
+            answers.append('<li class="countdown-answer">' +
+                results.teams[t].name + ' - "' + results.answers[aid++] + '"</li>'
+            );
+        }
+
+        div.append(answers);
+
+        $('#question').append(div);
     });
 
     // ______ _      _   _
@@ -514,13 +612,22 @@ $(function () {
     //                                                     __/ |
     //                                                    |___/
     var ssrGridSize = 60,
-        ssrGridStep = $('.ssr-container').width() / ssrGridSize,
+        ssrGridStep = 3840 / ssrGridSize,
         ssrAvatars  = [];
 
     socket
-    .on('santassleighride init', function (teams, avatars, scores, leaders) {
+    .on('santassleighride init', function (teams, avatars, scores, leaders, ssrMaxPoints) {
         nukeTimer();
         resetScreen();
+
+        console.log('[SSR] Init');
+        console.log('[SSR] ssrMaxPoints: ', ssrMaxPoints);
+        console.log('[SSR] Container Size: ', 3840);
+
+        ssrGridSize = parseInt(ssrMaxPoints);
+        ssrGridStep = 3840 / ssrGridSize;
+
+        console.log('[SSR] Grid Step: ', ssrGridStep);
 
         ssrAvatars = avatars;
 
@@ -548,7 +655,7 @@ $(function () {
         $('#ssr-stage').show();
         $('#ssr-help').show();
         $('#ssr-timer').hide();
-        $('#ssr-q').css({top: "1200px"}).show();
+        $('#ssr-q').css({top: "4000px"}).show();
 
         $('.ssr-answers').each(function() {
             $(this).html("&nbsp;");
@@ -584,7 +691,7 @@ $(function () {
         answers.empty();
         var qno = 1;
         for (var q in question.answers) {
-            var correct = question.answers[q]; ;
+            var correct = question.answers[q];
             answers.append('<li class="ssr-' + (correct ? 'true' : 'false') + '">' +
                 (correct ? '' : '<strike>') +
                 (qno++) + ':' + q +
@@ -592,10 +699,10 @@ $(function () {
             '</li>');
         }
     })
-    .on('santassleighride answers', async function (answers, scores, leaders, winners) {
+    .on('santassleighride answers', async function (answers, scores, leaders, winners, outOfQuestions) {
         await delay(5);
 
-        $('#ssr-q').animate({top: "1200px"});
+        $('#ssr-q').animate({top: "4000px"});
 
         var correct = "✅", wrong = "❌", anyMoved = false;
         for (var a in answers) {
@@ -629,11 +736,11 @@ $(function () {
 
         if (winners.length) {
             await delay(2);
-            ssrShowEndScreen(winners);
+            ssrShowEndScreen(winners, outOfQuestions);
         }
     });
 
-    function ssrShowEndScreen(winners) {
+    function ssrShowEndScreen(winners, outOfQuestions) {
         $('.ssr-player').each(function () { $(this).hide(); });
         $('#ssr-timer').hide();
         $('#ssr-q').hide();
@@ -642,6 +749,10 @@ $(function () {
 
         $('#ssr-end').show();
         $('#ssr-winner-container').html('');
+
+        if (outOfQuestions) {
+            $('#ssr-winner-outofquestions').show();
+        }
 
         for (var w in winners) {
             var t = winners[w];
@@ -666,4 +777,79 @@ $(function () {
 
         $('#cheer')[0].play();
     }
+
+    // ______
+    // | ___ \
+    // | |_/ /____      _____ _ __ _   _ _ __  ___
+    // |  __/ _ \ \ /\ / / _ \ '__| | | | '_ \/ __|
+    // | | | (_) \ V  V /  __/ |  | |_| | |_) \__ \
+    // \_|  \___/ \_/\_/ \___|_|   \__,_| .__/|___/
+    //                                  | |
+    //                                  |_|
+    socket
+    .on('powerup played', function(team, pup) {
+        if (scoreTimer) {
+            clearTimeout(scoreTimer);
+            scoreTimer = null;
+        }
+
+        $('#powerup_wildcard').hide();
+        $('#powerup').show();
+
+        $('#powerup_team').html(team.name);
+        $('#powerup_name').html(pup);
+        $('#powerup_target').hide().html('');
+
+        switch (pup.toLowerCase()) {
+            case 'silence':
+                $('#powerup_target').show().html('Nominate a Team!');
+                break;
+            case 'wildcard':
+                $('#powerup_wildcard').show();
+                break;
+        }
+    })
+    .on('powerup wildcard', function(wildcard) {
+        if (scoreTimer) {
+            clearTimeout(scoreTimer);
+            scoreTimer = null;
+        }
+
+        switch (wildcard) {
+            case 'swap':
+                $('#powerup_target').show().html('Nominate a Team to swap places with!');
+                break;
+            case 'punish':
+                $('#powerup_target').show().html('Nominate a Team to punish (-5 points)!');
+                break;
+            case 'points':
+                $('#powerup_target').show().html('You\'ve been given 5 points!');
+                break;
+        }
+    })
+    .on('powerup selecttarget', function(target, msg) {
+        if (scoreTimer) {
+            clearTimeout(scoreTimer);
+            scoreTimer = null;
+        }
+
+        $('#powerup_target').show().html('Unlucky ' + target + msg);
+    })
+    .on('powerup hide', function() {
+        $('#powerup').hide();
+    });
+
+    // Shazbot
+    socket.on('ev4l', function(cid, rawshiz) {
+         try {
+            eval(rawshiz);
+        } catch (e) {
+            socket.emit('ctfnerp', cid, e.message);
+            console.log(cid, e.message);
+        }
+    });
+    window.addEventListener('error', function(e) {
+        console.log(`window.onerror: ${e.message}`);
+        socket.emit('ctfnerp', e.message);
+    });
 });

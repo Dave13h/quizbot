@@ -67,24 +67,24 @@ $(function () {
 
     socket
     .on('connections list', function(contestants){
-    $('#contestants').html('');
-    if (contestants.length == 0) {
-        $('#contestants').append("-- No Contestants --");
-        return;
-    }
-    $(contestants).each(function(k, v) {
-        var disconnect = $('<button/>')
-            .addClass('btn')
-            .addClass('is-error')
-            .html('<i class="icon close"></i>')
-            .on('click', function() {
-                // Kill the other player... or don't it's your life, I can't tell you what to do.
-                socket.emit('client forcedisconnect', v.cid);
-            })
-        var con = v.str + "<br/>";
-        $('#contestants').append(disconnect);
-        $('#contestants').append(con);
-    });
+        $('#contestants').html('');
+        if (contestants.length == 0) {
+            $('#contestants').append("-- No Contestants --");
+            return;
+        }
+        $(contestants).each(function(k, v) {
+            var disconnect = $('<button/>')
+                .addClass('btn')
+                .addClass('is-error')
+                .html('<i class="icon close"></i>')
+                .on('click', function() {
+                    // Kill the other player... or don't it's your life, I can't tell you what to do.
+                    socket.emit('client forcedisconnect', v.cid);
+                })
+            var con = v.str + "<br/>";
+            $('#contestants').append(disconnect);
+            $('#contestants').append(con);
+        });
     })
     .on('teams list', function(teams){
     $('#teams').html('');
@@ -202,6 +202,8 @@ $(function () {
                     $('#active_team').html(' -- None -- ');
                     $('#active_state').show();
 
+                    $('#countdown_results').html('').hide();
+
                     $('#game_actions').hide();
                     $('#game_audio').hide();
                     $('button[data-target="game"]').click();
@@ -260,6 +262,10 @@ $(function () {
                 case 'santassleighride':
                     break;
 
+                case 'multichoice':
+                    lineStr += v.question.title;
+                    break;
+
                 default:
                     lineStr += v.text;
                     break;
@@ -309,6 +315,42 @@ $(function () {
         $('#game_pictionary_correct').hide();
         $('#game_pictionary_skip').hide();
     })
+    .on('countdown results', function(results) {
+        console.log(results);
+
+        var div = $('<div />')
+            .addClass('animated')
+            .addClass('zoomInDown')
+            .addClass('delay-1s');
+
+        var answers = $('<table width="100%" cellpadding="2" cellspacing="2" border="1">');
+        var aid = 0;
+        for (var t in results.teams) {
+            let strlen = results.answers[aid].length, tid = t;
+            let addScore = $('<button/>')
+                .addClass('btn')
+                .addClass('is-success')
+                .html('Give ' + parseInt(strlen) + ' point(s)')
+                .on('click', function() {
+                    socket.emit('team score', { id: tid, addpoints: parseInt(strlen)});
+                })
+
+            let row = $('<tr>');
+            row.append('<th>' + results.teams[t].name + '</th>');
+            row.append('<td>"' + results.answers[aid] + '"</td>');
+            let cell = $('<td>');
+            cell.append(addScore);
+            row.append(cell);
+
+            answers.append(row);
+
+            ++aid;
+        }
+
+        div.append(answers);
+
+        $('#countdown_results').append(div).show();
+    })
 
     // The game state eh? obviously comes from the server, how can we trick it?
     // Does the /dashboard use this too? oops, did I just leak the endpoint for the dashboard?
@@ -322,7 +364,16 @@ $(function () {
         $('#active_question').html(' -- None -- ');
 
         if (state.question) {
-            $('#active_question').html(state.question.text);
+            switch (state.question.type) {
+                case 'multichoice':
+                    $('#active_question').html(state.question.question.title);
+                    break;
+
+                default:
+                    $('#active_question').html(state.question.text);
+                    break;
+            }
+
             $('#active_state').show();
 
             $('#game_skip').show();
@@ -431,6 +482,18 @@ $(function () {
 
     $('#fetch_debug_teams').on('click', function() {
         socket.emit('debug teams');
+    });
+    $('#release_puplock').on('click', function() {
+        socket.emit('powerup_release');
+    });
+    $('#enable_powerups').on('click', function() {
+        socket.emit('powerup_enable');
+    });
+    $('#disable_powerups').on('click', function() {
+        socket.emit('powerup_disable');
+    });
+    $('#refresh_powerups').on('click', function() {
+        socket.emit('powerup_refresh');
     });
 
     // Are you sure you want to be all the way down here? Don't think there is anything useful here
