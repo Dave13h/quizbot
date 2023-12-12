@@ -202,12 +202,12 @@ text-align: left;
     width: 960px !important;
     height: 540px;
     background: url("/images/catchphrase_cover.png");
-    left: 1600px;
+    left: 1350px;
     animation: reveal 5.0s forwards;
     animation-play-state: paused;
-    top: 350px;
+    top: 400px;
     margin-top: 0 !important;
-    scale: 1.65;
+    scale: 1.75;
     opacity: 1;
 }
 

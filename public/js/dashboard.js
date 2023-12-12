@@ -612,7 +612,7 @@ $(function () {
     //                                                     __/ |
     //                                                    |___/
     var ssrGridSize = 60,
-        ssrGridStep = $('.ssr-container').width() / ssrGridSize,
+        ssrGridStep = 3840 / ssrGridSize,
         ssrAvatars  = [];
 
     socket
@@ -622,10 +622,10 @@ $(function () {
 
         console.log('[SSR] Init');
         console.log('[SSR] ssrMaxPoints: ', ssrMaxPoints);
-        console.log('[SSR] Container Size: ', $('body').width());
+        console.log('[SSR] Container Size: ', 3840);
 
         ssrGridSize = parseInt(ssrMaxPoints);
-        ssrGridStep = $('body').width() / ssrGridSize;
+        ssrGridStep = 3840 / ssrGridSize;
 
         console.log('[SSR] Grid Step: ', ssrGridStep);
 
